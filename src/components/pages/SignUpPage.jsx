@@ -8,12 +8,29 @@ import { useNavigate } from 'react-router-dom';
 const SignUpPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
+  const [dob, setDob] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  const calculateAge = (dob) => {
+    const birthDate = new Date(dob);
+    const ageDiff = Date.now() - birthDate.getTime();
+    const ageDate = new Date(ageDiff);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+  };
+
   const handleSignup = async (e) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    if (calculateAge(dob) < 13) {
+      setError("You must be at least 13 years old to join Amigos.");
+      return;
+    }
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -28,11 +45,12 @@ const SignUpPage = () => {
         monthlyQuiz: {},
         amigos: [],
         grupos: [],
-        location: '',
-        preferences: {}
+        dob,
+        preferences: {},
+        isAdmin: false
       });
 
-      navigate('/setup'); // go to quiz page after sign up
+      navigate('/setup');
     } catch (err) {
       setError(err.message);
     }
@@ -61,6 +79,19 @@ const SignUpPage = () => {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+        />
+        <input
+          type="date"
+          value={dob}
+          onChange={(e) => setDob(e.target.value)}
           required
         />
         <button type="submit">Sign Up</button>
