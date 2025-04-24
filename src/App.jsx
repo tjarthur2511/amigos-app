@@ -1,12 +1,12 @@
-import React from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import './styles/App.css'
-import NavBar from './components/NavBar'
-import HomePage from './pages/HomePage'
-import ProfilePage from './pages/ProfilePage'
-import GruposPage from './pages/GruposPage'
-import AmigosPage from './pages/AmigosPage'
-import LivePage from './pages/LivePage'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './styles/App.css';
+import NavBar from './components/NavBar';
+import HomePage from './pages/HomePage';
+import ProfilePage from './pages/ProfilePage';
+import GruposPage from './pages/GruposPage';
+import AmigosPage from './pages/AmigosPage';
+import LivePage from './pages/LivePage';
 
 function App() {
   return (
@@ -23,7 +23,7 @@ function App() {
         </Routes>
       </div>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;
