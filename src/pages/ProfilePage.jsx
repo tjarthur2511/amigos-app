@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import './ProfilePage.css';
+import '../styles/ProfilePage.css';
 
 const mockUserId = 'user123'; // Replace with actual auth ID when auth is connected
 

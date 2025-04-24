@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
-import './GruposPage.css';
+import '../styles/GruposPage.css';
 
 function GruposPage() {
   const [grupos, setGrupos] = useState([]);
