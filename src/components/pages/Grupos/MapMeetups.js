@@ -1,3 +1,4 @@
+// src/components/pages/Grupos/MapMeetups.jsx
 import React from "react";
 
 const MapMeetups = () => {

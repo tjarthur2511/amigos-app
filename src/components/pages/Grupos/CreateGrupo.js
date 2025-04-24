@@ -1,3 +1,4 @@
+// src/components/pages/Grupos/CreateGrupo.js
 import React, { useState } from "react";
 import { db, auth } from "../../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
@@ -5,22 +6,37 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 const CreateGrupo = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!name.trim()) {
+      setError("Group name is required.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setSuccess(false);
+
     try {
       await addDoc(collection(db, "grupos"), {
-        name,
-        description,
-        owner: auth.currentUser.uid,
-        members: [auth.currentUser.uid],
+        name: name.trim(),
+        description: description.trim(),
+        owner: auth.currentUser?.uid || "unknown",
+        members: [auth.currentUser?.uid || "unknown"],
         createdAt: serverTimestamp(),
       });
       setName("");
       setDescription("");
-      alert("Grupo created!");
-    } catch (error) {
-      console.error("Error creating grupo:", error);
+      setSuccess(true);
+    } catch (err) {
+      console.error("Error creating grupo:", err);
+      setError("Failed to create grupo. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -40,7 +56,11 @@ const CreateGrupo = () => {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
-        <button type="submit">Create Grupo</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Creating..." : "Create Grupo"}
+        </button>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {success && <p style={{ color: "green" }}>✅ Grupo created successfully!</p>}
       </form>
     </div>
   );
