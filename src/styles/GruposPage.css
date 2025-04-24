@@ -1,0 +1,40 @@
+.grupos-container {
+    padding: 1rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .grupos-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  .grupo-card {
+    border: 2px solid #FF6B6B;
+    padding: 1rem;
+    border-radius: 12px;
+    background-color: #fff9f9;
+    text-align: center;
+  }
+  
+  .grupo-card h3 {
+    color: #FF6B6B;
+    margin-bottom: 0.5rem;
+  }
+  
+  .join-btn {
+    margin-top: 0.5rem;
+    background-color: #FF6B6B;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .join-btn:hover {
+    background-color: #e25555;
+  }
+  
