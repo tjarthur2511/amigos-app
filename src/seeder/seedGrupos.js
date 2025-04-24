@@ -1,7 +1,8 @@
-import { db } from '../firebase';
+// src/seeder/seedGrupos.js
+import { db } from '../firebase.js';
 import { collection, addDoc } from 'firebase/firestore';
 
-export const seedGrupos = async () => {
+const seedGrupos = async () => {
   const grupos = [
     {
       name: 'Detroit Gamers',
@@ -35,3 +36,5 @@ export const seedGrupos = async () => {
 
   console.log('✅ Grupos seeded');
 };
+
+seedGrupos();

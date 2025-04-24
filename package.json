@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "seed": "node ./src/seeder/seedUsers.js",
+    "seed-questions": "node ./src/seeder/seedQuestionSets.js",
+    "seed-grupos": "node ./src/seeder/seedGrupos.js",
+    "seed-events": "node ./src/seeder/seedEvents.js"
   },
   "dependencies": {
     "firebase": "^11.6.0",

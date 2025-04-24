@@ -1,6 +1,7 @@
-import React from 'react'
-import './NavBar.css'
-import { Link } from 'react-router-dom'
+// src/components/NavBar.jsx
+import React from 'react';
+import './NavBar.css';
+import { Link } from 'react-router-dom';
 
 function NavBar() {
   return (
@@ -11,7 +12,7 @@ function NavBar() {
       <Link to="/amigos">Amigos</Link>
       <Link to="/live">Go Live</Link>
     </nav>
-  )
+  );
 }
 
-export default NavBar
+export default NavBar;
