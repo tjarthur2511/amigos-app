@@ -1,40 +1,67 @@
 .grupos-container {
-    padding: 1rem;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-  
-  .grupos-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-  
-  .grupo-card {
-    border: 2px solid #FF6B6B;
-    padding: 1rem;
-    border-radius: 12px;
-    background-color: #fff9f9;
-    text-align: center;
-  }
-  
-  .grupo-card h3 {
-    color: #FF6B6B;
-    margin-bottom: 0.5rem;
-  }
-  
-  .join-btn {
-    margin-top: 0.5rem;
-    background-color: #FF6B6B;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  
-  .join-btn:hover {
-    background-color: #e25555;
-  }
-  
+  padding: 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.grupo-form {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border: 2px solid #FF6B6B;
+  border-radius: 12px;
+  background-color: #fff9f9;
+}
+
+.grupo-form input,
+.grupo-form textarea {
+  display: block;
+  width: 100%;
+  padding: 0.6rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: 'Comfortaa', cursive;
+}
+
+.checkbox {
+  margin-top: 0.5rem;
+  font-weight: bold;
+}
+
+.grupo-form button {
+  margin-top: 1rem;
+  background-color: #FF6B6B;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.grupo-form button:hover {
+  background-color: #e25555;
+}
+
+.grupos-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.grupo-card {
+  border: 2px solid #FF6B6B;
+  padding: 1rem;
+  border-radius: 12px;
+  background-color: #fff;
+  text-align: center;
+}
+
+.grupo-card h3 {
+  color: #FF6B6B;
+  margin-bottom: 0.5rem;
+}
+
+.age-restricted {
+  color: red;
+  font-weight: bold;
+}
