@@ -7,6 +7,7 @@ import ProfilePage from './pages/ProfilePage';
 import GruposPage from './pages/GruposPage';
 import AmigosPage from './pages/AmigosPage';
 import LivePage from './pages/LivePage';
+import MonthlyQuizPage from './pages/MonthlyQuizPage';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/grupos" element={<GruposPage />} />
           <Route path="/amigos" element={<AmigosPage />} />
           <Route path="/live" element={<LivePage />} />
+          <Route path="/monthly-quiz" element={<MonthlyQuizPage />} />
         </Routes>
       </div>
     </Router>
