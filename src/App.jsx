@@ -30,6 +30,8 @@ function App() {
     return () => unsubscribe();
   }, []);
 
+  console.log('✅ Amigos app is loading...'); // <-- Tiny visible update here
+
   if (loading) return <LoadingScreen />;
 
   return (
