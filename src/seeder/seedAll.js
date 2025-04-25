@@ -15,4 +15,4 @@ const seedAll = async () => {
   console.log('✅ All collections seeded');
 };
 
-export default seedAll();
+export default seedAll;

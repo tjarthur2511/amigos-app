@@ -7,14 +7,16 @@ import clearQuestionSets from './clearQuestionSets.js';
 import clearWeeklyQuestion from './clearWeeklyQuestion.js';
 
 const clearAll = async () => {
-  console.log('🧹 Clearing all seeded data...');
-  await clearUsers();
-  await clearGrupos();
-  await clearEvents();
-  await clearReactions();
-  await clearQuestionSets();
-  await clearWeeklyQuestion();
-  console.log('✅ All collections cleared');
+  console.log("🧹 Clearing all seeded data...");
+  await Promise.all([
+    clearUsers(),
+    clearGrupos(),
+    clearEvents(),
+    clearReactions(),
+    clearQuestionSets(),
+    clearWeeklyQuestion(),
+  ]);
+  console.log("✅ All collections cleared");
 };
 
-export default clearAll();
+export default clearAll;

@@ -1,33 +1,27 @@
-import React from "react";
+// src/seeder/clearSeededData.js
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { db } from "../firebase";
 
-const AdminPanel = () => {
-  const runSeeder = async (script) => {
-    try {
-      const module = await import(`../../seeder/${script}.js`);
-      if (typeof module.default === 'function') {
-        await module.default();
-      } else if (typeof module[script] === 'function') {
-        await module[script]();
-      }
-      alert(`${script} ran successfully ✅`);
-    } catch (error) {
-      console.error(`Error running ${script}:`, error);
-      alert(`❌ Failed to run ${script}`);
+/**
+ * Clears only the data that was marked as seeded for testing/demo purposes.
+ * Assumes documents have a field `seeded: true`.
+ */
+const clearSeededData = async () => {
+  console.log("🧼 Clearing seeded data only...");
+
+  const collections = ["users", "grupos", "events", "questionSets", "reactions"];
+
+  for (const col of collections) {
+    const snapshot = await getDocs(collection(db, col));
+    const seededDocs = snapshot.docs.filter((docSnap) => docSnap.data().seeded === true);
+
+    for (const seededDoc of seededDocs) {
+      await deleteDoc(doc(db, col, seededDoc.id));
+      console.log(`🗑️ Deleted seeded doc from ${col}: ${seededDoc.id}`);
     }
-  };
+  }
 
-  return (
-    <div className="admin-panel container">
-      <h2>Admin Panel</h2>
-      <p>Welcome, admin. Use the buttons below to manage data.</p>
-
-      <button onClick={() => runSeeder('seedUsers')}>Seed Users</button>
-      <button onClick={() => runSeeder('seedGrupos')}>Seed Grupos</button>
-      <button onClick={() => runSeeder('seedEvents')}>Seed Events</button>
-      <button onClick={() => runSeeder('seedQuestionSets')}>Seed Question Sets</button>
-      <button onClick={() => runSeeder('clearSeededData')}>Clear Seeded Data</button>
-    </div>
-  );
+  console.log("✅ Seeded data cleared.");
 };
 
-export default AdminPanel;
+export default clearSeededData;
