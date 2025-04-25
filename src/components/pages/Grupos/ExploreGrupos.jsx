@@ -1,6 +1,6 @@
 // src/components/pages/Grupos/ExploreGrupos.js
 import React, { useEffect, useState } from "react";
-import { db, auth } from "../../firebase";
+import { db, auth } from "../../../firebase";
 import { collection, getDocs, updateDoc, doc, getDoc } from "firebase/firestore";
 import { Link } from "react-router-dom";
 

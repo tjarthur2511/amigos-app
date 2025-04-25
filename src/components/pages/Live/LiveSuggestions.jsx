@@ -1,3 +1,4 @@
+// src/components/pages/Live/LiveSuggestions.jsx
 import React from "react";
 
 const LiveSuggestions = () => {

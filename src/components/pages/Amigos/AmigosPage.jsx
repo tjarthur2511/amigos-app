@@ -2,11 +2,11 @@
 import React, { useEffect, useState } from "react";
 import "./AmigosPage.css";
 import {
-  getCurrentUserAmigos,
+  getUserAmigos as getCurrentUserAmigos,
   getSuggestedAmigos,
   getAmigosByGrupos,
-} from "../../utils/amigoUtils";
-import { useAuth } from "../../context/AuthContext";
+} from "../../../utils/amigoUtils";
+import { useAuth } from "../../../context/AuthContext";
 import AmigoCard from "./AmigoCard";
 
 const AmigosPage = () => {

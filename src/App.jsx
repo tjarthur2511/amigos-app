@@ -16,7 +16,7 @@ import WeeklyQuizPage from './components/pages/WeeklyQuizPage.jsx';
 import ProfilePage from './components/pages/ProfilePage/ProfilePage.jsx';
 import GruposPage from './components/pages/Grupos/GruposPage.jsx';
 import AmigosPage from './components/pages/Amigos/AmigosPage.jsx';
-import LivePage from './components/pages/LivePage/LivePage.jsx';
+import LivePage from './components/pages/Live/LivePage.jsx';
 
 function App() {
   const [loading, setLoading] = useState(true);

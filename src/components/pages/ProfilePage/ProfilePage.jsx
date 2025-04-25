@@ -1,13 +1,13 @@
 // src/components/pages/ProfilePage.jsx
 import React, { useEffect, useState } from 'react';
-import { auth, db } from '../../firebase.js';
+import { auth, db } from '../../../firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import QuizTab from './ProfilePage/QuizTab';
-import ProfileInfo from './ProfilePage/ProfileInfo';
-import Preferences from './ProfilePage/Preferences';
-import ProfileSettings from './ProfilePage/ProfileSettings';
-import UserGrupos from './ProfilePage/UserGrupos';
-import UserPosts from './ProfilePage/UserPosts';
+import QuizTab from './QuizTab';
+import ProfileInfo from './ProfileInfo';
+import Preferences from './Preferences';
+import ProfileSettings from './ProfileSettings';
+import UserGrupos from './UserGrupos';
+import UserPosts from './UserPosts';
 
 const ProfilePage = () => {
   const [userData, setUserData] = useState(null);
