@@ -1,4 +1,3 @@
-// src/seeder/seedUsers.js
 import { db } from '../firebase.js';
 import { collection, addDoc } from 'firebase/firestore';
 
@@ -21,4 +20,4 @@ const seedUsers = async () => {
   console.log('🌱 Done seeding users!');
 };
 
-seedUsers();
+export default seedUsers;
