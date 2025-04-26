@@ -1,8 +1,10 @@
+// src/components/pages/Grupos/GruposPage.jsx
 import React, { useState } from 'react';
 import CreateGrupo from './CreateGrupo';
 import ExploreGrupos from './ExploreGrupos';
 import YourGrupos from './YourGrupos';
 import MapMeetups from './MapMeetups';
+import { motion } from 'framer-motion'; // ✅ animations
 
 const GruposPage = () => {
   const [tab, setTab] = useState('explore');
@@ -23,54 +25,37 @@ const GruposPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center space-y-6">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
+      className="flex flex-col items-center min-h-screen space-y-6 p-6 bg-gray-50"
+    >
       <h1 className="text-4xl font-bold text-[#FF6B6B]">Grupos</h1>
 
       <div className="flex flex-wrap justify-center gap-4">
-        <button
-          onClick={() => setTab('explore')}
-          className={`px-4 py-2 rounded-full font-semibold transition-all ${
-            tab === 'explore'
-              ? 'bg-[#FF6B6B] text-white'
-              : 'bg-white text-[#FF6B6B] border border-[#FF6B6B]'
-          }`}
-        >
-          Explore
-        </button>
-        <button
-          onClick={() => setTab('your')}
-          className={`px-4 py-2 rounded-full font-semibold transition-all ${
-            tab === 'your'
-              ? 'bg-[#FF6B6B] text-white'
-              : 'bg-white text-[#FF6B6B] border border-[#FF6B6B]'
-          }`}
-        >
-          Your Grupos
-        </button>
-        <button
-          onClick={() => setTab('create')}
-          className={`px-4 py-2 rounded-full font-semibold transition-all ${
-            tab === 'create'
-              ? 'bg-[#FF6B6B] text-white'
-              : 'bg-white text-[#FF6B6B] border border-[#FF6B6B]'
-          }`}
-        >
-          Create
-        </button>
-        <button
-          onClick={() => setTab('map')}
-          className={`px-4 py-2 rounded-full font-semibold transition-all ${
-            tab === 'map'
-              ? 'bg-[#FF6B6B] text-white'
-              : 'bg-white text-[#FF6B6B] border border-[#FF6B6B]'
-          }`}
-        >
-          Map Meetups
-        </button>
+        {[
+          { id: 'explore', label: 'Explore' },
+          { id: 'your', label: 'Your Grupos' },
+          { id: 'create', label: 'Create' },
+          { id: 'map', label: 'Map Meetups' },
+        ].map(({ id, label }) => (
+          <button
+            key={id}
+            onClick={() => setTab(id)}
+            className={`px-4 py-2 rounded-full font-semibold transition-all ${
+              tab === id
+                ? 'bg-[#FF6B6B] text-white'
+                : 'bg-white text-[#FF6B6B] border border-[#FF6B6B]'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
-      <div className="w-full px-4">{renderTab()}</div>
-    </div>
+      <div className="w-full max-w-5xl">{renderTab()}</div>
+    </motion.div>
   );
 };
 

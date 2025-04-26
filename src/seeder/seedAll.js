@@ -1,16 +1,18 @@
 // src/seeder/seedAll.js
-import { seedUsers } from './seedUsers.js';
-import { seedGrupos } from './seedGrupos.js';
-import { seedEvents } from './seedEvents.js';
-import { seedQuestionSets } from './seedQuestionSets.js';
-import { seedReactions } from './seedReactions.js';
+import seedUsers from "./seedUsers.js";
+import seedGrupos from "./seedGrupos.js";
+import seedEvents from "./seedEvents.js";
+import seedQuestionSets from "./seedQuestionSets.js";
+import seedReactions from "./seedReactions.js";
 
-export const seedAll = async () => {
-  console.log('🌱 Seeding all collections...');
-  await seedUsers();
-  await seedGrupos();
-  await seedEvents();
-  await seedQuestionSets();
-  await seedReactions();
-  console.log('✅ All collections seeded');
+const seedAll = async () => {
+  console.log("🌱 Seeding All Amigos Collections...");
+  await seedUsers;
+  await seedGrupos;
+  await seedEvents;
+  await seedQuestionSets;
+  await seedReactions;
+  console.log("✅ Amigos DB Seeding Complete");
 };
+
+export default seedAll();

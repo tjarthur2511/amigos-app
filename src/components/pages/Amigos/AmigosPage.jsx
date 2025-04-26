@@ -1,6 +1,7 @@
 // src/components/pages/Amigos/AmigosPage.jsx
 import React, { useEffect, useState } from "react";
-import "./AmigosPage.css";
+import { motion } from "framer-motion";
+import "./AmigosPage.css"; // ✅ Make sure styles are matching theme
 import {
   getUserAmigos as getCurrentUserAmigos,
   getSuggestedAmigos,
@@ -15,17 +16,25 @@ const AmigosPage = () => {
   const [yourAmigos, setYourAmigos] = useState([]);
   const [suggestedAmigos, setSuggestedAmigos] = useState([]);
   const [grupoAmigos, setGrupoAmigos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (currentUser) {
-      getCurrentUserAmigos(currentUser.uid).then(setYourAmigos);
-      getSuggestedAmigos(currentUser.uid).then(setSuggestedAmigos);
-      getAmigosByGrupos(currentUser.uid).then(setGrupoAmigos);
-    }
+    const fetchAmigos = async () => {
+      if (currentUser) {
+        setLoading(true);
+        await Promise.all([
+          getCurrentUserAmigos(currentUser.uid).then(setYourAmigos),
+          getSuggestedAmigos(currentUser.uid).then(setSuggestedAmigos),
+          getAmigosByGrupos(currentUser.uid).then(setGrupoAmigos),
+        ]);
+        setLoading(false);
+      }
+    };
+    fetchAmigos();
   }, [currentUser]);
 
   const renderAmigoList = (list, emptyMessage) => (
-    <div className="amigo-list">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {list.length > 0 ? (
         list.map((amigo) => (
           <AmigoCard
@@ -34,57 +43,56 @@ const AmigosPage = () => {
             bio={amigo.bio}
             photoURL={amigo.photoURL}
             isFollowing={amigo.isFollowing || false}
-            onFollow={() => {}}
+            onFollow={() => {}} // 🛠 Hook for future follow/unfollow
           />
         ))
       ) : (
-        <p className="text-gray-600">{emptyMessage}</p>
+        <p className="text-gray-600 text-center col-span-full">{emptyMessage}</p>
       )}
     </div>
   );
 
-  return (
-    <div className="amigos-page container">
-      <h1 className="text-4xl font-bold text-[#FF6B6B] mb-6">Amigos</h1>
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-[#FF6B6B] text-xl font-semibold animate-pulse">Loading amigos...</p>
+      </div>
+    );
+  }
 
-      <div className="flex flex-wrap gap-4 justify-center mb-6">
-        <button
-          onClick={() => setTab("your")}
-          className={`px-4 py-2 rounded-full font-semibold ${
-            tab === "your"
-              ? "bg-[#FF6B6B] text-white"
-              : "bg-white text-[#FF6B6B] border border-[#FF6B6B]"
-          }`}
-        >
-          Your Amigos
-        </button>
-        <button
-          onClick={() => setTab("suggested")}
-          className={`px-4 py-2 rounded-full font-semibold ${
-            tab === "suggested"
-              ? "bg-[#FF6B6B] text-white"
-              : "bg-white text-[#FF6B6B] border border-[#FF6B6B]"
-          }`}
-        >
-          Suggested
-        </button>
-        <button
-          onClick={() => setTab("grupos")}
-          className={`px-4 py-2 rounded-full font-semibold ${
-            tab === "grupos"
-              ? "bg-[#FF6B6B] text-white"
-              : "bg-white text-[#FF6B6B] border border-[#FF6B6B]"
-          }`}
-        >
-          Grupos Amigos
-        </button>
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
+      className="container mx-auto px-4 py-8"
+    >
+      <h1 className="text-4xl font-bold text-[#FF6B6B] mb-6 text-center">Amigos</h1>
+
+      <div className="flex flex-wrap justify-center gap-4 mb-8">
+        {[
+          { id: "your", label: "Your Amigos" },
+          { id: "suggested", label: "Suggested" },
+          { id: "grupos", label: "Grupos Amigos" },
+        ].map(({ id, label }) => (
+          <button
+            key={id}
+            onClick={() => setTab(id)}
+            className={`px-4 py-2 rounded-full font-semibold ${
+              tab === id
+                ? "bg-[#FF6B6B] text-white"
+                : "bg-white text-[#FF6B6B] border border-[#FF6B6B]"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
-      {/* Renders based on selected tab */}
       {tab === "your" && renderAmigoList(yourAmigos, "No amigos yet.")}
       {tab === "suggested" && renderAmigoList(suggestedAmigos, "No suggestions at the moment.")}
       {tab === "grupos" && renderAmigoList(grupoAmigos, "You haven’t joined any Grupos yet.")}
-    </div>
+    </motion.div>
   );
 };
 

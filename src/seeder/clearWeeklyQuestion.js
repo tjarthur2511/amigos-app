@@ -1,17 +1,11 @@
 // src/seeder/clearWeeklyQuestion.js
+import { db } from "../firebase.js";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { db } from "../firebase";
 
-const clearWeeklyQuestion = async () => {
-  console.log("🧹 Clearing all weekly questions...");
+export const clearWeeklyQuestion = async () => {
   const snapshot = await getDocs(collection(db, "weeklyQuestions"));
-
-  const deletions = snapshot.docs.map((docSnap) =>
-    deleteDoc(doc(db, "weeklyQuestions", docSnap.id))
-  );
-
-  await Promise.all(deletions);
-  console.log("✅ All weekly questions cleared.");
+  for (const docRef of snapshot.docs) {
+    await deleteDoc(doc(db, "weeklyQuestions", docRef.id));
+  }
+  console.log("🧼 Cleared Weekly Questions");
 };
-
-export default clearWeeklyQuestion;

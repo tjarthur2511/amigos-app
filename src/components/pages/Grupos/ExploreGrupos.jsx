@@ -1,7 +1,9 @@
+// src/components/pages/Grupos/ExploreGrupos.jsx
 import React, { useEffect, useState } from "react";
 import { db, auth } from "../../../firebase";
 import { collection, getDocs, updateDoc, doc, getDoc } from "firebase/firestore";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion"; // ✅ animations
 
 const ExploreGrupos = () => {
   const [grupos, setGrupos] = useState([]);
@@ -43,7 +45,7 @@ const ExploreGrupos = () => {
             )
           );
 
-          alert("Joined grupo!");
+          alert("🎉 Joined grupo!");
         } else {
           alert("Already a member.");
         }
@@ -58,39 +60,54 @@ const ExploreGrupos = () => {
     fetchGrupos();
   }, []);
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-[#FF6B6B] animate-pulse text-lg font-semibold">Loading grupos...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-red-500 text-lg">{error}</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col items-center space-y-6">
-      <h2 className="text-3xl font-bold text-[#FF6B6B]">Explore Grupos</h2>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
+      className="flex flex-col items-center space-y-6 mt-6 px-4"
+    >
+      <h2 className="text-3xl font-bold text-[#FF6B6B] text-center">Explore Grupos</h2>
 
-      {error && <p className="text-red-500">{error}</p>}
-
-      {loading ? (
-        <p className="text-gray-500">Loading grupos...</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl">
-          {grupos.map((grupo) => (
-            <div
-              key={grupo.id}
-              className="border rounded-xl p-6 shadow-md bg-white hover:shadow-lg transition-all flex flex-col space-y-4"
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl">
+        {grupos.map((grupo) => (
+          <div
+            key={grupo.id}
+            className="border rounded-2xl p-6 shadow-lg bg-white hover:shadow-xl transition-all flex flex-col space-y-4"
+          >
+            <Link
+              to={`/grupos/${grupo.id}`}
+              className="text-2xl font-bold text-[#FF6B6B] hover:underline text-center"
             >
-              <Link
-                to={`/grupos/${grupo.id}`}
-                className="text-2xl font-bold text-[#FF6B6B] hover:underline"
-              >
-                {grupo.name}
-              </Link>
-              <p className="text-gray-700">{grupo.description || "No description provided."}</p>
-              <button
-                onClick={() => joinGrupo(grupo.id)}
-                className="bg-[#FF6B6B] text-white py-2 px-4 rounded-lg font-semibold hover:bg-[#ff8585] transition-all"
-              >
-                Join Grupo
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+              {grupo.name}
+            </Link>
+            <p className="text-gray-700 text-center">{grupo.description || "No description provided."}</p>
+            <button
+              onClick={() => joinGrupo(grupo.id)}
+              className="bg-[#FF6B6B] text-white py-2 px-4 rounded-lg font-semibold hover:bg-[#e15555] transition-all"
+            >
+              Join Grupo
+            </button>
+          </div>
+        ))}
+      </div>
+    </motion.div>
   );
 };
 

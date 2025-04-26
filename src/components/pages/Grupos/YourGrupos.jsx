@@ -1,7 +1,9 @@
+// src/components/pages/Grupos/YourGrupos.jsx
 import React, { useEffect, useState } from "react";
 import { db, auth } from "../../../firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion"; // ✅ animations
 
 const YourGrupos = () => {
   const [yourGrupos, setYourGrupos] = useState([]);
@@ -34,31 +36,52 @@ const YourGrupos = () => {
     fetchGrupos();
   }, []);
 
-  return (
-    <div className="flex flex-col items-center space-y-6">
-      <h2 className="text-3xl font-bold text-[#FF6B6B]">Your Grupos</h2>
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-[#FF6B6B] animate-pulse text-lg font-semibold">Loading your grupos...</p>
+      </div>
+    );
+  }
 
-      {loading ? (
-        <p className="text-gray-500">Loading your grupos...</p>
-      ) : error ? (
-        <p className="text-red-500">{error}</p>
-      ) : yourGrupos.length === 0 ? (
-        <p className="text-gray-600">You haven't joined or created any grupos yet.</p>
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-red-500 text-lg">{error}</p>
+      </div>
+    );
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
+      className="flex flex-col items-center space-y-6 mt-6 px-4"
+    >
+      <h2 className="text-3xl font-bold text-[#FF6B6B] text-center">Your Grupos</h2>
+
+      {yourGrupos.length === 0 ? (
+        <p className="text-gray-600 text-center">
+          You haven't joined or created any grupos yet.
+        </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl">
           {yourGrupos.map((grupo) => (
             <Link
               key={grupo.id}
               to={`/grupos/${grupo.id}`}
-              className="border rounded-xl p-6 shadow-md bg-white hover:shadow-lg transition-all flex flex-col space-y-2"
+              className="border rounded-2xl p-6 shadow-lg bg-white hover:shadow-xl transition-all flex flex-col space-y-2"
             >
-              <h3 className="text-2xl font-bold text-[#FF6B6B]">{grupo.name}</h3>
-              <p className="text-gray-700">{grupo.description || "No description provided."}</p>
+              <h3 className="text-2xl font-bold text-[#FF6B6B] text-center">{grupo.name}</h3>
+              <p className="text-gray-700 text-center">
+                {grupo.description || "No description provided."}
+              </p>
             </Link>
           ))}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

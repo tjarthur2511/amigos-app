@@ -1,13 +1,9 @@
 // src/seeder/clearSeededData.js
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "../firebase.js"; // (add .js so Vite doesn't cry)
 
-/**
- * Clears only the data that was marked as seeded for testing/demo purposes.
- * Assumes documents have a field `seeded: true`.
- */
 const clearSeededData = async () => {
-  console.log("🧼 Clearing seeded data only...");
+  console.log("🧹 Clearing only seeded (test) data...");
 
   const collections = ["users", "grupos", "events", "questionSets", "reactions"];
 
@@ -21,7 +17,7 @@ const clearSeededData = async () => {
     }
   }
 
-  console.log("✅ Seeded data cleared.");
+  console.log("✅ Seeded test/demo data cleared safely.");
 };
 
 export default clearSeededData;

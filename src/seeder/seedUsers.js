@@ -1,23 +1,36 @@
-import { db } from '../firebase.js';
-import { collection, addDoc } from 'firebase/firestore';
+// src/seeder/seedUsers.js
+import { db } from "../firebase.js";
+import { collection, addDoc } from "firebase/firestore";
 
 const seedUsers = async () => {
   const users = [
-    { displayName: 'LunaBot', email: 'luna@amigos.ai', quizAnswers: {}, monthlyQuiz: {} },
-    { displayName: 'ZenBot', email: 'zen@amigos.ai', quizAnswers: {}, monthlyQuiz: {} },
-    { displayName: 'PixelPal', email: 'pixel@amigos.ai', quizAnswers: {}, monthlyQuiz: {} },
-    { displayName: 'EchoBot', email: 'echo@amigos.ai', quizAnswers: {}, monthlyQuiz: {} },
-    { displayName: 'NovaBot', email: 'nova@amigos.ai', quizAnswers: {}, monthlyQuiz: {} },
+    {
+      displayName: "TJ Arthur",
+      email: "tjarthur2511@gmail.com",
+      quizAnswers: {},
+      monthlyQuiz: {},
+      isAdmin: true,
+      uid: "Boss1"
+    },
+    {
+      displayName: "LunaBot",
+      email: "luna@amigos.ai",
+      quizAnswers: {},
+      monthlyQuiz: {}
+    },
+    {
+      displayName: "ZenBot",
+      email: "zen@amigos.ai",
+      quizAnswers: {},
+      monthlyQuiz: {}
+    }
   ];
 
-  const userCollection = collection(db, 'users');
-
   for (const user of users) {
-    await addDoc(userCollection, user);
-    console.log(`✅ Seeded user: ${user.displayName}`);
+    await addDoc(collection(db, "users"), user);
   }
 
-  console.log('🌱 Done seeding users!');
+  console.log("✅ Seeded Users");
 };
 
-export default seedUsers;
+export default seedUsers();

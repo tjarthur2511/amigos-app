@@ -2,14 +2,10 @@
 import { db } from "../firebase.js";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 
-const clearReactions = async () => {
-  console.log("🧹 Clearing Reactions collection...");
+export const clearReactions = async () => {
   const snapshot = await getDocs(collection(db, "reactions"));
-  const deletePromises = snapshot.docs.map((docSnap) =>
-    deleteDoc(doc(db, "reactions", docSnap.id))
-  );
-  await Promise.all(deletePromises);
-  console.log("✅ Reactions collection cleared.");
+  for (const docRef of snapshot.docs) {
+    await deleteDoc(doc(db, "reactions", docRef.id));
+  }
+  console.log("🧼 Cleared Reactions");
 };
-
-export default clearReactions;

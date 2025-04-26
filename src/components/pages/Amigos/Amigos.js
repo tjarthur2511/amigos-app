@@ -1,7 +1,6 @@
-// src/pages/Amigos.js
+// src/components/pages/Amigos/Amigos.js
 import React from "react";
 import AmigosPage from "./AmigosPage";
-import './AmigosPage.css';
 
 const Amigos = () => {
   return <AmigosPage />;

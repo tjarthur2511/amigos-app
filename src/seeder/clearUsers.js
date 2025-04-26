@@ -1,17 +1,21 @@
 // src/seeder/clearUsers.js
+import { db } from "../firebase.js";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { db } from "../firebase";
 
-const clearUsers = async () => {
-  console.log("🧹 Clearing all users...");
+export const clearUsers = async () => {
   const snapshot = await getDocs(collection(db, "users"));
 
-  const deletions = snapshot.docs.map((userDoc) =>
-    deleteDoc(doc(db, "users", userDoc.id))
-  );
+  for (const docRef of snapshot.docs) {
+    const userData = docRef.data();
 
-  await Promise.all(deletions);
-  console.log("✅ All users cleared.");
+    // ONLY delete if the user is marked as seeded
+    if (userData?.seeded === true) {
+      await deleteDoc(doc(db, "users", docRef.id));
+      console.log(`🧹 Deleted seeded user: ${docRef.id}`);
+    } else {
+      console.log(`🛡️ Skipped real user (non-seeded): ${docRef.id}`);
+    }
+  }
+
+  console.log("✅ Cleared only seeded users.");
 };
-
-export default clearUsers;

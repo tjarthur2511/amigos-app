@@ -1,9 +1,10 @@
 // src/App.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 
+// Pages and Components
 import LoadingScreen from './components/LoadingScreen';
 import NavBar from './components/NavBar';
 import HomePage from './components/pages/HomePage';
@@ -17,7 +18,8 @@ import ProfilePage from './components/pages/ProfilePage/ProfilePage.jsx';
 import GruposPage from './components/pages/Grupos/GruposPage.jsx';
 import AmigosPage from './components/pages/Amigos/AmigosPage.jsx';
 import LivePage from './components/pages/Live/LivePage.jsx';
-import LandingPage from './components/pages/LandingPage.jsx'; // ✅ ADD THIS LINE
+import LandingPage from './components/pages/LandingPage.jsx';
+import ScrollToTop from './components/common/ScrollToTop.jsx'; // ✅ we'll make this next
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -31,36 +33,35 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  console.log('✅ Amigos app is loading...');
-
   if (loading) return <LoadingScreen />;
 
   return (
     <Router>
-      {user && <NavBar />}
-      <Routes>
-        {user ? (
-          <>
-            {/* LOGGED IN ROUTES */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/grupos" element={<GruposPage />} />
-            <Route path="/amigos" element={<AmigosPage />} />
-            <Route path="/live" element={<LivePage />} />
-            <Route path="/setup" element={<SetupQuizPage />} />
-            <Route path="/monthly-quiz" element={<MonthlyQuizPage />} />
-            <Route path="/weekly-quiz" element={<WeeklyQuizPage />} />
-            <Route path="/profile/admin" element={<AdminPanel />} />
-          </>
-        ) : (
-          <>
-            {/* NOT LOGGED IN ROUTES */}
-            <Route path="/" element={<LandingPage />} /> {/* ✅ LANDING PAGE FOR VISITORS */}
-            <Route path="/signup" element={<SignUpPage />} />
-            <Route path="*" element={<LoginPage />} />
-          </>
-        )}
-      </Routes>
+      <ScrollToTop />
+      <Suspense fallback={<LoadingScreen />}>
+        {user && <NavBar />}
+        <Routes>
+          {user ? (
+            <>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/grupos" element={<GruposPage />} />
+              <Route path="/amigos" element={<AmigosPage />} />
+              <Route path="/live" element={<LivePage />} />
+              <Route path="/setup" element={<SetupQuizPage />} />
+              <Route path="/monthly-quiz" element={<MonthlyQuizPage />} />
+              <Route path="/weekly-quiz" element={<WeeklyQuizPage />} />
+              <Route path="/profile/admin" element={<AdminPanel />} />
+            </>
+          ) : (
+            <>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/signup" element={<SignUpPage />} />
+              <Route path="*" element={<LoginPage />} />
+            </>
+          )}
+        </Routes>
+      </Suspense>
     </Router>
   );
 }

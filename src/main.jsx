@@ -1,12 +1,16 @@
+// src/main.jsx
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import './index.css';
 import App from './App.jsx';
-import { AuthProvider } from './context/AuthContext'; // ✅ Add this line
+import './index.css';
+import { AuthProvider } from './context/AuthContext.jsx'; // ✅ Consistent extension
 
-createRoot(document.getElementById('root')).render(
+const container = document.getElementById('root');
+const root = createRoot(container);
+
+root.render(
   <StrictMode>
-    <AuthProvider>         {/* ✅ Wrap App with AuthProvider */}
+    <AuthProvider>
       <App />
     </AuthProvider>
   </StrictMode>

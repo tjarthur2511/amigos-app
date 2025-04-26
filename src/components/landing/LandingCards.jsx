@@ -1,4 +1,6 @@
+// src/components/landing/LandingCards.jsx
 import React from 'react';
+import { motion } from 'framer-motion'; // ✅ for animations
 
 const tasks = [
   {
@@ -25,20 +27,30 @@ const tasks = [
 
 const LandingCards = () => {
   return (
-    <section className="flex flex-col items-center py-12 bg-gray-50">
-      <h2 className="text-3xl md:text-4xl font-bold mb-10 text-center">
+    <section className="flex flex-col items-center py-16 bg-gray-50">
+      <motion.h2
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="text-3xl md:text-4xl font-bold mb-10 text-center"
+      >
         Get Started in 4 Easy Steps
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl w-full px-6">
+      </motion.h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl w-full px-6">
         {tasks.map((task, index) => (
-          <div
+          <motion.div
             key={index}
-            className="flex flex-col items-center text-center bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: index * 0.2, duration: 0.6 }}
+            whileHover={{ scale: 1.05 }}
+            className="flex flex-col items-center text-center bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all"
           >
             <div className="text-5xl mb-4">{task.icon}</div>
             <h3 className="text-xl font-semibold mb-2">{task.title}</h3>
             <p className="text-gray-600">{task.description}</p>
-          </div>
+          </motion.div>
         ))}
       </div>
     </section>

@@ -1,12 +1,16 @@
-// src/pages/Amigos/AmigoCard.jsx
+// src/components/pages/Amigos/AmigoCard.jsx
 import React from 'react';
 import './AmigoCard.css';
+import { motion } from 'framer-motion'; // ✅ Animations!
 
 const AmigoCard = ({ name, bio, photoURL, onFollow, isFollowing }) => {
-  const placeholderImage = "https://via.placeholder.com/150";
+  const placeholderImage = "https://via.placeholder.com/300x200?text=Amigo";
 
   return (
-    <div className="amigo-card">
+    <motion.div
+      whileHover={{ scale: 1.03 }}
+      className="amigo-card"
+    >
       <img
         src={photoURL || placeholderImage}
         alt={name}
@@ -22,7 +26,7 @@ const AmigoCard = ({ name, bio, photoURL, onFollow, isFollowing }) => {
           {isFollowing ? "Unfollow" : "Follow"}
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
