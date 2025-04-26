@@ -1,8 +1,8 @@
 // src/components/pages/Live/LivePage.jsx
 import React, { useState } from "react";
-import LiveFeed from "./LiveFeed";
-import LiveSuggestions from "./LiveSuggestions";
-import { motion } from "framer-motion"; // ✅ animations
+import LiveFeed from "./LiveFeed.jsx"; // 🔥 add .jsx for Vite correct parsing
+import LiveSuggestions from "./LiveSuggestions.jsx"; // 🔥 add .jsx for Vite correct parsing
+import { motion } from "framer-motion";
 
 const LivePage = () => {
   const [tab, setTab] = useState("feed");

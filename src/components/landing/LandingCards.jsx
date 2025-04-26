@@ -1,6 +1,6 @@
 // src/components/landing/LandingCards.jsx
-import React from 'react';
-import { motion } from 'framer-motion'; // ✅ for animations
+import React from "react";
+import { motion } from "framer-motion";
 
 const tasks = [
   {

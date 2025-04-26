@@ -1,6 +1,6 @@
 // src/components/landing/LandingFeatures.jsx
-import React from 'react';
-import { motion } from 'framer-motion'; // ✅ animations
+import React from "react";
+import { motion } from "framer-motion";
 
 const features = [
   {

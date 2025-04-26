@@ -1,8 +1,8 @@
 // src/components/pages/Grupos/CreateGrupo.jsx
 import React, { useState } from "react";
-import { db, auth } from "../../../firebase";
+import { db, auth } from "../../firebase.js"; // 🔥 Correct path
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { motion } from "framer-motion"; // ✅ Animation on page load
+import { motion } from "framer-motion";
 
 const CreateGrupo = () => {
   const [name, setName] = useState("");

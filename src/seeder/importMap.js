@@ -13,8 +13,9 @@ import { clearQuestionSets } from "./clearQuestionSets.js";
 import { clearWeeklyQuestion } from "./clearWeeklyQuestion.js";
 import { clearAll } from "./clearAll.js";
 
-import clearSeededData from "./clearSeededData.js"; // ✅ ADD THIS
+import clearSeededData from "./clearSeededData.js";
 
+// ✅ Keep these named exports
 export {
   seedUsers,
   seedGrupos,
@@ -28,5 +29,22 @@ export {
   clearQuestionSets,
   clearWeeklyQuestion,
   clearAll,
-  clearSeededData, // ✅ EXPORT IT
+  clearSeededData,
+};
+
+// ✅ ADD THIS grouped export
+export const SeederScripts = {
+  seedUsers,
+  seedGrupos,
+  seedEvents,
+  seedQuestionSets,
+  seedReactions,
+  clearUsers,
+  clearGrupos,
+  clearEvents,
+  clearReactions,
+  clearQuestionSets,
+  clearWeeklyQuestion,
+  clearAll,
+  clearSeededData,
 };

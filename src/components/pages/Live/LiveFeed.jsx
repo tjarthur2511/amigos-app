@@ -1,7 +1,6 @@
 // src/components/pages/Live/LiveFeed.jsx
 import React from "react";
-import { motion } from "framer-motion"; // ✅ animate the pulse
-import aLogo from "../../../assets/amigos-a-logo.png"; // ✅ Replace with your Amigos 'a' logo path
+import { motion } from "framer-motion";
 
 const liveEvents = [
   {
@@ -42,7 +41,11 @@ const LiveFeed = () => {
               transition={{ duration: 1.2, repeat: Infinity }}
               className="absolute top-4 right-4 w-6 h-6"
             >
-              <img src={aLogo} alt="Live" className="w-full h-full rounded-full" />
+              <img
+                src="/assets/amigos-a-logo.png" // 🔥 Static correct path
+                alt="Live"
+                className="w-full h-full rounded-full"
+              />
             </motion.div>
 
             <h3 className="text-2xl font-bold text-[#FF6B6B]">{event.title}</h3>

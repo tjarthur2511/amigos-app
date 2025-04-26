@@ -1,6 +1,6 @@
 // src/components/pages/Live/LiveSuggestions.jsx
 import React from "react";
-import { motion } from "framer-motion"; // ✅ animations
+import { motion } from "framer-motion";
 
 const LiveSuggestions = () => {
   return (

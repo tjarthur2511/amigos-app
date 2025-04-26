@@ -1,9 +1,9 @@
 // src/components/pages/LoginPage.jsx
 import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../firebase.js';
+import { auth } from '../firebase.js'; // 🔥 Correct path
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion'; // ✅ animations
+import { motion } from 'framer-motion';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -18,7 +18,7 @@ const LoginPage = () => {
     setError('');
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/'); // ✅ send to home page on success
+      navigate('/');
     } catch (err) {
       setError(err.message);
       setLoading(false);

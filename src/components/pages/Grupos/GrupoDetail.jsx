@@ -1,9 +1,9 @@
 // src/components/pages/Grupos/GrupoDetail.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { db } from "../../../firebase";
+import { db } from "../../firebase.js"; // 🔥 Corrected path
 import { doc, getDoc } from "firebase/firestore";
-import { motion } from "framer-motion"; // ✅ animations
+import { motion } from "framer-motion";
 
 const GrupoDetail = () => {
   const { id } = useParams();

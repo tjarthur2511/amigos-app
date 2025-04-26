@@ -1,20 +1,20 @@
 // src/components/landing/LandingHero.jsx
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import AnimatedAmigoLogo from './AnimatedAmigoLogo.jsx'; // ✅ import it
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import AnimatedAmigoLogo from "./AnimatedAmigoLogo.jsx";
 
 const LandingHero = () => {
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
-    navigate('/signup');
+    navigate("/signup");
   };
 
   return (
     <section className="flex flex-col items-center justify-center text-center bg-[#FF6B6B] text-white p-10 min-h-[60vh] overflow-hidden">
-      <AnimatedAmigoLogo /> {/* ✅ add it right here */}
-      
+      <AnimatedAmigoLogo />
+
       <motion.h1
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -30,7 +30,7 @@ const LandingHero = () => {
         transition={{ delay: 0.4, duration: 0.8 }}
         className="text-lg md:text-2xl max-w-2xl mb-8"
       >
-        Real Friends. Real Adventures.  
+        Real Friends. Real Adventures.
         Find your next Amigo today — a community built for real friendships, not just followers.
       </motion.p>
 

@@ -1,11 +1,11 @@
 // src/components/pages/LandingPage.jsx
-import React, { Suspense } from 'react';
-import { motion } from 'framer-motion'; // ✅ smooth animations
-import LandingHero from '../landing/LandingHero';
-import LandingCards from '../landing/LandingCards';
-import LandingFeatures from '../landing/LandingFeatures';
-import LandingFooter from '../landing/LandingFooter';
-import LoadingScreen from '../LoadingScreen'; // ✅ fallback if something lags
+import React, { Suspense } from "react";
+import { motion } from "framer-motion";
+import LandingHero from "../landing/LandingHero";
+import LandingCards from "../landing/LandingCards";
+import LandingFeatures from "../landing/LandingFeatures";
+import LandingFooter from "../landing/LandingFooter";
+import LoadingScreen from "../LoadingScreen"; // fallback for suspense
 
 const LandingPage = () => {
   return (
@@ -14,7 +14,7 @@ const LandingPage = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.8 }}
         className="flex flex-col min-h-screen bg-white text-gray-800 overflow-hidden"
       >
         <LandingHero />

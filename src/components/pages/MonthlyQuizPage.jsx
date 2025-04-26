@@ -1,7 +1,7 @@
 // src/components/pages/MonthlyQuizPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, db } from '../../firebase.js';
+import { auth, db } from '../firebase.js'; // 🔥 Correct path
 import { doc, updateDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { motion } from 'framer-motion';
 
@@ -55,7 +55,6 @@ const MonthlyQuizPage = () => {
   };
 
   const handleNext = async () => {
-    // ✅ Word count validation
     const wordCount = answers[current]?.trim().split(/\s+/).length;
     if (wordCount < 3) {
       alert('Please write at least 3 words! Amigos love details 🌟');

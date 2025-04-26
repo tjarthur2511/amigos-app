@@ -1,6 +1,6 @@
 // src/components/landing/LandingFooter.jsx
-import React from 'react';
-import { motion } from 'framer-motion'; // ✅ for animation
+import React from "react";
+import { motion } from "framer-motion";
 
 const LandingFooter = () => {
   return (

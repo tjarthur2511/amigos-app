@@ -1,9 +1,9 @@
 // src/components/pages/Grupos/YourGrupos.jsx
 import React, { useEffect, useState } from "react";
-import { db, auth } from "../../../firebase";
+import { db, auth } from "../../firebase.js"; // 🔥 Correct path
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion"; // ✅ animations
+import { motion } from "framer-motion";
 
 const YourGrupos = () => {
   const [yourGrupos, setYourGrupos] = useState([]);
