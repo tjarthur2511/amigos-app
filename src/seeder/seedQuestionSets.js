@@ -2,7 +2,7 @@
 import { db } from '../firebase.js';
 import { collection, addDoc } from 'firebase/firestore';
 
-const seedQuestionSets = async () => {
+export const seedQuestionSets = async () => {
   // Onboarding quiz (used for q1–q10)
   await addDoc(collection(db, 'questionSets'), {
     type: 'onboarding',
@@ -35,5 +35,3 @@ const seedQuestionSets = async () => {
 
   console.log('✅ Seeded AI-generated onboarding and monthly questions');
 };
-
-seedQuestionSets();

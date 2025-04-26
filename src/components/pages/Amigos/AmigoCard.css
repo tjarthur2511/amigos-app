@@ -1,56 +1,66 @@
 /* src/pages/Amigos/AmigoCard.css */
 
 .amigo-card {
-    display: flex;
-    align-items: center;
-    background-color: #ffffff;
-    border: 2px solid #ff6b6b;
-    border-radius: 10px;
-    padding: 12px;
-    margin-bottom: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .amigo-avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 15px;
-    border: 2px solid #ff6b6b;
-  }
-  
-  .amigo-info {
-    flex: 1;
-  }
-  
-  .amigo-info h3 {
-    margin: 0;
-    font-size: 18px;
-    color: #333;
-    font-family: 'Comfortaa', cursive;
-  }
-  
-  .amigo-info p {
-    margin: 5px 0 10px;
-    font-size: 14px;
-    color: #666;
-    font-family: 'Comfortaa', cursive;
-  }
-  
-  .follow-btn {
-    padding: 6px 12px;
-    border: none;
-    border-radius: 5px;
-    background-color: #ff6b6b;
-    color: white;
-    cursor: pointer;
-    font-family: 'Comfortaa', cursive;
-    transition: background-color 0.3s ease;
-  }
-  
-  .follow-btn.following {
-    background-color: #ccc;
-    color: #333;
-  }
-  
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border: 2px solid #FF6B6B;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.amigo-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.amigo-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 15px;
+  border: 2px solid #FF6B6B;
+}
+
+.amigo-info {
+  flex: 1;
+}
+
+.amigo-info h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+  font-family: 'Comfortaa', cursive;
+}
+
+.amigo-info p {
+  margin: 5px 0 10px;
+  font-size: 14px;
+  color: #666;
+  font-family: 'Comfortaa', cursive;
+}
+
+.follow-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  background-color: #FF6B6B;
+  color: white;
+  cursor: pointer;
+  font-family: 'Comfortaa', cursive;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.follow-btn:hover {
+  background-color: #ff8585;
+  transform: scale(1.05);
+}
+
+.follow-btn.following {
+  background-color: #f0f0f0;
+  color: #333;
+}

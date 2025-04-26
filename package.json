@@ -14,7 +14,9 @@
     "seed-events": "node ./src/seeder/seedEvents.js"
   },
   "dependencies": {
-    "firebase": "^11.6.0",
+    "@firebase/component": "^0.6.5",
+    "@firebase/util": "^1.9.3",
+    "firebase": "^9.22.2",
     "i18next": "^25.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

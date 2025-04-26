@@ -1,4 +1,4 @@
-// src/pages/Amigos/SuggestedAmigos.js
+// src/pages/Amigos/SuggestedAmigos.jsx
 import React, { useEffect, useState } from "react";
 import { getSuggestedAmigos, toggleFollow } from "./amigoUtils";
 import AmigoCard from "./AmigoCard";
@@ -22,19 +22,24 @@ const SuggestedAmigos = ({ currentUser }) => {
   };
 
   return (
-    <div>
-      <h2>Suggested Amigos</h2>
+    <div className="suggested-amigos">
+      <h2 className="text-3xl font-bold text-[#FF6B6B] mb-4">Suggested Amigos</h2>
+
       {suggestedAmigos.length === 0 ? (
-        <p>No suggestions at the moment.</p>
+        <p className="text-gray-600">No suggestions at the moment.</p>
       ) : (
-        suggestedAmigos.map((amigo) => (
-          <AmigoCard
-            key={amigo.id}
-            amigo={amigo}
-            onFollow={() => handleFollow(amigo.id)}
-            isFollowing={amigo.isFollowing}
-          />
-        ))
+        <div className="amigo-list">
+          {suggestedAmigos.map((amigo) => (
+            <AmigoCard
+              key={amigo.id}
+              name={amigo.displayName}
+              bio={amigo.bio}
+              photoURL={amigo.photoURL}
+              isFollowing={amigo.isFollowing}
+              onFollow={() => handleFollow(amigo.id)}
+            />
+          ))}
+        </div>
       )}
     </div>
   );

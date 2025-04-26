@@ -2,7 +2,7 @@
 import { db } from '../firebase.js';
 import { collection, addDoc } from 'firebase/firestore';
 
-const seedGrupos = async () => {
+export const seedGrupos = async () => {
   const grupos = [
     {
       name: 'Detroit Gamers',
@@ -10,7 +10,7 @@ const seedGrupos = async () => {
       location: 'Detroit, MI',
       isAgeRestricted: false,
       creatorId: 'user123',
-      members: ['user123', 'user456']
+      members: ['user123', 'user456'],
     },
     {
       name: 'Queer Creatives',
@@ -18,7 +18,7 @@ const seedGrupos = async () => {
       location: 'Ann Arbor, MI',
       isAgeRestricted: true,
       creatorId: 'user456',
-      members: ['user456']
+      members: ['user456'],
     },
     {
       name: 'Trail Blazers',
@@ -26,8 +26,8 @@ const seedGrupos = async () => {
       location: 'Grand Rapids, MI',
       isAgeRestricted: false,
       creatorId: 'user789',
-      members: ['user789', 'user123']
-    }
+      members: ['user789', 'user123'],
+    },
   ];
 
   for (const grupo of grupos) {
@@ -36,5 +36,3 @@ const seedGrupos = async () => {
 
   console.log('✅ Grupos seeded');
 };
-
-seedGrupos();
