@@ -7,6 +7,7 @@ const Settings = () => {
   const { t, i18n } = useTranslation();
   const [language, setLanguage] = useState("en");
   const [location, setLocation] = useState("");
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -23,37 +24,62 @@ const Settings = () => {
   }, []);
 
   const handleSave = async () => {
-    const docRef = doc(db, "users", auth.currentUser.uid);
-    await updateDoc(docRef, {
-      language,
-      location,
-    });
-    i18n.changeLanguage(language);
+    try {
+      const docRef = doc(db, "users", auth.currentUser.uid);
+      await updateDoc(docRef, {
+        language,
+        location,
+      });
+      i18n.changeLanguage(language);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (error) {
+      console.error("Error saving settings:", error);
+    }
   };
 
   return (
-    <div className="settings">
-      <h2>{t("settings")}</h2>
+    <div className="flex flex-col space-y-6">
+      <h2 className="text-2xl font-bold text-[#FF6B6B]">{t("settings")}</h2>
 
-      <label>{t("preferredLanguage") || "Preferred Language"}</label>
-      <select
-        value={language}
-        onChange={(e) => setLanguage(e.target.value)}
-      >
-        <option value="en">English</option>
-        <option value="es">Español</option>
-        {/* Add more languages here */}
-      </select>
+      <div className="w-full max-w-md space-y-4">
+        <div>
+          <label className="font-semibold">{t("preferredLanguage") || "Preferred Language"}</label>
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg p-2 mt-1"
+          >
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            {/* Add more languages if you want */}
+          </select>
+        </div>
 
-      <label>{t("preferredLocation") || "Preferred Location"}</label>
-      <input
-        type="text"
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
-        placeholder="e.g. Detroit, MI"
-      />
+        <div>
+          <label className="font-semibold">{t("preferredLocation") || "Preferred Location"}</label>
+          <input
+            type="text"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="e.g. Detroit, MI"
+            className="w-full border border-gray-300 rounded-lg p-2 mt-1"
+          />
+        </div>
 
-      <button onClick={handleSave}>{t("save")}</button>
+        <button
+          onClick={handleSave}
+          className="mt-4 bg-[#FF6B6B] text-white py-2 px-4 rounded-lg font-semibold hover:bg-[#ff8585] transition-all"
+        >
+          {t("save") || "Save Settings"}
+        </button>
+
+        {saved && (
+          <p className="text-green-600 text-center mt-2">
+            {t("settingsSaved") || "Settings updated successfully!"}
+          </p>
+        )}
+      </div>
     </div>
   );
 };

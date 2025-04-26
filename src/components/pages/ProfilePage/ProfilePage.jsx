@@ -1,4 +1,4 @@
-// src/components/pages/ProfilePage.jsx
+// src/components/pages/ProfilePage/ProfilePage.jsx
 import React, { useEffect, useState } from 'react';
 import { auth, db } from '../../../firebase';
 import { doc, getDoc } from 'firebase/firestore';
@@ -26,26 +26,92 @@ const ProfilePage = () => {
     loadUser();
   }, []);
 
-  if (loading) return <p>Loading profile...</p>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-50">
+        <p className="text-2xl text-[#FF6B6B] font-bold">Loading your profile...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="container">
-      <h1>Welcome, {userData?.displayName || 'Amigo'}!</h1>
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '20px' }}>
-        <button onClick={() => setActiveTab('profile')}>Profile</button>
-        <button onClick={() => setActiveTab('preferences')}>Preferences</button>
-        <button onClick={() => setActiveTab('settings')}>Settings</button>
-        <button onClick={() => setActiveTab('grupos')}>Your Grupos</button>
-        <button onClick={() => setActiveTab('posts')}>Your Posts</button>
-        <button onClick={() => setActiveTab('quiz')}>Quiz History</button>
+    <div className="flex flex-col items-center px-6 py-8 bg-gray-50 min-h-screen">
+      <h1 className="text-4xl font-bold mb-6 text-[#FF6B6B]">
+        Welcome, {userData?.displayName || 'Amigo'}!
+      </h1>
+
+      <div className="flex flex-wrap justify-center gap-4 mb-8">
+        <button
+          className={`px-4 py-2 rounded-full font-semibold ${
+            activeTab === 'profile'
+              ? 'bg-[#FF6B6B] text-white'
+              : 'bg-white text-[#FF6B6B] border border-[#FF6B6B]'
+          }`}
+          onClick={() => setActiveTab('profile')}
+        >
+          Profile
+        </button>
+        <button
+          className={`px-4 py-2 rounded-full font-semibold ${
+            activeTab === 'preferences'
+              ? 'bg-[#FF6B6B] text-white'
+              : 'bg-white text-[#FF6B6B] border border-[#FF6B6B]'
+          }`}
+          onClick={() => setActiveTab('preferences')}
+        >
+          Preferences
+        </button>
+        <button
+          className={`px-4 py-2 rounded-full font-semibold ${
+            activeTab === 'settings'
+              ? 'bg-[#FF6B6B] text-white'
+              : 'bg-white text-[#FF6B6B] border border-[#FF6B6B]'
+          }`}
+          onClick={() => setActiveTab('settings')}
+        >
+          Settings
+        </button>
+        <button
+          className={`px-4 py-2 rounded-full font-semibold ${
+            activeTab === 'grupos'
+              ? 'bg-[#FF6B6B] text-white'
+              : 'bg-white text-[#FF6B6B] border border-[#FF6B6B]'
+          }`}
+          onClick={() => setActiveTab('grupos')}
+        >
+          Your Grupos
+        </button>
+        <button
+          className={`px-4 py-2 rounded-full font-semibold ${
+            activeTab === 'posts'
+              ? 'bg-[#FF6B6B] text-white'
+              : 'bg-white text-[#FF6B6B] border border-[#FF6B6B]'
+          }`}
+          onClick={() => setActiveTab('posts')}
+        >
+          Your Posts
+        </button>
+        <button
+          className={`px-4 py-2 rounded-full font-semibold ${
+            activeTab === 'quiz'
+              ? 'bg-[#FF6B6B] text-white'
+              : 'bg-white text-[#FF6B6B] border border-[#FF6B6B]'
+          }`}
+          onClick={() => setActiveTab('quiz')}
+        >
+          Quiz History
+        </button>
       </div>
 
-      {activeTab === 'profile' && <ProfileInfo userData={userData} />}
-      {activeTab === 'preferences' && <Preferences userData={userData} />}
-      {activeTab === 'settings' && <ProfileSettings userData={userData} />}
-      {activeTab === 'grupos' && <UserGrupos userData={userData} />}
-      {activeTab === 'posts' && <UserPosts userData={userData} />}
-      {activeTab === 'quiz' && <QuizTab />}
+      {/* Dynamic Sections */}
+      <div className="w-full max-w-4xl bg-white rounded-2xl shadow-lg p-6">
+        {activeTab === 'profile' && <ProfileInfo userData={userData} />}
+        {activeTab === 'preferences' && <Preferences userData={userData} />}
+        {activeTab === 'settings' && <ProfileSettings userData={userData} />}
+        {activeTab === 'grupos' && <UserGrupos userData={userData} />}
+        {activeTab === 'posts' && <UserPosts userData={userData} />}
+        {activeTab === 'quiz' && <QuizTab />}
+      </div>
     </div>
   );
 };

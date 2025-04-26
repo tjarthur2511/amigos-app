@@ -17,6 +17,7 @@ import ProfilePage from './components/pages/ProfilePage/ProfilePage.jsx';
 import GruposPage from './components/pages/Grupos/GruposPage.jsx';
 import AmigosPage from './components/pages/Amigos/AmigosPage.jsx';
 import LivePage from './components/pages/Live/LivePage.jsx';
+import LandingPage from './components/pages/LandingPage.jsx'; // ✅ ADD THIS LINE
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -30,7 +31,7 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  console.log('✅ Amigos app is loading...'); // <-- Tiny visible update here
+  console.log('✅ Amigos app is loading...');
 
   if (loading) return <LoadingScreen />;
 
@@ -40,6 +41,7 @@ function App() {
       <Routes>
         {user ? (
           <>
+            {/* LOGGED IN ROUTES */}
             <Route path="/" element={<HomePage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/grupos" element={<GruposPage />} />
@@ -52,6 +54,8 @@ function App() {
           </>
         ) : (
           <>
+            {/* NOT LOGGED IN ROUTES */}
+            <Route path="/" element={<LandingPage />} /> {/* ✅ LANDING PAGE FOR VISITORS */}
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="*" element={<LoginPage />} />
           </>

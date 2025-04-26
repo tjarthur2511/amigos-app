@@ -2,19 +2,22 @@
 
 .navbar {
   display: flex;
-  justify-content: center;
-  gap: 2rem;
-  background-color: #FF6B6B;
-  padding: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: white;
+  font-family: "Comfortaa", sans-serif;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .navbar a {
-  color: white;
+  color: #333;
   text-decoration: none;
   font-weight: bold;
-  font-family: "Comfortaa", sans-serif;
+  transition: color 0.2s ease;
 }
 
 .navbar a:hover {
+  color: #FF6B6B;
   text-decoration: underline;
 }

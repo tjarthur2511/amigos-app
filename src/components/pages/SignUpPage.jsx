@@ -1,7 +1,7 @@
 // src/components/pages/SignUpPage.jsx
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../../firebase.js';
 import { useNavigate } from 'react-router-dom';
 
@@ -40,14 +40,14 @@ const SignUpPage = () => {
         uid: user.uid,
         displayName,
         email,
-        createdAt: new Date().toISOString(),
+        createdAt: serverTimestamp(),
         quizAnswers: {},
         monthlyQuiz: {},
         amigos: [],
         grupos: [],
         dob,
         preferences: {},
-        isAdmin: false
+        isAdmin: false,
       });
 
       navigate('/setup');
@@ -57,46 +57,65 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="container">
-      <h1>Sign Up for Amigos</h1>
-      <form onSubmit={handleSignup}>
-        <input
-          type="text"
-          placeholder="Display Name"
-          value={displayName}
-          onChange={(e) => setDisplayName(e.target.value)}
-          required
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
-        <input
-          type="date"
-          value={dob}
-          onChange={(e) => setDob(e.target.value)}
-          required
-        />
-        <button type="submit">Sign Up</button>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-      </form>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
+      <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
+        <h2 className="text-3xl font-bold text-center text-[#FF6B6B] mb-6">Join Amigos</h2>
+
+        {error && (
+          <div className="bg-red-100 text-red-700 p-2 rounded mb-4 text-center">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSignup} className="flex flex-col space-y-4">
+          <input
+            type="text"
+            placeholder="Display Name"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            required
+            className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
+          />
+          <input
+            type="password"
+            placeholder="Password (6+ characters)"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
+          />
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
+          />
+          <input
+            type="date"
+            value={dob}
+            onChange={(e) => setDob(e.target.value)}
+            required
+            className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
+          />
+
+          <button
+            type="submit"
+            className="bg-[#FF6B6B] text-white font-semibold rounded-lg py-3 hover:bg-[#ff8585] transition-all"
+          >
+            Sign Up
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

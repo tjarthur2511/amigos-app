@@ -1,4 +1,3 @@
-// src/components/pages/Grupos/GrupoDetail.js
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../../../firebase";
@@ -32,18 +31,20 @@ const GrupoDetail = () => {
   }, [id]);
 
   return (
-    <div className="grupo-detail">
+    <div className="flex flex-col items-center space-y-6 mt-6">
       {loading ? (
-        <p>Loading grupo...</p>
+        <p className="text-gray-500">Loading grupo...</p>
       ) : error ? (
-        <p style={{ color: "red" }}>{error}</p>
+        <p className="text-red-500">{error}</p>
       ) : grupo ? (
-        <>
-          <h2>{grupo.name}</h2>
-          <p>{grupo.description}</p>
-          <p><strong>Created by:</strong> {grupo.owner}</p>
-          {/* Future: members, map, events, RSVP, etc. */}
-        </>
+        <div className="w-full max-w-3xl border rounded-xl p-6 shadow-md bg-white flex flex-col space-y-4">
+          <h2 className="text-4xl font-bold text-[#FF6B6B]">{grupo.name}</h2>
+          <p className="text-gray-700">{grupo.description || "No description provided."}</p>
+          <p className="text-gray-600">
+            <strong>Created by:</strong> {grupo.creatorId || "Unknown"}
+          </p>
+          {/* Future: Add members list, events list, RSVP buttons here */}
+        </div>
       ) : null}
     </div>
   );
