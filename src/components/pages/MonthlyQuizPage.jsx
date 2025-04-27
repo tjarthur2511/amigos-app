@@ -1,7 +1,7 @@
 // src/components/pages/MonthlyQuizPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, db } from '../firebase.js'; // 🔥 Correct path
+import { auth, db } from '../../firebase.js';
 import { doc, updateDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { motion } from 'framer-motion';
 
@@ -41,12 +41,6 @@ const MonthlyQuizPage = () => {
     };
     fetchQuestions();
   }, []);
-
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [current]);
 
   const handleAnswer = (e) => {
     const updated = [...answers];

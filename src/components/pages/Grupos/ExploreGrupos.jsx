@@ -1,6 +1,6 @@
 // src/components/pages/Grupos/ExploreGrupos.jsx
 import React, { useEffect, useState } from "react";
-import { db, auth } from "../../firebase.js"; // 🔥 Correct path
+import { db, auth } from "../../firebase.js"; //  Correct path
 import { collection, getDocs, updateDoc, doc, getDoc } from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -97,9 +97,7 @@ const ExploreGrupos = () => {
             >
               {grupo.name}
             </Link>
-            <p className="text-gray-700 text-center">
-              {grupo.description || "No description provided."}
-            </p>
+            <p className="text-gray-700 text-center">{grupo.description || "No description provided."}</p>
             <button
               onClick={() => joinGrupo(grupo.id)}
               className="bg-[#FF6B6B] text-white py-2 px-4 rounded-lg font-semibold hover:bg-[#e15555] transition-all"

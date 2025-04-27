@@ -1,25 +1,27 @@
 // src/App.jsx
 import React, { useEffect, useState, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 
 // Pages and Components
 import LoadingScreen from './components/LoadingScreen';
 import NavBar from './components/NavBar';
-import HomePage from './components/pages/HomePage';
-import LoginPage from './components/pages/LoginPage';
-import SignUpPage from './components/pages/SignUpPage';
-import AdminPanel from './components/pages/Admin/AdminPanel';
-import SetupQuizPage from './components/pages/SetupQuizPage';
-import MonthlyQuizPage from './components/pages/MonthlyQuizPage';
-import WeeklyQuizPage from './components/pages/WeeklyQuizPage.jsx';
-import ProfilePage from './components/pages/ProfilePage/ProfilePage.jsx';
-import GruposPage from './components/pages/Grupos/GruposPage.jsx';
-import AmigosPage from './components/pages/Amigos/AmigosPage.jsx';
-import LivePage from './components/pages/Live/LivePage.jsx';
-import LandingPage from './components/pages/LandingPage.jsx';
-import ScrollToTop from './components/common/ScrollToTop.jsx'; // ✅ we'll make this next
+import ScrollToTop from './components/common/ScrollToTop.jsx';
+
+// Lazy load pages
+const HomePage = React.lazy(() => import('./components/pages/HomePage'));
+const LoginPage = React.lazy(() => import('./components/pages/LoginPage'));
+const SignUpPage = React.lazy(() => import('./components/pages/SignUpPage'));
+const AdminPanel = React.lazy(() => import('./components/pages/Admin/AdminPanel'));
+const SetupQuizPage = React.lazy(() => import('./components/pages/SetupQuizPage'));
+const MonthlyQuizPage = React.lazy(() => import('./components/pages/MonthlyQuizPage'));
+const WeeklyQuizPage = React.lazy(() => import('./components/pages/WeeklyQuizPage.jsx'));
+const ProfilePage = React.lazy(() => import('./components/pages/ProfilePage/ProfilePage.jsx'));
+const GruposPage = React.lazy(() => import('./components/pages/Grupos/GruposPage.jsx'));
+const AmigosPage = React.lazy(() => import('./components/pages/Amigos/AmigosPage.jsx'));
+const LivePage = React.lazy(() => import('./components/pages/Live/LivePage.jsx'));
+const LandingPage = React.lazy(() => import('./components/pages/LandingPage.jsx'));
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -52,12 +54,13 @@ function App() {
               <Route path="/monthly-quiz" element={<MonthlyQuizPage />} />
               <Route path="/weekly-quiz" element={<WeeklyQuizPage />} />
               <Route path="/profile/admin" element={<AdminPanel />} />
+              <Route path="*" element={<Navigate to="/" />} /> {/* Redirect to home if route not found */}
             </>
           ) : (
             <>
               <Route path="/" element={<LandingPage />} />
               <Route path="/signup" element={<SignUpPage />} />
-              <Route path="*" element={<LoginPage />} />
+              <Route path="*" element={<Navigate to="/" />} /> {/* Redirect to landing if route not found */}
             </>
           )}
         </Routes>

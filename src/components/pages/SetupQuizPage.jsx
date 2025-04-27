@@ -1,10 +1,9 @@
-// src/components/pages/SetupQuizPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, db } from '../firebase.js'; // 🔥 Correct path
+import { auth, db } from "../../firebase"; // Fixed import
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
-import { motion } from 'framer-motion';
-import { generateAIQuestion } from '../utils/questionGenerator.js'; // 🔥 Correct path
+import { motion } from 'framer-motion'; // ✅ animations
+import { generateAIQuestion } from '../../utils/questionGenerator.js'; // ✅ future-proof for AI swapping
 
 const staticQuestions = [
   "What's your favorite way to relax?",
@@ -40,6 +39,7 @@ const SetupQuizPage = () => {
   };
 
   const handleNext = async () => {
+    // ✅ Word count validation
     const wordCount = answers[currentQuestion]?.trim().split(/\s+/).length;
     if (wordCount < 3) {
       alert('Please write at least 3 words! Amigos love details 🌟');
