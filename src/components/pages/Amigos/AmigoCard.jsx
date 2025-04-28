@@ -1,6 +1,5 @@
 // src/components/pages/Amigos/AmigoCard.jsx
 import React from 'react';
-import './AmigoCard.css';
 import { motion } from 'framer-motion'; // ✅ Animations!
 
 const AmigoCard = ({ name, bio, photoURL, onFollow, isFollowing }) => {

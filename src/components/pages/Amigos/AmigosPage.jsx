@@ -1,7 +1,6 @@
 // src/components/pages/Amigos/AmigosPage.jsx
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import "./AmigosPage.css"; // ✅ Make sure styles are matching theme
 import {
   getUserAmigos as getCurrentUserAmigos,
   getSuggestedAmigos,

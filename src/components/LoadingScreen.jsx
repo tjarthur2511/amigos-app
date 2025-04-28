@@ -1,6 +1,5 @@
 // src/components/LoadingScreen.jsx
 import React from 'react';
-import './LoadingScreen.css';
 
 const LoadingScreen = () => {
   return (

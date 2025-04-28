@@ -1,6 +1,6 @@
 // src/components/pages/Grupos/CreateGrupo.jsx
 import React, { useState } from "react";
-import { db, auth } from "../../firebase.js"; // 🔥 Correct path
+import { db, auth } from "../../../firebase.js"; // 🔥 Correct path
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { motion } from "framer-motion";
 
