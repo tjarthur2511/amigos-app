@@ -10,23 +10,66 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="relative text-center min-h-screen flex flex-col justify-center items-center bg-white overflow-hidden p-4">
+    <div style={{ backgroundColor: "#FF6B6B", minHeight: "100vh", position: "relative", overflow: "hidden", width: "100%" }}>
       <FallingAEffect />
 
-      <div className="relative z-10">
-        <h1 className="text-6xl md:text-8xl font-bold text-[#FF6B6B] font-[Comfortaa] mb-4 amigo-text">
-          <span className="flex items-center justify-center">
-            <span className="inline-block animate-pulse-a">a</span>migos
-          </span>
-        </h1>
+      <div style={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        backgroundColor: "white",
+        padding: "2rem",
+        borderRadius: "1rem",
+        boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
+        width: "90%",
+        maxWidth: "500px",
+        textAlign: "center",
+        zIndex: 10,
+      }}>
+        <h1 style={{
+  fontFamily: "Comfortaa, sans-serif",
+  fontSize: "3rem",
+  color: "#FF6B6B",
+  marginBottom: "1rem",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "baseline",
+  gap: "0.25rem"
+}}>
+  <img
+    src="/assets/amigos-a-logo.png"
+    alt="amigos a logo"
+    style={{
+      height: "4em",
+      width: "auto",
+      verticalAlign: "baseline",
+      marginTop: "-4.0em",     // ✅ Lifts it to fix the baseline
+      animation: "pulse-a 1.5s infinite"
+    }}
+  />
+</h1>
 
-        <p className="text-lg md:text-2xl text-gray-700 mb-8 font-[Comfortaa] max-w-md mx-auto">
+
+        <p style={{ fontFamily: "Comfortaa, sans-serif", fontSize: "1.2rem", color: "#555", marginBottom: "2rem" }}>
           Real friends. Real adventures. Join the community built for real friendships, not just followers.
         </p>
 
         <button
           onClick={handleGetStarted}
-          className="bg-[#FF6B6B] hover:bg-[#e15555] text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 font-[Comfortaa]"
+          style={{
+            backgroundColor: "#FF6B6B",
+            color: "white",
+            border: "none",
+            padding: "12px 24px",
+            borderRadius: "30px",
+            fontSize: "1rem",
+            fontFamily: "Comfortaa, sans-serif",
+            cursor: "pointer",
+            transition: "background-color 0.3s ease",
+          }}
+          onMouseOver={(e) => e.target.style.backgroundColor = "#e15555"}
+          onMouseOut={(e) => e.target.style.backgroundColor = "#FF6B6B"}
         >
           Get Started
         </button>

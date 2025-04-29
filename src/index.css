@@ -1,104 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&display=swap');
-
-/* Root Variables */
-:root {
-  --primary-color: #FF6B6B;
-  --hover-color: #e15555;
-  --background-color: #ffffff;
-  --text-color: #333333;
-}
-
-/* Reset */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  font-family: 'Comfortaa', sans-serif;
-  background-color: var(--background-color);
-  overflow-x: hidden;
-}
-
-/* Main Center Layout */
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  flex-direction: column;
-  text-align: center;
-}
-
-/* Link Styles */
-a {
-  color: var(--primary-color);
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-/* Button Styles */
-button {
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 12px 18px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-family: "Comfortaa", sans-serif;
-  transition: background-color 0.3s ease;
-  font-size: 1.1rem;
-}
-
-button:hover {
-  background-color: var(--hover-color);
-}
-
-/* Input Styling */
-input, select, textarea {
-  font-family: "Comfortaa", sans-serif;
-  padding: 8px;
-  margin: 8px 0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  width: 100%;
-  box-sizing: border-box;
-  transition: border-color 0.2s ease;
-}
-
-input:focus, select:focus, textarea:focus {
-  border-color: var(--primary-color);
-  outline: none;
-}
-
-/* Animations */
 @keyframes fall {
-  0% { transform: translateY(-10%); opacity: 0.7; }
-  100% { transform: translateY(110%); opacity: 0; }
+  0% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(120vh);
+    opacity: 0;
+  }
 }
 
 @keyframes pulse-a {
   0% { transform: scale(1); opacity: 0.7; }
   50% { transform: scale(1.5); opacity: 1; }
   100% { transform: scale(1); opacity: 0.7; }
-}
-
-/* Attach Animations */
-.animate-fall {
-  animation: fall linear infinite;
-}
-
-.animate-pulse-a {
-  animation: pulse-a 1.5s infinite;
-}
-
-/* Background container for falling "a"s */
-.falling {
-  position: absolute;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
 }
