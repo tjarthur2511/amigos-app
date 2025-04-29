@@ -1,9 +1,9 @@
-// src/components/pages/SignUpPage.jsx
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { auth, db } from '../../firebase.js';
+import { auth, db } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
+import FallingAEffect from './FallingAEffect';
 
 const SignUpPage = () => {
   const [email, setEmail] = useState('');
@@ -23,58 +23,100 @@ const SignUpPage = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    setError('');
+
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError('Passwords do not match');
       return;
     }
+
     if (calculateAge(dob) < 13) {
-      setError("You must be at least 13 years old to join Amigos.");
+      setError('You must be at least 13 years old to join amigos.');
       return;
     }
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      await updateProfile(user, { displayName });
+      await updateProfile(userCredential.user, { displayName });
+
+      await auth.currentUser?.reload();
+      const user = auth.currentUser;
+
+      if (!user) {
+        setError('Authentication failed. Please try again.');
+        return;
+      }
 
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
         displayName,
         email,
+        dob,
         createdAt: serverTimestamp(),
         quizAnswers: {},
         monthlyQuiz: {},
         amigos: [],
         grupos: [],
-        dob,
         preferences: {},
         isAdmin: false,
       });
 
       navigate('/setup');
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Sign-up failed');
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center text-[#FF6B6B] mb-6">Join Amigos</h2>
+    <div style={{ backgroundColor: "#FF6B6B", minHeight: "100vh", position: "relative", overflow: "hidden", width: "100%" }}>
+      <FallingAEffect />
+
+      <div style={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        backgroundColor: "white",
+        padding: "2rem",
+        borderRadius: "1rem",
+        boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
+        width: "90%",
+        maxWidth: "500px",
+        textAlign: "center",
+        zIndex: 10,
+      }}>
+        <h2 style={{
+          fontSize: "1.8rem",
+          color: "#FF6B6B",
+          marginBottom: "1rem",
+          
+          fontFamily: "sans-serif"
+        }}>
+          Join <span style={{ fontFamily: "'Comfortaa', sans-serif" }}>a</span>migos
+        </h2>
 
         {error && (
-          <div className="bg-red-100 text-red-700 p-2 rounded mb-4 text-center">
+          <div style={{
+            backgroundColor: "#ffe6e6",
+            color: "#cc0000",
+            padding: "10px",
+            borderRadius: "8px",
+            marginBottom: "1rem",
+            fontFamily: "Comfortaa, sans-serif",
+            fontSize: "0.9rem"
+          }}>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSignup} className="flex flex-col space-y-4">
+        <form onSubmit={handleSignup} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <input
             type="text"
             placeholder="Display Name"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
             required
-            className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
+            style={inputStyle}
           />
           <input
             type="email"
@@ -82,7 +124,7 @@ const SignUpPage = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
+            style={inputStyle}
           />
           <input
             type="password"
@@ -90,7 +132,7 @@ const SignUpPage = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
+            style={inputStyle}
           />
           <input
             type="password"
@@ -98,19 +140,30 @@ const SignUpPage = () => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
+            style={inputStyle}
           />
           <input
             type="date"
             value={dob}
             onChange={(e) => setDob(e.target.value)}
             required
-            className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
+            style={inputStyle}
           />
-
           <button
             type="submit"
-            className="bg-[#FF6B6B] text-white font-semibold rounded-lg py-3 hover:bg-[#ff8585] transition-all"
+            style={{
+              backgroundColor: "#FF6B6B",
+              color: "white",
+              border: "none",
+              padding: "12px 24px",
+              borderRadius: "30px",
+              fontSize: "1rem",
+              fontFamily: "Comfortaa, sans-serif",
+              cursor: "pointer",
+              transition: "background-color 0.3s ease",
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = "#e15555"}
+            onMouseOut={(e) => e.target.style.backgroundColor = "#FF6B6B"}
           >
             Sign Up
           </button>
@@ -118,6 +171,15 @@ const SignUpPage = () => {
       </div>
     </div>
   );
+};
+
+const inputStyle = {
+  padding: "12px",
+  border: "1px solid #ccc",
+  borderRadius: "10px",
+  fontFamily: "Comfortaa, sans-serif",
+  fontSize: "1rem",
+  outline: "none"
 };
 
 export default SignUpPage;

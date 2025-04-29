@@ -19,7 +19,7 @@ const LandingPage = () => {
         left: "50%",
         transform: "translate(-50%, -50%)",
         backgroundColor: "white",
-        padding: "1rem",
+        padding: "2rem",
         borderRadius: "1rem",
         boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
         width: "90%",
@@ -34,13 +34,18 @@ const LandingPage = () => {
             style={{
               height: "9em",
               width: "auto",
-              marginBottom: "-4rem",    // ✅ Added marginBottom to move logo closer to the phrase
+              marginBottom: "-4rem",
               animation: "pulse-a 1.75s infinite"
             }}
           />
         </div>
 
-        <p style={{ fontFamily: "Comfortaa, sans-serif", fontSize: "1.2rem", color: "#555", marginBottom: "2rem" }}>
+        <p style={{
+          fontFamily: "Comfortaa, sans-serif",
+          fontSize: "1.2rem",
+          color: "#555",
+          marginBottom: "2rem"
+        }}>
           Find your place. Find your passion. Find your amigos
         </p>
 

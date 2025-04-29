@@ -20,6 +20,8 @@ import ProfilePage from './components/pages/ProfilePage/ProfilePage';
 import GruposPage from './components/pages/Grupos/GruposPage';
 import AmigosPage from './components/pages/Amigos/AmigosPage';
 import LivePage from './components/pages/Live/LivePage';
+import TailwindTest from './components/pages/TailwindTest';
+<Route path="/tailwind-test" element={<TailwindTest />} />
 
 function App() {
   const [loading, setLoading] = useState(true);

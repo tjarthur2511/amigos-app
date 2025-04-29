@@ -1,31 +1,35 @@
 import React from "react";
 
 const FallingAEffect = () => {
-  const numberOfAs = 30;
-
-  const randomStyle = () => ({
-    position: "absolute",
-    left: `${Math.random() * 100}%`,
-    top: `-${Math.random() * 300}px`,
-    width: `${10 + Math.random() * 80}px`,
-    height: "auto",
-    opacity: 0.8,
-    animationDuration: `${8 + Math.random() * 8}s`,
-    animationDelay: `${Math.random() * 5}s`,
-  });
+  const elements = Array.from({ length: 25 });
 
   return (
-    <div className="absolute inset-0 overflow-hidden z-0 pointer-events-none">
-      {Array.from({ length: numberOfAs }).map((_, idx) => (
-        <img
-          key={idx}
-          src="/assets/amigosaonly.png"  // ✅ Correct small 'a' logo
-          alt="a"
-          className="absolute opacity-80 animate-fall"
-          style={randomStyle()}
-        />
-      ))}
-    </div>
+    <>
+      {elements.map((_, i) => {
+        const size = Math.floor(Math.random() * 40) + 20;
+        const left = Math.random() * 100;
+        const delay = Math.random() * 4;
+
+        return (
+          <img
+            key={i}
+            src="/assets/amigosaonly.png"
+            alt="a"
+            style={{
+              position: "absolute",
+              top: "-50px",
+              left: `${left}%`,
+              width: `${size}px`,
+              opacity: 0.6,
+              animation: `fall linear ${3 + Math.random() * 3}s infinite`,
+              animationDelay: `${delay}s`,
+              zIndex: 0,
+              pointerEvents: "none",
+            }}
+          />
+        );
+      })}
+    </>
   );
 };
 
