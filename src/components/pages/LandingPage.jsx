@@ -19,7 +19,7 @@ const LandingPage = () => {
         left: "50%",
         transform: "translate(-50%, -50%)",
         backgroundColor: "white",
-        padding: "2rem",
+        padding: "1rem",
         borderRadius: "1rem",
         boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
         width: "90%",
@@ -27,32 +27,21 @@ const LandingPage = () => {
         textAlign: "center",
         zIndex: 10,
       }}>
-        <h1 style={{
-  fontFamily: "Comfortaa, sans-serif",
-  fontSize: "3rem",
-  color: "#FF6B6B",
-  marginBottom: "1rem",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "baseline",
-  gap: "0.25rem"
-}}>
-  <img
-    src="/assets/amigos-a-logo.png"
-    alt="amigos a logo"
-    style={{
-      height: "4em",
-      width: "auto",
-      verticalAlign: "baseline",
-      marginTop: "-4.0em",     // ✅ Lifts it to fix the baseline
-      animation: "pulse-a 1.5s infinite"
-    }}
-  />
-</h1>
-
+        <div style={{ marginBottom: "1rem" }}>
+          <img
+            src="/assets/amigos-a-logo.png"
+            alt="amigos logo"
+            style={{
+              height: "9em",
+              width: "auto",
+              marginBottom: "-4rem",    // ✅ Added marginBottom to move logo closer to the phrase
+              animation: "pulse-a 1.75s infinite"
+            }}
+          />
+        </div>
 
         <p style={{ fontFamily: "Comfortaa, sans-serif", fontSize: "1.2rem", color: "#555", marginBottom: "2rem" }}>
-          Real friends. Real adventures. Join the community built for real friendships, not just followers.
+          Find your place. Find your passion. Find your amigos
         </p>
 
         <button

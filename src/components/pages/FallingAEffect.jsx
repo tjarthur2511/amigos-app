@@ -7,18 +7,23 @@ const FallingAEffect = () => {
     position: "absolute",
     left: `${Math.random() * 100}%`,
     top: `-${Math.random() * 300}px`,
-    fontSize: `${20 + Math.random() * 30}px`,
-    color: "#FF6B6B",
-    opacity: 0.3,
-    fontFamily: "Comfortaa, sans-serif", // ✅ ADD THIS
-    animation: `fall ${8 + Math.random() * 8}s linear infinite`,
+    width: `${10 + Math.random() * 80}px`,
+    height: "auto",
+    opacity: 0.8,
+    animationDuration: `${8 + Math.random() * 8}s`,
     animationDelay: `${Math.random() * 5}s`,
   });
 
   return (
-    <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", overflow: "hidden", zIndex: 0 }}>
+    <div className="absolute inset-0 overflow-hidden z-0 pointer-events-none">
       {Array.from({ length: numberOfAs }).map((_, idx) => (
-        <span key={idx} style={randomStyle()}>a</span>
+        <img
+          key={idx}
+          src="/assets/amigosaonly.png"  // ✅ Correct small 'a' logo
+          alt="a"
+          className="absolute opacity-80 animate-fall"
+          style={randomStyle()}
+        />
       ))}
     </div>
   );
