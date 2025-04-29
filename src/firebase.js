@@ -1,24 +1,45 @@
 // src/firebase.js
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs, query, where } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  deleteDoc,
+  collection,
+  getDocs,
+  query,
+  where
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
-// Firebase configuration object from Firebase Console
+// ✅ Correct Firebase config for amigos-f0b75 project
 const firebaseConfig = {
-  apiKey: "AIzaSyBU6jGIQIOdctuxRz-HuDFwQjqEPwCRrJE",  // Update this with your actual Firebase API key
-  authDomain: "amigos-app-9fbfa.firebaseapp.com",  // Update with your Firebase Auth domain
-  projectId: "amigos-app-9fbfa",  // Firebase Project ID
-  storageBucket: "amigos-app-9fbfa.appspot.com",  // Firebase Storage bucket
-  messagingSenderId: "766654858394",  // Firebase messaging sender ID
-  appId: "1:766654858394:web:f36bc88b2348822be9804c"  // Firebase App ID
+  apiKey: "AIzaSyBsAP4a2a6BI7FReA2NoF3lbiTzzjEyG6U",
+  authDomain: "amigos-f0b75.firebaseapp.com",
+  projectId: "amigos-f0b75",
+  storageBucket: "amigos-f0b75.firebasestorage.app",
+  messagingSenderId: "188885971311",
+  appId: "1:188885971311:web:73f51e65d7affb92c4f89a"
 };
 
-// Initialize Firebase app with config
+// ✅ Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firestore (database) and Authentication
-const db = getFirestore(app);  // Firestore instance for DB operations
-const auth = getAuth(app);  // Firebase Auth instance for user authentication
+// ✅ Firestore & Auth
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-// Export Firebase services for use in your app
-export { db, auth, doc, getDoc, setDoc, deleteDoc, collection, getDocs, query, where };
+// ✅ Exports
+export {
+  db,
+  auth,
+  doc,
+  getDoc,
+  setDoc,
+  deleteDoc,
+  collection,
+  getDocs,
+  query,
+  where
+};

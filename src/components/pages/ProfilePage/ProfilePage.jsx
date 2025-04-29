@@ -1,14 +1,20 @@
 // src/components/pages/ProfilePage/ProfilePage.jsx
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { db, auth } from "../../../firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+
+import ProfileInfo from "./ProfileInfo";
+import YourPosts from "./YourPosts";
+import YourGrupos from "./YourGrupos";
+import QuizTab from "./QuizTab";
+import Preferences from "./Preferences";
+import Settings from "./Settings";
 
 const ProfilePage = () => {
+  const [activeTab, setActiveTab] = useState("profile");
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -21,7 +27,7 @@ const ProfilePage = () => {
           setUserData(snap.data());
         }
       } catch (err) {
-        console.error("Failed to fetch profile:", err);
+        console.error("❌ Failed to fetch profile:", err);
       } finally {
         setLoading(false);
       }
@@ -32,16 +38,16 @@ const ProfilePage = () => {
 
   if (loading) {
     return (
-      <div className="container flex items-center justify-center min-h-screen">
-        <p>Loading your profile...</p>
+      <div className="flex items-center justify-center min-h-screen font-[Comfortaa] text-[#FF6B6B]">
+        <p>loading your profile...</p>
       </div>
     );
   }
 
   if (!userData) {
     return (
-      <div className="container flex items-center justify-center min-h-screen">
-        <p className="text-red-500">Profile not found. Please log in again.</p>
+      <div className="flex items-center justify-center min-h-screen font-[Comfortaa]">
+        <p className="text-red-500">profile not found. please log in again.</p>
       </div>
     );
   }
@@ -51,29 +57,44 @@ const ProfilePage = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="container mx-auto px-4 py-8"
+      className="container mx-auto px-4 py-8 font-[Comfortaa]"
     >
-      <h1 className="text-3xl md:text-4xl font-bold text-[#FF6B6B] mb-6">
-        Your Profile
+      <h1 className="text-4xl font-bold text-[#FF6B6B] mb-8 text-center lowercase">
+        your profile
       </h1>
 
-      <div className="bg-white p-6 rounded-2xl shadow-lg max-w-2xl mx-auto space-y-6">
-        <div className="flex flex-col items-center space-y-2">
-          <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-4xl font-bold text-[#FF6B6B]">
-            {userData.displayName ? userData.displayName[0] : "A"}
-          </div>
-          <h2 className="text-2xl font-semibold">{userData.displayName || "Amigo"}</h2>
-          <p className="text-gray-600">{userData.email}</p>
-        </div>
-
-        <div className="flex justify-center">
+      {/* Tabs */}
+      <div className="flex flex-wrap justify-center gap-4 mb-8">
+        {[
+          { name: "profile", label: "profile info" },
+          { name: "posts", label: "your posts" },
+          { name: "grupos", label: "your grupos" },
+          { name: "quiz", label: "quiz history" },
+          { name: "preferences", label: "preferences" },
+          { name: "settings", label: "settings" },
+        ].map((tab) => (
           <button
-            onClick={() => navigate("/settings")}
-            className="px-6 py-2 bg-[#FF6B6B] text-white rounded-xl hover:bg-[#e15555] transition"
+            key={tab.name}
+            className={`px-4 py-2 rounded-full font-semibold lowercase ${
+              activeTab === tab.name
+                ? "bg-[#FF6B6B] text-white"
+                : "bg-white text-[#FF6B6B] border border-[#FF6B6B]"
+            }`}
+            onClick={() => setActiveTab(tab.name)}
           >
-            Edit Profile
+            {tab.label}
           </button>
-        </div>
+        ))}
+      </div>
+
+      {/* Dynamic Content Based on Active Tab */}
+      <div className="bg-white p-6 rounded-2xl shadow-lg max-w-5xl mx-auto w-full space-y-6">
+        {activeTab === "profile" && <ProfileInfo />}
+        {activeTab === "posts" && <YourPosts />}
+        {activeTab === "grupos" && <YourGrupos />}
+        {activeTab === "quiz" && <QuizTab />}
+        {activeTab === "preferences" && <Preferences />}
+        {activeTab === "settings" && <Settings />}
       </div>
     </motion.div>
   );

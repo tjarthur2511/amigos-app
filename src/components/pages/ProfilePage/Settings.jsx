@@ -1,9 +1,9 @@
 // src/components/pages/ProfilePage/Settings.jsx
 import React, { useState, useEffect } from "react";
-import { auth, db } from "../../firebase";
+import { auth, db } from "../../../firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion"; // ✅ smooth entrance animations
+import { motion } from "framer-motion";
 
 const Settings = () => {
   const { t, i18n } = useTranslation();
@@ -46,45 +46,51 @@ const Settings = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="flex flex-col items-center space-y-6 p-6 bg-gray-50 rounded-2xl shadow-lg"
+      className="flex flex-col items-center space-y-6 p-6 bg-white rounded-2xl shadow-lg font-[Comfortaa]"
     >
-      <h2 className="text-2xl font-bold text-[#FF6B6B]">{t("settings") || "Settings"}</h2>
+      <h2 className="text-3xl font-bold text-[#FF6B6B] lowercase">
+        {t("settings") || "settings"}
+      </h2>
 
       <div className="w-full max-w-md space-y-6">
         <div>
-          <label className="font-semibold text-gray-700">{t("preferredLanguage") || "Preferred Language"}:</label>
+          <label className="font-semibold text-gray-700 lowercase">
+            {t("preferredLanguage") || "preferred language"}:
+          </label>
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg p-2 mt-2 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
+            className="w-full border border-gray-300 rounded-lg p-3 mt-2 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
           >
             <option value="en">English</option>
             <option value="es">Español</option>
-            {/* Add more languages if needed */}
+            {/* 🔻 Add more languages here if you want */}
           </select>
         </div>
 
         <div>
-          <label className="font-semibold text-gray-700">{t("preferredLocation") || "Preferred Location"}:</label>
+          <label className="font-semibold text-gray-700 lowercase">
+            {t("preferredLocation") || "preferred location"}:
+          </label>
           <input
             type="text"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             placeholder={t("enterLocation") || "e.g. Detroit, MI"}
-            className="w-full border border-gray-300 rounded-lg p-2 mt-2 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
+            className="w-full border border-gray-300 rounded-lg p-3 mt-2 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
           />
         </div>
 
         <button
           onClick={handleSave}
-          className="w-full bg-[#FF6B6B] text-white py-3 rounded-lg font-semibold hover:bg-[#ff8585] transition-all"
+          className="w-full bg-[#FF6B6B] text-white py-3 rounded-lg font-semibold hover:bg-[#e15555] transition-all"
         >
-          {t("save") || "Save Settings"}
+          {t("save") || "save settings"}
         </button>
 
         {saved && (
           <p className="text-green-600 text-center font-semibold mt-4">
-            {t("settingsSaved") || "Settings updated successfully!"}
+            {t("settingsSaved") || "settings updated successfully!"}
           </p>
         )}
       </div>

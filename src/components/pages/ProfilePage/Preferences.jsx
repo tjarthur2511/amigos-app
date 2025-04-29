@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { db, auth } from "../../../firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion"; // ✅ animations
+import { motion } from "framer-motion";
 
 const Preferences = () => {
   const { i18n } = useTranslation();
@@ -47,45 +47,50 @@ const Preferences = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="flex flex-col items-center space-y-6 p-6 bg-gray-50 rounded-2xl shadow-lg"
+      className="flex flex-col items-center space-y-6 p-6 bg-white rounded-2xl shadow-lg font-[Comfortaa]"
     >
-      <h2 className="text-2xl font-bold text-[#FF6B6B]">Preferences</h2>
+      <h2 className="text-3xl font-bold text-[#FF6B6B] lowercase">
+        preferences
+      </h2>
 
       <div className="w-full max-w-md space-y-6">
         <div>
-          <label className="font-semibold text-gray-700">Preferred Language:</label>
+          <label className="font-semibold lowercase text-gray-700">
+            preferred language:
+          </label>
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg p-2 mt-2 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
+            className="w-full border border-gray-300 rounded-lg p-3 mt-2 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
           >
-            <option value="en">English</option>
-            <option value="es">Español</option>
-            {/* Future: Add more languages here */}
+            <option value="en">english</option>
+            <option value="es">español</option>
           </select>
         </div>
 
         <div>
-          <label className="font-semibold text-gray-700">Preferred Location:</label>
+          <label className="font-semibold lowercase text-gray-700">
+            preferred location:
+          </label>
           <input
             type="text"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            placeholder="City, State"
-            className="w-full border border-gray-300 rounded-lg p-2 mt-2 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
+            placeholder="city, state"
+            className="w-full border border-gray-300 rounded-lg p-3 mt-2 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
           />
         </div>
 
         <button
           onClick={savePrefs}
-          className="w-full bg-[#FF6B6B] text-white py-3 rounded-lg font-semibold hover:bg-[#ff8585] transition-all"
+          className="w-full bg-[#FF6B6B] text-white py-3 rounded-lg font-semibold hover:bg-[#e15555] transition-all"
         >
-          Save Preferences
+          save preferences
         </button>
 
         {saved && (
           <p className="text-green-600 text-center font-semibold mt-4">
-            Preferences updated successfully!
+            preferences updated successfully!
           </p>
         )}
       </div>
