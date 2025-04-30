@@ -14,7 +14,7 @@ const FallingAEffect = () => {
         return (
           <img
             key={i}
-            src="/assets/amigosaonly.png"
+            src="/amigosaonly.png"
             alt="a"
             className="absolute animate-fall"
             style={{

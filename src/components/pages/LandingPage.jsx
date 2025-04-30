@@ -34,14 +34,11 @@ const LandingPage = () => {
 
       const userData = userSnap.data();
       if (userData.isAdmin) {
-        console.log("✅ Admin logged in");
         navigate("/profile/admin");
       } else {
-        console.log("✅ Regular user logged in");
         navigate("/profile");
       }
     } catch (error) {
-      console.error("❌ Login error:", error.message);
       alert("Login failed: " + error.message);
     }
   };
@@ -54,154 +51,156 @@ const LandingPage = () => {
   }, []);
 
   return (
-    <div style={{ backgroundColor: "#FF6B6B", minHeight: "100vh", position: "relative", overflow: "hidden", width: "100%" }}>
+    <div style={{
+      minHeight: "100vh",
+      position: "relative",
+      overflow: "hidden",
+      width: "100%",
+      fontFamily: "Comfortaa, sans-serif"
+    }}>
       <FallingAEffect />
 
-      {/* Centered Join Amigos Card */}
-      <div style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "2rem",
-        paddingTop: "4rem",
-        paddingBottom: "4rem",
-        zIndex: 10,
-        position: "relative",
-      }}>
+      {/* Foreground layer container */}
+      <div style={{ position: "relative", zIndex: 5 }}>
+        {/* Main Card */}
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "2rem",
+          paddingTop: "4rem",
+          paddingBottom: "4rem",
+        }}>
+          <div style={{
+            backgroundColor: "white",
+            padding: "2rem",
+            borderRadius: "1rem",
+            boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
+            width: "90%",
+            maxWidth: "500px",
+            textAlign: "center",
+          }}>
+            <div style={{ marginBottom: "1rem" }}>
+              <img
+                src="/assets/amigos-a-logo.png"
+                alt="amigos logo"
+                style={{
+                  height: "9em",
+                  width: "auto",
+                  marginBottom: "-4rem",
+                  animation: "pulse-a 1.75s infinite"
+                }}
+              />
+            </div>
+
+            <p style={{
+              fontSize: "1.2rem",
+              color: "#555",
+              marginBottom: "2rem"
+            }}>
+              Find your place. Find your passion. Find your amigos
+            </p>
+
+            <button
+              onClick={handleGetStarted}
+              style={{
+                backgroundColor: "#FF6B6B",
+                color: "white",
+                border: "none",
+                padding: "12px 24px",
+                borderRadius: "30px",
+                fontSize: "1rem",
+                cursor: "pointer",
+                transition: "background-color 0.3s ease",
+              }}
+              onMouseOver={(e) => e.target.style.backgroundColor = "#e15555"}
+              onMouseOut={(e) => e.target.style.backgroundColor = "#FF6B6B"}
+            >
+              Get Started
+            </button>
+          </div>
+        </div>
+
+        {/* Login Card */}
         <div style={{
           backgroundColor: "white",
-          padding: "2rem",
+          padding: "0.8em",
           borderRadius: "1rem",
           boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-          width: "90%",
-          maxWidth: "500px",
+          width: "14em",
+          position: isMobile ? "relative" : "absolute",
+          top: isMobile ? "auto" : "30px",
+          right: isMobile ? "auto" : "30px",
           textAlign: "center",
+          fontSize: "0.8em",
         }}>
-          <div style={{ marginBottom: "1rem" }}>
-            <img
-              src="/assets/amigos-a-logo.png"
-              alt="amigos logo"
-              style={{
-                height: "9em",
-                width: "auto",
-                marginBottom: "-4rem",
-                animation: "pulse-a 1.75s infinite"
-              }}
-            />
-          </div>
-
-          <p style={{
-            fontFamily: "Comfortaa, sans-serif",
-            fontSize: "1.2rem",
-            color: "#555",
-            marginBottom: "2rem"
+          <h2 style={{
+            fontSize: "1.4em",
+            color: "#FF6B6B",
+            marginBottom: "0.5em"
           }}>
-            Find your place. Find your passion. Find your amigos
-          </p>
-
-          <button
-            onClick={handleGetStarted}
-            style={{
-              backgroundColor: "#FF6B6B",
-              color: "white",
-              border: "none",
-              padding: "12px 24px",
-              borderRadius: "30px",
-              fontSize: "1rem",
-              fontFamily: "Comfortaa, sans-serif",
-              cursor: "pointer",
-              transition: "background-color 0.3s ease",
-            }}
-            onMouseOver={(e) => e.target.style.backgroundColor = "#e15555"}
-            onMouseOut={(e) => e.target.style.backgroundColor = "#FF6B6B"}
-          >
-            Get Started
-          </button>
-        </div>
-      </div>
-
-      {/* LOGIN CARD */}
-      <div style={{
-        backgroundColor: "white",
-        padding: "0.8em",
-        borderRadius: "1rem",
-        boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-        width: "14em",
-        position: isMobile ? "relative" : "absolute",
-        top: isMobile ? "auto" : "30px",
-        right: isMobile ? "auto" : "30px",
-        textAlign: "center",
-        zIndex: 10,
-        fontSize: "0.8em",
-      }}>
-        <h2 style={{
-          fontSize: "1.4em",
-          color: "#FF6B6B",
-          fontFamily: "Comfortaa, sans-serif",
-          marginBottom: "0.5em"
-        }}>
-          Login
-        </h2>
-
-        <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "0.6em" }}>
-          <input
-            type="text"
-            placeholder="Username or Email"
-            value={loginEmail}
-            onChange={(e) => setLoginEmail(e.target.value)}
-            required
-            style={inputStyle}
-          />
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            value={loginPassword}
-            onChange={(e) => setLoginPassword(e.target.value)}
-            required
-            style={inputStyle}
-          />
-
-          <label style={{ fontFamily: "Comfortaa, sans-serif", fontSize: "0.9em", textAlign: "left" }}>
-            <input
-              type="checkbox"
-              checked={showPassword}
-              onChange={(e) => setShowPassword(e.target.checked)}
-              style={{ marginRight: "8px" }}
-            />
-            Show Password
-          </label>
-
-          <label style={{ fontFamily: "Comfortaa, sans-serif", fontSize: "0.9em", textAlign: "left" }}>
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              style={{ marginRight: "8px" }}
-            />
-            Remember Me
-          </label>
-
-          <button
-            type="submit"
-            style={{
-              backgroundColor: "#FF6B6B",
-              color: "white",
-              border: "none",
-              padding: "0.6em 1em",
-              borderRadius: "30px",
-              fontSize: "1em",
-              fontFamily: "Comfortaa, sans-serif",
-              cursor: "pointer",
-              transition: "background-color 0.3s ease",
-              width: "100%",
-            }}
-            onMouseOver={(e) => e.target.style.backgroundColor = "#e15555"}
-            onMouseOut={(e) => e.target.style.backgroundColor = "#FF6B6B"}
-          >
             Login
-          </button>
-        </form>
+          </h2>
+
+          <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "0.6em" }}>
+            <input
+              type="text"
+              placeholder="Username or Email"
+              value={loginEmail}
+              onChange={(e) => setLoginEmail(e.target.value)}
+              required
+              style={inputStyle}
+            />
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={loginPassword}
+              onChange={(e) => setLoginPassword(e.target.value)}
+              required
+              style={inputStyle}
+            />
+
+            <label>
+              <input
+                type="checkbox"
+                checked={showPassword}
+                onChange={(e) => setShowPassword(e.target.checked)}
+                style={{ marginRight: "8px" }}
+              />
+              Show Password
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                style={{ marginRight: "8px" }}
+              />
+              Remember Me
+            </label>
+
+            <button
+              type="submit"
+              style={{
+                backgroundColor: "#FF6B6B",
+                color: "white",
+                border: "none",
+                padding: "0.6em 1em",
+                borderRadius: "30px",
+                fontSize: "1em",
+                cursor: "pointer",
+                transition: "background-color 0.3s ease",
+                width: "100%",
+              }}
+              onMouseOver={(e) => e.target.style.backgroundColor = "#e15555"}
+              onMouseOut={(e) => e.target.style.backgroundColor = "#FF6B6B"}
+            >
+              Login
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
