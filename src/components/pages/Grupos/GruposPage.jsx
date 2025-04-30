@@ -109,7 +109,19 @@ const GruposPage = () => {
 
   return (
     <div style={{ fontFamily: 'Comfortaa, sans-serif', backgroundColor: '#FF6B6B', minHeight: '100vh', overflow: 'hidden', position: 'relative' }}>
-      <FallingAEffect />
+      
+      {/* ✅ Falling A Effect background wrapper fix */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 0,
+        pointerEvents: 'none'
+      }}>
+        <FallingAEffect />
+      </div>
 
       <header style={{ textAlign: 'center', paddingTop: '2rem' }}>
         <h1 style={{ fontSize: '3.5rem', color: 'white' }}>grupos</h1>

@@ -11,7 +11,7 @@ const AmigosPage = () => {
   const [suggestedAmigos, setSuggestedAmigos] = useState([]);
   const [followedAmigos, setFollowedAmigos] = useState([]);
   const [followedPosts, setFollowedPosts] = useState([]);
-  const [currentCard, setCurrentCard] = useState(1); // Set Followed Amigos as the default landing card
+  const [currentCard, setCurrentCard] = useState(1); // default to Followed Amigos
 
   const feedCards = ['Suggested Amigos', 'Followed Amigos', 'Your Amigos Posts'];
 
@@ -90,7 +90,19 @@ const AmigosPage = () => {
 
   return (
     <div style={{ fontFamily: 'Comfortaa, sans-serif', backgroundColor: '#FF6B6B', minHeight: '100vh', overflow: 'hidden', position: 'relative' }}>
-      <FallingAEffect />
+      
+      {/* ✅ background fix */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 0,
+        pointerEvents: 'none'
+      }}>
+        <FallingAEffect />
+      </div>
 
       <header style={{ textAlign: 'center', paddingTop: '2rem' }}>
         <h1 style={{ fontSize: '3.5rem', color: 'white' }}>amigos</h1>

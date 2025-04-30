@@ -1,34 +1,62 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const FallingAEffect = () => {
-  const elements = Array.from({ length: 25 });
+  const [aElements, setAElements] = useState([]);
 
-  return (
-    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-      {elements.map((_, i) => {
-        const size = Math.floor(Math.random() * 40) + 20;
-        const left = Math.random() * 100;
-        const delay = Math.random() * 5;
-        const duration = 4 + Math.random() * 3;
+  useEffect(() => {
+    const generateElements = () => {
+      const elements = [];
+      for (let i = 0; i < 30; i++) {
+        const size = Math.random() * 40 + 10; // 10px to 50px
+        const left = Math.random() * 100; // percentage
+        const delay = Math.random() * 5; // seconds
+        const duration = Math.random() * 10 + 5; // seconds
+        const opacity = Math.random() * 0.6 + 0.2;
 
-        return (
+        elements.push(
           <img
             key={i}
-            src="/amigosaonly.png"
-            alt="a"
-            className="absolute animate-fall"
+            src="/assets/amigosaonly.png"
             style={{
-              top: `-50px`,
+              position: "absolute",
+              top: "-50px",
               left: `${left}%`,
               width: `${size}px`,
-              height: "auto",
-              opacity: 0.6,
-              animationDelay: `${delay}s`,
-              animationDuration: `${duration}s`,
+              height: `${size}px`,
+              opacity: opacity,
+              animation: `fallingA ${duration}s linear ${delay}s infinite`,
+              pointerEvents: "none",
+              zIndex: -10,
+              userSelect: "none"
             }}
+            draggable={false}
           />
         );
-      })}
+      }
+      setAElements(elements);
+    };
+
+    generateElements();
+  }, []);
+
+  return (
+    <div style={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      zIndex: -10,
+      overflow: "hidden",
+      pointerEvents: "none"
+    }}>
+      <style>{`
+        @keyframes fallingA {
+          0% { transform: translateY(-100px) rotate(0deg); }
+          100% { transform: translateY(120vh) rotate(360deg); }
+        }
+      `}</style>
+      {aElements}
     </div>
   );
 };
