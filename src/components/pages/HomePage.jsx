@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../firebase';
 import { collection, getDocs, doc, getDoc, query, where } from 'firebase/firestore';
 import FallingAEffect from './FallingAEffect';
+import PostForm from '../common/PostForm';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -75,6 +76,13 @@ const HomePage = () => {
           <button onClick={() => navigate('/profile')} style={tabStyle}>Profile</button>
         </div>
       </nav>
+
+      {/* ✅ PostForm goes here */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+        <div style={{ width: '90%', maxWidth: '800px' }}>
+          <PostForm />
+        </div>
+      </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
         <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '1.5rem', boxShadow: '0 5px 25px rgba(0,0,0,0.2)', width: '90%', maxWidth: '800px', minHeight: '60vh', textAlign: 'center', position: 'relative', marginBottom: '2rem' }}>
