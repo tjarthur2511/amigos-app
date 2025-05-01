@@ -6,6 +6,8 @@ import { useAuth } from "../contexts/AuthContext";
 const PrivateRoute = ({ children }) => {
   const { currentUser } = useAuth();
 
+  // ✅ If logged in, render protected page
+  // ❌ If not logged in, send to login screen
   return currentUser ? children : <Navigate to="/login" />;
 };
 

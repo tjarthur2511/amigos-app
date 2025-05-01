@@ -1,25 +1,29 @@
+// src/components/NavBar.jsx
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
-function NavBar() {
+const NavBar = () => {
+  const { t } = useTranslation();
+
   return (
-    <nav className="navbar flex items-center justify-between px-6 py-3 bg-white shadow-md">
-      <Link to="/" className="text-3xl font-bold flex items-center space-x-2">
-        <span className="bg-[#FF6B6B] text-white rounded-full px-3 py-1 animate-pulse">
-          a
-        </span>
+    <nav className="navbar z-30 flex items-center justify-between px-6 py-3 bg-white shadow-md">
+      {/* Left-side logo */}
+      <NavLink to="/" className="text-3xl font-bold flex items-center space-x-2">
+        <span className="bg-[#FF6B6B] text-white rounded-full px-3 py-1 animate-pulse">a</span>
         <span className="text-gray-800">migos</span>
-      </Link>
+      </NavLink>
 
+      {/* Right-side navigation links */}
       <div className="flex items-center space-x-6 text-lg">
-        <Link to="/">Home</Link>
-        <Link to="/profile">Profile</Link>
-        <Link to="/grupos">Grupos</Link>
-        <Link to="/amigos">Amigos</Link>
-        <Link to="/live">Go Live</Link>
+        <NavLink to="/">{t('home')}</NavLink>
+        <NavLink to="/profile">{t('profile')}</NavLink>
+        <NavLink to="/grupos">{t('grupos')}</NavLink>
+        <NavLink to="/amigos">{t('amigos')}</NavLink>
+        <NavLink to="/live">Go Live</NavLink>
       </div>
     </nav>
   );
-}
+};
 
 export default NavBar;

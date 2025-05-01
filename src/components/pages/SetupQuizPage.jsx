@@ -1,9 +1,10 @@
+// src/components/pages/SetupQuizPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, db } from "../../firebase"; // Fixed import
+import { auth, db } from "../../firebase";
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
-import { motion } from 'framer-motion'; // ✅ animations
-import { generateAIQuestion } from '../../utils/questionGenerator.js'; // ✅ future-proof for AI swapping
+import { motion } from 'framer-motion';
+import FallingAEffect from './FallingAEffect';
 
 const staticQuestions = [
   "What's your favorite way to relax?",
@@ -27,9 +28,7 @@ const SetupQuizPage = () => {
   const inputRef = useRef(null);
 
   useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
+    if (inputRef.current) inputRef.current.focus();
   }, [currentQuestion]);
 
   const handleAnswer = (e) => {
@@ -39,7 +38,6 @@ const SetupQuizPage = () => {
   };
 
   const handleNext = async () => {
-    // ✅ Word count validation
     const wordCount = answers[currentQuestion]?.trim().split(/\s+/).length;
     if (wordCount < 3) {
       alert('Please write at least 3 words! Amigos love details 🌟');
@@ -78,12 +76,22 @@ const SetupQuizPage = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50"
+      className="flex flex-col items-center justify-center min-h-screen p-6 bg-[#FF6B6B] relative font-[Comfortaa] overflow-hidden"
     >
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
-        <h2 className="text-3xl font-bold text-[#FF6B6B] mb-6 text-center">Let's Get to Know You</h2>
+      {/* ✅ background layer */}
+      <div className="absolute top-0 left-0 w-full h-full z-0 pointer-events-none">
+        <FallingAEffect />
+      </div>
 
-        <p className="text-gray-700 text-lg text-center mb-6">{staticQuestions[currentQuestion]}</p>
+      {/* ✅ foreground content */}
+      <div className="w-full max-w-xl bg-white p-8 rounded-2xl shadow-lg z-10">
+        <h2 className="text-3xl font-bold text-[#FF6B6B] mb-6 text-center">
+          Let's Get to Know You
+        </h2>
+
+        <p className="text-gray-700 text-lg text-center mb-6">
+          {staticQuestions[currentQuestion]}
+        </p>
 
         <input
           ref={inputRef}

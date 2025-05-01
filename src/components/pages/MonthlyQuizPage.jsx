@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../firebase.js';
 import { doc, updateDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { motion } from 'framer-motion';
+import FallingAEffect from './FallingAEffect';
 
 const MonthlyQuizPage = () => {
   const [questions, setQuestions] = useState([]);
@@ -90,7 +91,7 @@ const MonthlyQuizPage = () => {
 
   if (loading) {
     return (
-      <div className="container flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-[#FF6B6B] text-white font-[Comfortaa]">
         <p>Loading monthly quiz...</p>
       </div>
     );
@@ -98,8 +99,8 @@ const MonthlyQuizPage = () => {
 
   if (error) {
     return (
-      <div className="container flex items-center justify-center min-h-screen">
-        <p className="text-red-500">{error}</p>
+      <div className="flex items-center justify-center min-h-screen bg-[#FF6B6B] text-white font-[Comfortaa]">
+        <p className="text-red-200 text-center">{error}</p>
       </div>
     );
   }
@@ -109,14 +110,22 @@ const MonthlyQuizPage = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50"
+      className="flex flex-col items-center justify-center min-h-screen p-6 bg-[#FF6B6B] relative font-[Comfortaa] overflow-hidden"
     >
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
+      {/* Falling background layer */}
+      <div className="absolute top-0 left-0 w-full h-full z-0 pointer-events-none">
+        <FallingAEffect />
+      </div>
+
+      {/* Foreground card */}
+      <div className="w-full max-w-xl bg-white p-8 rounded-2xl shadow-lg z-10">
         <h2 className="text-2xl font-bold text-[#FF6B6B] mb-6 text-center">
           This Month's Questions
         </h2>
 
-        <p className="text-gray-700 text-lg text-center mb-6">{questions[current]}</p>
+        <p className="text-gray-700 text-lg text-center mb-6">
+          {questions[current]}
+        </p>
 
         <input
           ref={inputRef}

@@ -4,6 +4,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase.js';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import FallingAEffect from './FallingAEffect'; // ✅ imported falling background
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -30,11 +31,17 @@ const LoginPage = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50"
+      className="flex flex-col items-center justify-center min-h-screen p-6 bg-[#FF6B6B] relative overflow-hidden font-[Comfortaa]"
     >
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
+      {/* ✅ background layer */}
+      <div className="absolute top-0 left-0 w-full h-full z-0 pointer-events-none">
+        <FallingAEffect />
+      </div>
+
+      {/* ✅ login card foreground */}
+      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg z-10">
         <h1 className="text-3xl font-bold text-[#FF6B6B] mb-6 text-center">Login to Amigos</h1>
-        
+
         <form onSubmit={handleLogin} className="flex flex-col space-y-4">
           <input
             type="email"

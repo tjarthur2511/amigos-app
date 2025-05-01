@@ -32,12 +32,8 @@ const LandingPage = () => {
         return;
       }
 
-      const userData = userSnap.data();
-      if (userData.isAdmin) {
-        navigate("/profile/admin");
-      } else {
-        navigate("/profile");
-      }
+      // ✅ Always navigate to Home
+      navigate("/");
     } catch (error) {
       alert("Login failed: " + error.message);
     }
@@ -60,7 +56,6 @@ const LandingPage = () => {
     }}>
       <FallingAEffect />
 
-      {/* Foreground layer container */}
       <div style={{ position: "relative", zIndex: 5 }}>
         {/* Main Card */}
         <div style={{
@@ -86,7 +81,7 @@ const LandingPage = () => {
                 src="/assets/amigos-a-logo.png"
                 alt="amigos logo"
                 style={{
-                  height: "9em",
+                  height: "10em",
                   width: "auto",
                   marginBottom: "-4rem",
                   animation: "pulse-a 1.75s infinite"

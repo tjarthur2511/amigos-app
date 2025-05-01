@@ -11,18 +11,18 @@ const FeedPage = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="flex flex-col items-center space-y-6 mt-6 px-4 font-[Comfortaa]"
+      className="min-h-screen bg-[#FF6B6B] text-white font-[Comfortaa] flex flex-col items-center justify-center px-6 py-12 text-center"
     >
-      <h1 className="text-4xl font-bold text-[#FF6B6B] lowercase text-center">
+      <h1 className="text-4xl md:text-5xl font-bold lowercase mb-6">
         {t("feed") || "your amigos feed 📰"}
       </h1>
 
-      <p className="text-gray-700 text-center max-w-2xl lowercase">
+      <p className="text-lg max-w-2xl lowercase leading-relaxed">
         this is where you’ll discover new posts from amigos, rsvp for events, and find new adventures. 
         stay tuned, we’re building your feed experience! 🚀
       </p>
 
-      {/* 🛠 Future: Insert posts, events, amigos' activities */}
+      {/* 🛠 Future: Insert posts, events, amigos' activities here */}
     </motion.div>
   );
 };
