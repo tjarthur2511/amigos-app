@@ -11,7 +11,7 @@ import ScrollToTop from './components/common/ScrollToTop';
 import FallingAEffect from './components/common/FallingAEffect';
 
 import SignOutButton from './components/common/SignOutButton';
-import NewPostButton from './components/common/NewPostButton';
+import NewPostButton from './components/common/NewPostButton'; // ✅ Restored
 import NotificationsBell from './components/common/NotificationsBell';
 import GoLiveButton from './components/common/GoLiveButton';
 import ThemeToggle from './components/common/ThemeToggle';
@@ -46,7 +46,7 @@ function AppContent({ user }) {
       {user && (
         <>
           <SignOutButton />
-          <NewPostButton />
+          <NewPostButton /> {/* ✅ Button restored correctly */}
           <NotificationsBell />
           <GoLiveButton />
           <ThemeToggle />
