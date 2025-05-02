@@ -1,4 +1,3 @@
-// src/components/common/LanguageToggle.jsx
 import React, { useState } from "react";
 
 const LanguageToggle = () => {
@@ -13,8 +12,8 @@ const LanguageToggle = () => {
         position: "fixed",
         top: "3.75rem",
         right: "1rem",
-        backgroundColor: isHovered ? "#e15555" : "#FFFFFF",
-        color: "#FF6B6B",
+        backgroundColor: isHovered ? "#FF6B6B" : "#FFFFFF",
+        color: isHovered ? "#FFFFFF" : "#FF6B6B",
         border: "none",
         padding: "0.4rem 1rem",
         borderRadius: "9999px",
@@ -23,7 +22,8 @@ const LanguageToggle = () => {
         fontWeight: "bold",
         cursor: "pointer",
         boxShadow: "0 3px 8px rgba(0,0,0,0.2)",
-        zIndex: 9999
+        zIndex: 9999,
+        transition: "background-color 0.3s ease, color 0.3s ease",
       }}
     >
       Language

@@ -1,4 +1,3 @@
-// src/components/common/NewPostButton.jsx
 import React, { useState } from "react";
 import PostModal from "./PostModal";
 
@@ -11,8 +10,8 @@ const NewPostButton = () => {
         onClick={() => setShowModal(true)}
         style={{
           position: "fixed",
-          bottom: "29rem", // below the feed
-          left: "1rem",
+          top: "255px", // below the feed
+          left: "16px",
           backgroundColor: "#FFFFFF",
           color: "#FF6B6B",
           border: "none",
@@ -24,6 +23,15 @@ const NewPostButton = () => {
           cursor: "pointer",
           boxShadow: "0 3px 8px rgba(0,0,0,0.2)",
           zIndex: 9999,
+          transition: "background-color 0.3s ease, color 0.3s ease",
+        }}
+        onMouseOver={(e) => {
+          e.target.style.backgroundColor = "#FF6B6B";
+          e.target.style.color = "#FFFFFF";
+        }}
+        onMouseOut={(e) => {
+          e.target.style.backgroundColor = "#FFFFFF";
+          e.target.style.color = "#FF6B6B";
         }}
       >
         + Post

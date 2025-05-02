@@ -1,4 +1,3 @@
-// src/components/common/GoLiveButton.jsx
 import React from "react";
 
 const GoLiveButton = () => {
@@ -19,7 +18,16 @@ const GoLiveButton = () => {
         fontWeight: "bold",
         cursor: "pointer",
         boxShadow: "0 3px 8px rgba(0,0,0,0.2)",
-        zIndex: 9999
+        zIndex: 9999,
+        transition: "background-color 0.3s ease, color 0.3s ease",
+      }}
+      onMouseOver={(e) => {
+        e.target.style.backgroundColor = "#FF6B6B";
+        e.target.style.color = "#FFFFFF";
+      }}
+      onMouseOut={(e) => {
+        e.target.style.backgroundColor = "#FFFFFF";
+        e.target.style.color = "#FF6B6B";
       }}
     >
       Go Live

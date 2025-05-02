@@ -1,4 +1,3 @@
-// src/components/common/SignOutButton.jsx
 import React from "react";
 import { auth } from "../../firebase";
 
@@ -10,7 +9,7 @@ const SignOutButton = () => {
         position: "fixed",
         top: "1rem",
         right: "1rem",
-        backgroundColor: "white",
+        backgroundColor: "#FFFFFF",
         color: "#FF6B6B",
         border: "none",
         padding: "0.6rem 1.5rem",
@@ -21,10 +20,16 @@ const SignOutButton = () => {
         cursor: "pointer",
         boxShadow: "0 3px 8px rgba(0,0,0,0.2)",
         zIndex: 9999,
-        transition: "background-color 0.3s ease",
+        transition: "background-color 0.3s ease, color 0.3s ease",
       }}
-      onMouseOver={(e) => (e.target.style.backgroundColor = "#e15555")}
-      onMouseOut={(e) => (e.target.style.backgroundColor = "#FF6B6B")}
+      onMouseOver={(e) => {
+        e.target.style.backgroundColor = "#FF6B6B";
+        e.target.style.color = "#FFFFFF";
+      }}
+      onMouseOut={(e) => {
+        e.target.style.backgroundColor = "#FFFFFF";
+        e.target.style.color = "#FF6B6B";
+      }}
     >
       Sign Out
     </button>
