@@ -5,12 +5,12 @@ import { db, auth } from '../../firebase';
 import { collection, onSnapshot, query, doc, updateDoc } from 'firebase/firestore';
 import FallingAEffect from './FallingAEffect';
 
-const emojiOptions = ['👍', '👎', '😂', '🔥', '❤️'];
+const emojiOptions = ['👍', '👎', '😂', '😢', '😮', '😡', '😍', '👏', '🔥', '🎉', '🤔', '💯'];
 
 const HomePage = () => {
   const navigate = useNavigate();
   const [feedItems, setFeedItems] = useState([]);
-  const [hoveredPostId, setHoveredPostId] = useState(null);
+  const [activePicker, setActivePicker] = useState(null);
 
   useEffect(() => {
     const currentUser = auth.currentUser;
@@ -20,7 +20,6 @@ const HomePage = () => {
     const unsubscribe = onSnapshot(feedQuery, (snapshot) => {
       const posts = snapshot.docs
         .map((doc) => ({ id: doc.id, ...doc.data() }))
-        .filter((post) => post.userId === currentUser.uid)
         .sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
 
       setFeedItems(posts);
@@ -29,18 +28,48 @@ const HomePage = () => {
     return () => unsubscribe();
   }, []);
 
-  const handleReact = async (postId, newReaction) => {
+  const handleReaction = async (postId, emoji, currentEmojis) => {
+    const userId = auth.currentUser.uid;
     const postRef = doc(db, 'posts', postId);
-    const userId = auth.currentUser?.uid;
-    const post = feedItems.find((p) => p.id === postId);
-    const currentReactions = post.reactions || {};
-    const updatedReactions = { ...currentReactions, [userId]: newReaction };
-    await updateDoc(postRef, { reactions: updatedReactions });
+    const updated = {};
+
+    // Remove user from all other emoji arrays
+    Object.keys(currentEmojis || {}).forEach((key) => {
+      updated[key] = (currentEmojis[key] || []).filter((id) => id !== userId);
+    });
+
+    // Add user to selected emoji
+    updated[emoji] = [...(updated[emoji] || []), userId];
+
+    await updateDoc(postRef, { emojis: updated });
+    setActivePicker(null);
+  };
+
+  const getUserReaction = (emojis) => {
+    const userId = auth.currentUser.uid;
+    for (const key in emojis) {
+      if (emojis[key].includes(userId)) return key;
+    }
+    return null;
   };
 
   return (
-    <div style={{ fontFamily: 'Comfortaa, sans-serif', backgroundColor: '#FF6B6B', minHeight: '100vh', overflow: 'hidden', position: 'relative' }}>
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, pointerEvents: 'none' }}>
+    <div style={{
+      fontFamily: 'Comfortaa, sans-serif',
+      backgroundColor: '#FF6B6B',
+      minHeight: '100vh',
+      overflow: 'hidden',
+      position: 'relative'
+    }}>
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: 0,
+        pointerEvents: 'none'
+      }}>
         <FallingAEffect />
       </div>
 
@@ -63,8 +92,8 @@ const HomePage = () => {
           {feedItems.length > 0 ? (
             <ul style={listStyle}>
               {feedItems.map((item) => {
-                const currentUserReaction = item.reactions?.[auth.currentUser?.uid] || null;
-                const reactionCount = Object.keys(item.reactions || {}).length;
+                const userReact = getUserReaction(item.emojis || {});
+                const totalReacts = Object.values(item.emojis || {}).reduce((acc, arr) => acc + arr.length, 0);
                 return (
                   <li key={item.id} style={itemStyle}>
                     <p style={userName}>{item.content || 'Untitled Post'}</p>
@@ -74,22 +103,38 @@ const HomePage = () => {
                         <source src={item.videoUrl} type="video/mp4" />
                       </video>
                     )}
-                    <div
-                      style={{ marginTop: '0.5rem', position: 'relative', display: 'inline-block' }}
-                      onMouseEnter={() => setHoveredPostId(item.id)}
-                      onMouseLeave={() => setHoveredPostId(null)}
-                    >
-                      <button style={reactionButtonStyle}>{currentUserReaction || '👍'} {reactionCount}</button>
-                      {hoveredPostId === item.id && (
-                        <div style={{ position: 'absolute', top: '120%', left: '0', background: 'white', borderRadius: '1rem', boxShadow: '0 2px 8px rgba(0,0,0,0.2)', padding: '0.5rem', display: 'flex', gap: '0.5rem', zIndex: 10 }}>
+                    <div style={{ marginTop: '0.5rem' }}>
+                      <button
+                        onClick={() => setActivePicker(activePicker === item.id ? null : item.id)}
+                        style={reactionButtonStyle}
+                      >
+                        {userReact || '💬'} {totalReacts > 0 && <span style={{ marginLeft: '0.3rem' }}>{totalReacts}</span>}
+                      </button>
+                      {activePicker === item.id && (
+                        <div style={{
+                          marginTop: '0.5rem',
+                          backgroundColor: '#fff',
+                          padding: '0.5rem',
+                          borderRadius: '1rem',
+                          boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          justifyContent: 'center'
+                        }}>
                           {emojiOptions.map((emoji) => (
-                            <span
+                            <button
                               key={emoji}
-                              style={{ cursor: 'pointer', fontSize: '1.3rem' }}
-                              onClick={() => handleReact(item.id, emoji)}
+                              onClick={() => handleReaction(item.id, emoji, item.emojis || {})}
+                              style={{
+                                fontSize: '1.4rem',
+                                margin: '0.25rem',
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer'
+                              }}
                             >
                               {emoji}
-                            </span>
+                            </button>
                           ))}
                         </div>
                       )}
@@ -140,11 +185,12 @@ const userName = {
 };
 
 const reactionButtonStyle = {
+  marginRight: '0.5rem',
   backgroundColor: '#fff',
   color: '#FF6B6B',
   border: '1px solid #FF6B6B',
   borderRadius: '9999px',
-  padding: '0.4rem 1rem',
+  padding: '0.4rem 0.8rem',
   fontFamily: 'Comfortaa, sans-serif',
   cursor: 'pointer'
 };
