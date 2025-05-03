@@ -54,8 +54,30 @@ const ProfilePage = () => {
           <ul className="space-y-4">
             {posts.map(post => (
               <li key={post.id} className="bg-[#ffecec] p-4 rounded-xl shadow">
-                <p className="font-bold">{post.title}</p>
-                <p className="text-sm text-[#555]">{post.content}</p>
+                <p className="font-bold">{post.title || 'Untitled Post'}</p>
+                <p className="text-sm text-[#555] mb-2">{post.content}</p>
+                {post.imageUrl && (
+                  <img src={post.imageUrl} alt="post" className="max-w-full rounded mb-2" />
+                )}
+                {post.videoUrl && (
+                  <video src={post.videoUrl} controls className="max-w-full rounded mb-2" />
+                )}
+                {post.emojis && Object.keys(post.emojis).length > 0 && (
+                  <div className="text-sm text-[#FF6B6B] mt-2">
+                    <span className="font-bold">Reactions: </span>
+                    {Object.entries(post.emojis).map(([emoji, users]) => (
+                      <span key={emoji} className="mr-2">{emoji} {users.length}</span>
+                    ))}
+                  </div>
+                )}
+                {post.comments && post.comments.length > 0 && (
+                  <ul className="text-left mt-2 space-y-1 text-sm">
+                    <li className="text-[#FF6B6B] font-bold">Comments:</li>
+                    {post.comments.slice(0, 3).map((comment, idx) => (
+                      <li key={idx} className="text-[#444]">🗨️ {comment}</li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>
@@ -92,7 +114,6 @@ const ProfilePage = () => {
 
   return (
     <div style={{ fontFamily: 'Comfortaa, sans-serif', backgroundColor: '#FF6B6B', minHeight: '100vh', overflow: 'visible', position: 'relative' }}>
-      {/* ✅ Falling background */}
       <div style={{
         position: 'absolute',
         top: 0,
@@ -105,7 +126,6 @@ const ProfilePage = () => {
         <FallingAEffect />
       </div>
 
-      {/* ✅ Shared Sign Out Button */}
       <SignOutButton />
 
       <header style={{ textAlign: 'center', paddingTop: '2rem' }}>

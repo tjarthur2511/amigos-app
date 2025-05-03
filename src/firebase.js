@@ -9,34 +9,31 @@ import {
   collection,
   getDocs,
   query,
-  where
+  where,
+  addDoc,
+  updateDoc,
+  serverTimestamp
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { getStorage } from "firebase/storage"; // ✅ Added for file uploads
 
-// ✅ Correct Firebase config for amigos-f0b75 project
+// ✅ Firebase config for amigos-f0b75 (NO storageBucket issue)
 const firebaseConfig = {
   apiKey: "AIzaSyBsAP4a2a6BI7FReA2NoF3lbiTzzjEyG6U",
   authDomain: "amigos-f0b75.firebaseapp.com",
   projectId: "amigos-f0b75",
-  storageBucket: "amigos-f0b75.appspot.com", // ✅ Corrected storageBucket
+  storageBucket: "", // 🚫 Disabled storage
   messagingSenderId: "188885971311",
   appId: "1:188885971311:web:73f51e65d7affb92c4f89a"
 };
 
-// ✅ Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// ✅ Firestore, Auth, and Storage
 const db = getFirestore(app);
 const auth = getAuth(app);
-const storage = getStorage(app); // ✅ Added
 
-// ✅ Exports
 export {
   db,
   auth,
-  storage, // ✅ Added
   doc,
   getDoc,
   setDoc,
@@ -44,5 +41,8 @@ export {
   collection,
   getDocs,
   query,
-  where
+  where,
+  addDoc,
+  updateDoc,
+  serverTimestamp
 };

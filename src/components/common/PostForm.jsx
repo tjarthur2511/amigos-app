@@ -1,9 +1,7 @@
-// src/components/common/PostForm.jsx
 import React, { useState, useRef } from "react";
-import { db, auth, storage } from "../../firebase";
+import { db, auth } from "../../firebase"; // ⛔ no storage import
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from "uuid"; // ✅ keep for future uploads
 
 const PostForm = ({ onClose }) => {
   const [content, setContent] = useState("");
@@ -18,22 +16,21 @@ const PostForm = ({ onClose }) => {
   const handlePost = async (e) => {
     e.preventDefault();
     if (!content.trim() && !file) {
-      alert("Write something or upload a file!");
+      alert("Write something or select a file.");
       return;
     }
 
     setLoading(true);
-    let mediaUrl = "";
     let mediaType = "";
+    let mediaUrl = "";
+
+    if (file) {
+      mediaType = file.type.startsWith("video") ? "video" : "image";
+      console.warn("⚠️ File upload is skipped during testing mode.");
+      // Upload logic skipped because Storage isn't configured
+    }
 
     try {
-      if (file) {
-        const storageRef = ref(storage, `posts/${uuidv4()}_${file.name}`);
-        await uploadBytes(storageRef, file);
-        mediaUrl = await getDownloadURL(storageRef);
-        mediaType = file.type.startsWith("video") ? "video" : "image";
-      }
-
       await addDoc(collection(db, "posts"), {
         content,
         userId: auth.currentUser?.uid || "anon",
@@ -50,17 +47,12 @@ const PostForm = ({ onClose }) => {
       setContent("");
       setFile(null);
       if (typeof onClose === "function") onClose();
-    } catch (error) {
-      console.error("Post failed:", error);
+    } catch (err) {
+      console.error("Firestore error:", err);
+      alert("Post failed to save.");
     }
-    setLoading(false);
-  };
 
-  const handleFileSelect = (type) => {
-    if (fileInputRef.current) {
-      fileInputRef.current.accept = type === "video" ? "video/*" : "image/*";
-      fileInputRef.current.click();
-    }
+    setLoading(false);
   };
 
   return (
@@ -86,7 +78,7 @@ const PostForm = ({ onClose }) => {
       <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
         <button
           type="button"
-          onClick={() => handleFileSelect("image")}
+          onClick={() => fileInputRef.current?.click()}
           style={{
             fontSize: "1.5rem",
             backgroundColor: "transparent",
@@ -95,29 +87,46 @@ const PostForm = ({ onClose }) => {
             animation: "pulse 2s infinite",
           }}
         >
-          📸
-        </button>
-        <button
-          type="button"
-          onClick={() => handleFileSelect("video")}
-          style={{
-            fontSize: "1.5rem",
-            backgroundColor: "transparent",
-            border: "none",
-            cursor: "pointer",
-            animation: "pulse 2s infinite",
-          }}
-        >
-          🎥
+          📸/🎥
         </button>
       </div>
 
       <input
         type="file"
         ref={fileInputRef}
+        accept="image/*,video/*"
         onChange={(e) => setFile(e.target.files[0])}
         style={{ display: "none" }}
       />
+
+      {file && (
+        <div style={{ textAlign: "center" }}>
+          {file.type.startsWith("image") ? (
+            <img
+              src={URL.createObjectURL(file)}
+              alt="Preview"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "200px",
+                objectFit: "cover",
+                borderRadius: "1rem",
+                marginBottom: "1rem",
+              }}
+            />
+          ) : (
+            <video
+              src={URL.createObjectURL(file)}
+              controls
+              style={{
+                maxWidth: "100%",
+                maxHeight: "240px",
+                borderRadius: "1rem",
+                marginBottom: "1rem",
+              }}
+            />
+          )}
+        </div>
+      )}
 
       <button
         type="submit"

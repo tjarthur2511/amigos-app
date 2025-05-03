@@ -139,6 +139,7 @@ const HomePage = () => {
                       )}
                     </div>
 
+                    {/* Comment Preview */}
                     {commentsMap[item.id]?.length > 0 && (
                       <div style={{ marginTop: '1rem', textAlign: 'left' }}>
                         <h4 style={{ color: '#FF6B6B', marginBottom: '0.5rem' }}>Top Comments</h4>
