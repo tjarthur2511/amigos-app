@@ -9,9 +9,11 @@ import {
   doc,
   updateDoc,
   getDocs,
+  addDoc,
   where,
   orderBy,
-  limit
+  Timestamp,
+  deleteDoc
 } from 'firebase/firestore';
 import FallingAEffect from './FallingAEffect';
 import PostDetailModal from '../common/PostDetailModal';
@@ -24,6 +26,7 @@ const HomePage = () => {
   const [commentsMap, setCommentsMap] = useState({});
   const [activePicker, setActivePicker] = useState(null);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [commentInputs, setCommentInputs] = useState({});
 
   useEffect(() => {
     const currentUser = auth.currentUser;
@@ -80,6 +83,28 @@ const HomePage = () => {
     return null;
   };
 
+  const handleCommentSubmit = async (postId) => {
+    const content = commentInputs[postId]?.trim();
+    if (!content) return;
+
+    await addDoc(collection(db, 'comments'), {
+      content,
+      createdAt: Timestamp.now(),
+      postId,
+      userId: auth.currentUser.uid,
+      parentId: '',
+      emojis: {}
+    });
+
+    setCommentInputs((prev) => ({ ...prev, [postId]: '' }));
+  };
+
+  const handleDeletePost = async (postId) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this post?');
+    if (!confirmDelete) return;
+    await deleteDoc(doc(db, 'posts', postId));
+  };
+
   return (
     <div style={{ fontFamily: 'Comfortaa, sans-serif', backgroundColor: '#FF6B6B', minHeight: '100vh', overflow: 'hidden', position: 'relative' }}>
       <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, pointerEvents: 'none' }}>
@@ -100,13 +125,16 @@ const HomePage = () => {
       </nav>
 
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
-        <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '1.5rem', boxShadow: '0 5px 25px rgba(0,0,0,0.2)', width: '90%', maxWidth: '800px', minHeight: '60vh', textAlign: 'center', position: 'relative', marginBottom: '2rem' }}>
+        <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '1.5rem', boxShadow: '0 5px 25px rgba(0,0,0,0.2)', width: '90%', maxWidth: '800px', minHeight: '60vh', textAlign: 'center' }}>
           <h2 style={{ fontSize: '2rem', color: '#FF6B6B', marginBottom: '1rem' }}>Your Feed</h2>
           {feedItems.length > 0 ? (
             <ul style={listStyle}>
               {feedItems.map((item) => {
                 const userReact = getUserReaction(item.emojis || {});
                 const totalReacts = Object.values(item.emojis || {}).reduce((acc, arr) => acc + arr.length, 0);
+                const comments = commentsMap[item.id] || [];
+                const isOwner = auth.currentUser?.uid === item.userId;
+
                 return (
                   <li key={item.id} style={itemStyle}>
                     <p style={userName}>{item.content || 'Untitled Post'}</p>
@@ -117,42 +145,59 @@ const HomePage = () => {
                       </video>
                     )}
 
-                    <div style={{ marginTop: '0.5rem' }}>
+                    {comments.slice(0, 3).map((comment) => (
+                      <div key={comment.id} style={{ backgroundColor: '#fff7f7', padding: '0.5rem 1rem', borderRadius: '0.5rem', margin: '0.25rem 0', textAlign: 'left', fontSize: '0.95rem' }}>
+                        <strong style={{ marginRight: '0.5rem' }}>🗨️</strong>{comment.content}
+                      </div>
+                    ))}
+
+                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '0.5rem' }}>
+                      <input
+                        type="text"
+                        value={commentInputs[item.id] || ''}
+                        onChange={(e) => setCommentInputs(prev => ({ ...prev, [item.id]: e.target.value }))}
+                        placeholder="Write a comment..."
+                        style={{ flex: 1, padding: '0.4rem', borderRadius: '1rem', border: '1px solid #ccc', fontSize: '0.9rem', fontFamily: 'Comfortaa, sans-serif' }}
+                      />
+                      <button onClick={() => handleCommentSubmit(item.id)} style={{ ...reactionButtonStyle, marginLeft: '0.5rem', fontSize: '0.8rem' }}>Post</button>
                       <button
                         onClick={() => setActivePicker(activePicker === item.id ? null : item.id)}
-                        style={reactionButtonStyle}
+                        style={{ ...reactionButtonStyle, marginLeft: '0.5rem', fontSize: '0.8rem' }}
                       >
                         {userReact || '😀'} {totalReacts > 0 && <span style={{ marginLeft: '0.3rem' }}>{totalReacts}</span>}
                       </button>
-                      {activePicker === item.id && (
-                        <div style={{ marginTop: '0.5rem', backgroundColor: '#fff', padding: '0.5rem', borderRadius: '1rem', boxShadow: '0 2px 6px rgba(0,0,0,0.15)', display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-                          {emojiOptions.map((emoji) => (
-                            <button
-                              key={emoji}
-                              onClick={() => handleReaction(item.id, emoji, item.emojis || {})}
-                              style={{ fontSize: '1.4rem', margin: '0.25rem', background: 'none', border: 'none', cursor: 'pointer' }}
-                            >
-                              {emoji}
-                            </button>
-                          ))}
-                        </div>
-                      )}
                     </div>
 
-                    {commentsMap[item.id]?.length > 0 && (
-                      <div style={{ marginTop: '1rem', textAlign: 'left' }}>
-                        <h4 style={{ color: '#FF6B6B', marginBottom: '0.5rem' }}>Top Comments</h4>
-                        {commentsMap[item.id].slice(0, 3).map((comment, idx) => (
-                          <div
-                            key={idx}
-                            onClick={() => setSelectedPost(item)}
-                            style={{ backgroundColor: '#fff7f7', padding: '0.5rem 1rem', borderRadius: '0.5rem', marginBottom: '0.4rem', cursor: 'pointer' }}
+                    {activePicker === item.id && (
+                      <div style={{ marginTop: '0.5rem', backgroundColor: '#fff', padding: '0.5rem', borderRadius: '1rem', boxShadow: '0 2px 6px rgba(0,0,0,0.15)', display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+                        {emojiOptions.map((emoji) => (
+                          <button
+                            key={emoji}
+                            onClick={() => handleReaction(item.id, emoji, item.emojis || {})}
+                            style={{ fontSize: '1.4rem', margin: '0.25rem', background: 'none', border: 'none', cursor: 'pointer' }}
                           >
-                            <strong style={{ marginRight: '0.5rem' }}>🗨️</strong>{comment.content}
-                          </div>
+                            {emoji}
+                          </button>
                         ))}
                       </div>
                     )}
+
+                    <div style={{ marginTop: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
+                      <button
+                        onClick={() => setSelectedPost(item)}
+                        style={{ fontSize: '0.8rem', color: '#FF6B6B', background: 'none', border: 'none', cursor: 'pointer' }}
+                      >
+                        View All
+                      </button>
+                      {isOwner && (
+                        <button
+                          onClick={() => handleDeletePost(item.id)}
+                          style={{ fontSize: '0.8rem', color: '#888', background: 'none', border: 'none', cursor: 'pointer' }}
+                        >
+                          🗑️ Delete
+                        </button>
+                      )}
+                    </div>
                   </li>
                 );
               })}
@@ -186,7 +231,7 @@ const tabStyle = {
 const listStyle = {
   display: 'flex',
   flexDirection: 'column',
-  gap: '1rem',
+  gap: '1.5rem',
   marginTop: '1rem'
 };
 
@@ -203,7 +248,6 @@ const userName = {
 };
 
 const reactionButtonStyle = {
-  marginRight: '0.5rem',
   backgroundColor: '#fff',
   color: '#FF6B6B',
   border: '1px solid #FF6B6B',

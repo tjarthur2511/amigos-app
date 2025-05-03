@@ -1,7 +1,6 @@
 import React, { useState, useRef } from "react";
-import { db, auth } from "../../firebase"; // ⛔ no storage import
+import { db, auth } from "../../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { v4 as uuidv4 } from "uuid"; // ✅ keep for future uploads
 
 const PostForm = ({ onClose }) => {
   const [content, setContent] = useState("");
@@ -15,30 +14,29 @@ const PostForm = ({ onClose }) => {
 
   const handlePost = async (e) => {
     e.preventDefault();
-    if (!content.trim() && !file) {
-      alert("Write something or select a file.");
+    const trimmedContent = content.trim();
+    const hasText = trimmedContent.length > 0;
+    const hasMedia = file !== null;
+
+    if (!hasText && !hasMedia) {
+      alert("You must write something or select a file.");
       return;
     }
 
     setLoading(true);
-    let mediaType = "";
-    let mediaUrl = "";
 
-    if (file) {
-      mediaType = file.type.startsWith("video") ? "video" : "image";
-      console.warn("⚠️ File upload is skipped during testing mode.");
-      // Upload logic skipped because Storage isn't configured
-    }
+    const mediaType = file ? (file.type.startsWith("video") ? "video" : "image") : "";
+    const mediaUrl = ""; // No upload yet, keep blank
 
     try {
       await addDoc(collection(db, "posts"), {
-        content,
+        content: trimmedContent,
         userId: auth.currentUser?.uid || "anon",
         createdAt: serverTimestamp(),
+        emojis: {},
         likes: [],
         dislikes: [],
-        emojis: {},
-        hashtags: extractHashtags(content),
+        hashtags: extractHashtags(trimmedContent),
         imageUrl: mediaType === "image" ? mediaUrl : "",
         videoUrl: mediaType === "video" ? mediaUrl : "",
         type: "amigo",

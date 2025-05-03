@@ -1,112 +1,84 @@
-// src/components/pages/ProfilePage/ProfilePage.jsx
+// src/components/pages/ProfilePage.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../firebase';
-import { collection, getDocs, doc, getDoc, query, where } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+  deleteDoc,
+  doc
+} from 'firebase/firestore';
 import FallingAEffect from '../FallingAEffect';
-import SignOutButton from '../../common/SignOutButton';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const [userData, setUserData] = useState(null);
   const [posts, setPosts] = useState([]);
-  const [grupos, setGrupos] = useState([]);
   const [currentCard, setCurrentCard] = useState(0);
-  const feedCards = ['Profile Info', 'Your Posts', 'Your Grupos', 'Preferences', 'Settings'];
+  const feedCards = ['Your Posts', 'Your Grupos', 'Settings'];
 
   useEffect(() => {
-    const loadProfile = async () => {
-      const user = auth.currentUser;
+    const unsubscribeAuth = auth.onAuthStateChanged((user) => {
       if (!user) return;
 
-      const userRef = doc(db, 'users', user.uid);
-      const userSnap = await getDoc(userRef);
-      if (!userSnap.exists()) return;
-      const userData = userSnap.data();
-      setUserData(userData);
+      const q = query(
+        collection(db, 'posts'),
+        where('userId', '==', user.uid),
+        orderBy('createdAt', 'desc')
+      );
 
-      const postSnap = await getDocs(query(collection(db, 'posts'), where('userId', '==', user.uid)));
-      setPosts(postSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      const unsubscribePosts = onSnapshot(q, (snapshot) => {
+        const userPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setPosts(userPosts);
+      });
 
-      const grupoSnap = await getDocs(collection(db, 'grupos'));
-      setGrupos(grupoSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(g => userData.grupos?.includes(g.id)));
-    };
-    loadProfile();
+      return () => unsubscribePosts();
+    });
+
+    return () => unsubscribeAuth();
   }, []);
+
+  const handleDelete = async (postId) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this post?');
+    if (!confirmDelete) return;
+    try {
+      await deleteDoc(doc(db, 'posts', postId));
+    } catch (err) {
+      console.error('Error deleting post:', err);
+    }
+  };
 
   const nextCard = () => setCurrentCard((prev) => (prev + 1) % feedCards.length);
   const prevCard = () => setCurrentCard((prev) => (prev - 1 + feedCards.length) % feedCards.length);
 
   const renderCurrent = () => {
-    if (!userData) return <p className="text-white">Loading profile...</p>;
-
     switch (feedCards[currentCard]) {
-      case 'Profile Info':
-        return (
-          <div className="space-y-2 text-left">
-            <p><strong>Name:</strong> {userData.displayName}</p>
-            <p><strong>Email:</strong> {userData.email}</p>
-            <p><strong>Location:</strong> {userData.location || 'Not set'}</p>
-          </div>
-        );
       case 'Your Posts':
-        return posts.length ? (
-          <ul className="space-y-4">
+        return posts.length > 0 ? (
+          <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {posts.map(post => (
-              <li key={post.id} className="bg-[#ffecec] p-4 rounded-xl shadow">
-                <p className="font-bold">{post.title || 'Untitled Post'}</p>
-                <p className="text-sm text-[#555] mb-2">{post.content}</p>
-                {post.imageUrl && (
-                  <img src={post.imageUrl} alt="post" className="max-w-full rounded mb-2" />
-                )}
+              <li key={post.id} style={{ backgroundColor: '#ffecec', padding: '1rem', borderRadius: '1rem', boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}>
+                <p style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>{post.content || 'Untitled Post'}</p>
+                {post.imageUrl && <img src={post.imageUrl} alt="Post" style={{ maxWidth: '100%', borderRadius: '1rem', marginTop: '0.5rem' }} />}
                 {post.videoUrl && (
-                  <video src={post.videoUrl} controls className="max-w-full rounded mb-2" />
+                  <video controls style={{ maxWidth: '100%', borderRadius: '1rem', marginTop: '0.5rem' }}>
+                    <source src={post.videoUrl} type="video/mp4" />
+                  </video>
                 )}
-                {post.emojis && Object.keys(post.emojis).length > 0 && (
-                  <div className="text-sm text-[#FF6B6B] mt-2">
-                    <span className="font-bold">Reactions: </span>
-                    {Object.entries(post.emojis).map(([emoji, users]) => (
-                      <span key={emoji} className="mr-2">{emoji} {users.length}</span>
-                    ))}
-                  </div>
-                )}
-                {post.comments && post.comments.length > 0 && (
-                  <ul className="text-left mt-2 space-y-1 text-sm">
-                    <li className="text-[#FF6B6B] font-bold">Comments:</li>
-                    {post.comments.slice(0, 3).map((comment, idx) => (
-                      <li key={idx} className="text-[#444]">🗨️ {comment}</li>
-                    ))}
-                  </ul>
-                )}
+                <button onClick={() => handleDelete(post.id)} style={{ marginTop: '0.75rem', fontSize: '0.8rem', color: '#FF6B6B', border: 'none', background: 'none', cursor: 'pointer' }}>🗑️ Delete</button>
               </li>
             ))}
           </ul>
-        ) : <p>You haven't posted anything yet.</p>;
+        ) : <p style={{ textAlign: 'center', color: '#FF6B6B' }}>You haven't posted anything yet.</p>;
+
       case 'Your Grupos':
-        return grupos.length ? (
-          <ul className="space-y-4">
-            {grupos.map(grupo => (
-              <li key={grupo.id} className="bg-[#ffecec] p-4 rounded-xl shadow">
-                <p className="font-bold">{grupo.name}</p>
-                <p className="text-sm text-[#555]">{grupo.description}</p>
-              </li>
-            ))}
-          </ul>
-        ) : <p>You have not joined any grupos yet.</p>;
-      case 'Preferences':
-        return (
-          <div className="text-left space-y-2">
-            <p><strong>Language:</strong> {userData.preferences?.language || 'Not set'}</p>
-            <p><strong>Theme:</strong> {userData.preferences?.theme || 'Default'}</p>
-          </div>
-        );
+        return <p style={{ textAlign: 'center', color: '#FF6B6B' }}>Grupos feature coming soon.</p>;
+
       case 'Settings':
-        return (
-          <div className="text-left space-y-2">
-            <p><strong>Account Created:</strong> {userData.createdAt?.toDate?.().toLocaleDateString() || 'Unknown'}</p>
-            <p><strong>UID:</strong> {auth.currentUser?.uid}</p>
-          </div>
-        );
+        return <p style={{ textAlign: 'center', color: '#FF6B6B' }}>Settings feature coming soon.</p>;
+
       default:
         return null;
     }
@@ -114,22 +86,12 @@ const ProfilePage = () => {
 
   return (
     <div style={{ fontFamily: 'Comfortaa, sans-serif', backgroundColor: '#FF6B6B', minHeight: '100vh', overflow: 'visible', position: 'relative' }}>
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: 0,
-        pointerEvents: 'none'
-      }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, pointerEvents: 'none' }}>
         <FallingAEffect />
       </div>
 
-      <SignOutButton />
-
       <header style={{ textAlign: 'center', paddingTop: '2rem' }}>
-        <h1 style={{ fontSize: '3.5rem', color: 'white' }}>profile</h1>
+        <h1 style={{ fontSize: '3.5rem', color: 'white' }}>amigos</h1>
       </header>
 
       <nav style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem', marginBottom: '2rem' }}>
@@ -142,21 +104,7 @@ const ProfilePage = () => {
       </nav>
 
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
-        <div style={{
-          backgroundColor: 'white',
-          padding: '2rem',
-          borderRadius: '1.5rem',
-          boxShadow: '0 5px 25px rgba(0,0,0,0.2)',
-          width: '90%',
-          maxWidth: '800px',
-          minHeight: '60vh',
-          maxHeight: '70vh',
-          overflowY: 'auto',
-          textAlign: 'center',
-          position: 'relative',
-          marginBottom: '2rem',
-          zIndex: 10
-        }}>
+        <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '1.5rem', boxShadow: '0 5px 25px rgba(0,0,0,0.2)', width: '90%', maxWidth: '800px', minHeight: '60vh', textAlign: 'center', position: 'relative', zIndex: 10 }}>
           <h2 style={{ fontSize: '2rem', color: '#FF6B6B', marginBottom: '1rem' }}>{feedCards[currentCard]}</h2>
           {renderCurrent()}
 
