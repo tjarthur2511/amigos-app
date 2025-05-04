@@ -1,8 +1,8 @@
-// src/components/common/GoLiveButton.jsx
+// src/components/common/MapHangoutButton.jsx
 import React, { useState } from "react";
-import GoLiveModal from "./GoLiveModal";
+import MapHangoutsModal from "./MapHangoutsModal";
 
-const GoLiveButton = () => {
+const MapHangoutButton = () => {
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -11,12 +11,12 @@ const GoLiveButton = () => {
         onClick={() => setShowModal(true)}
         style={{
           position: "fixed",
-          top: "13.5rem",
-          left: "1rem",
+          top: "297px", // slightly below + Post (255px)
+          left: "16px",
           backgroundColor: "#FFFFFF",
           color: "#FF6B6B",
           border: "none",
-          padding: "0.4rem 1rem",
+          padding: ".5rem 1rem",
           borderRadius: "9999px",
           fontSize: "0.9rem",
           fontFamily: "Comfortaa, sans-serif",
@@ -35,12 +35,12 @@ const GoLiveButton = () => {
           e.target.style.color = "#FF6B6B";
         }}
       >
-        Go Live
+        + Map
       </button>
 
-      {showModal && <GoLiveModal onClose={() => setShowModal(false)} />}
+      {showModal && <MapHangoutsModal onClose={() => setShowModal(false)} />}
     </>
   );
 };
 
-export default GoLiveButton;
+export default MapHangoutButton;

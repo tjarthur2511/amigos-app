@@ -1,4 +1,3 @@
-// src/components/NavBar.jsx
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +19,7 @@ const NavBar = () => {
         <NavLink to="/profile">{t('profile')}</NavLink>
         <NavLink to="/grupos">{t('grupos')}</NavLink>
         <NavLink to="/amigos">{t('amigos')}</NavLink>
+        <NavLink to="/map-hangouts">Map Hangouts</NavLink>
         <NavLink to="/live">Go Live</NavLink>
       </div>
     </nav>

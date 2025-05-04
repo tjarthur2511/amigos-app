@@ -12,12 +12,16 @@ import {
   doc
 } from 'firebase/firestore';
 import FallingAEffect from '../FallingAEffect';
+import ProfilePhotos from './ProfilePhotos';
+import ProfileGrupos from './ProfileGrupos';
+import ProfileAmigos from './ProfileAmigos';
+import ProfilePreferences from './ProfilePreferences';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [currentCard, setCurrentCard] = useState(0);
-  const feedCards = ['Your Posts', 'Your Grupos', 'Settings'];
+  const feedCards = ['Your Posts', 'Photos', 'Grupos Unidos', 'Amigos', 'Preferences'];
 
   useEffect(() => {
     const unsubscribeAuth = auth.onAuthStateChanged((user) => {
@@ -59,25 +63,31 @@ const ProfilePage = () => {
         return posts.length > 0 ? (
           <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {posts.map(post => (
-              <li key={post.id} style={{ backgroundColor: '#ffecec', padding: '1rem', borderRadius: '1rem', boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}>
-                <p style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>{post.content || 'Untitled Post'}</p>
-                {post.imageUrl && <img src={post.imageUrl} alt="Post" style={{ maxWidth: '100%', borderRadius: '1rem', marginTop: '0.5rem' }} />}
+              <li key={post.id} style={itemStyle}>
+                <p style={userName}>{post.content || 'Untitled Post'}</p>
+                {post.imageUrl && <img src={post.imageUrl} alt="Post" style={imageStyle} />}
                 {post.videoUrl && (
-                  <video controls style={{ maxWidth: '100%', borderRadius: '1rem', marginTop: '0.5rem' }}>
+                  <video controls style={imageStyle}>
                     <source src={post.videoUrl} type="video/mp4" />
                   </video>
                 )}
-                <button onClick={() => handleDelete(post.id)} style={{ marginTop: '0.75rem', fontSize: '0.8rem', color: '#FF6B6B', border: 'none', background: 'none', cursor: 'pointer' }}>🗑️ Delete</button>
+                <button onClick={() => handleDelete(post.id)} style={deleteButton}>🗑️ Delete</button>
               </li>
             ))}
           </ul>
-        ) : <p style={{ textAlign: 'center', color: '#FF6B6B' }}>You haven't posted anything yet.</p>;
+        ) : <p style={noPostText}>You haven't posted anything yet.</p>;
 
-      case 'Your Grupos':
-        return <p style={{ textAlign: 'center', color: '#FF6B6B' }}>Grupos feature coming soon.</p>;
+      case 'Photos':
+        return <ProfilePhotos posts={posts} />;
 
-      case 'Settings':
-        return <p style={{ textAlign: 'center', color: '#FF6B6B' }}>Settings feature coming soon.</p>;
+      case 'Grupos Unidos':
+        return <ProfileGrupos />;
+
+      case 'Amigos':
+        return <ProfileAmigos />;
+
+      case 'Preferences':
+        return <ProfilePreferences />;
 
       default:
         return null;
@@ -85,17 +95,15 @@ const ProfilePage = () => {
   };
 
   return (
-    <div style={{ fontFamily: 'Comfortaa, sans-serif', backgroundColor: '#FF6B6B', minHeight: '100vh', overflow: 'visible', position: 'relative' }}>
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, pointerEvents: 'none' }}>
-        <FallingAEffect />
-      </div>
+    <div style={pageStyle}>
+      <div style={bgEffect}><FallingAEffect /></div>
 
-      <header style={{ textAlign: 'center', paddingTop: '2rem' }}>
-        <h1 style={{ fontSize: '3.5rem', color: 'white' }}>amigos</h1>
+      <header style={headerStyle}>
+        <h1 style={titleStyle}>amigos</h1>
       </header>
 
-      <nav style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem', marginBottom: '2rem' }}>
-        <div style={{ backgroundColor: 'white', padding: '0.8rem 1rem', borderRadius: '30px', boxShadow: '0 5px 15px rgba(0,0,0,0.3)', display: 'flex', gap: '1rem' }}>
+      <nav style={navWrapper}>
+        <div style={navStyle}>
           <button onClick={() => navigate('/')} style={tabStyle}>Home</button>
           <button onClick={() => navigate('/amigos')} style={tabStyle}>Amigos</button>
           <button onClick={() => navigate('/grupos')} style={tabStyle}>Grupos</button>
@@ -103,21 +111,61 @@ const ProfilePage = () => {
         </div>
       </nav>
 
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
-        <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '1.5rem', boxShadow: '0 5px 25px rgba(0,0,0,0.2)', width: '90%', maxWidth: '800px', minHeight: '60vh', textAlign: 'center', position: 'relative', zIndex: 10 }}>
-          <h2 style={{ fontSize: '2rem', color: '#FF6B6B', marginBottom: '1rem' }}>{feedCards[currentCard]}</h2>
+      <div style={mainCardWrapper}>
+        <div style={mainCardStyle}>
+          <h2 style={sectionTitle}>{feedCards[currentCard]}</h2>
           {renderCurrent()}
 
-          <div style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', zIndex: 20 }}>
-            <button onClick={nextCard} style={arrowStyle}>→</button>
-          </div>
-          <div style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', zIndex: 20 }}>
-            <button onClick={prevCard} style={arrowStyle}>←</button>
-          </div>
+          <div style={arrowRight}><button onClick={nextCard} style={arrowStyle}>→</button></div>
+          <div style={arrowLeft}><button onClick={prevCard} style={arrowStyle}>←</button></div>
         </div>
       </div>
     </div>
   );
+};
+
+const pageStyle = {
+  fontFamily: 'Comfortaa, sans-serif',
+  backgroundColor: '#FF6B6B',
+  minHeight: '100vh',
+  overflow: 'visible',
+  position: 'relative'
+};
+
+const bgEffect = {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: '100%',
+  height: '100%',
+  zIndex: 0,
+  pointerEvents: 'none'
+};
+
+const headerStyle = {
+  textAlign: 'center',
+  paddingTop: '2rem'
+};
+
+const titleStyle = {
+  fontSize: '3.5rem',
+  color: 'white'
+};
+
+const navWrapper = {
+  display: 'flex',
+  justifyContent: 'center',
+  marginTop: '2rem',
+  marginBottom: '2rem'
+};
+
+const navStyle = {
+  backgroundColor: 'white',
+  padding: '0.8rem 1rem',
+  borderRadius: '30px',
+  boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
+  display: 'flex',
+  gap: '1rem'
 };
 
 const tabStyle = {
@@ -131,6 +179,79 @@ const tabStyle = {
   fontFamily: 'Comfortaa, sans-serif',
   cursor: 'pointer',
   boxShadow: '0 3px 8px rgba(0,0,0,0.2)'
+};
+
+const mainCardWrapper = {
+  display: 'flex',
+  justifyContent: 'center',
+  marginBottom: '2rem'
+};
+
+const mainCardStyle = {
+  backgroundColor: 'white',
+  padding: '2rem',
+  borderRadius: '1.5rem',
+  boxShadow: '0 5px 25px rgba(0,0,0,0.2)',
+  width: '90%',
+  maxWidth: '800px',
+  minHeight: '60vh',
+  textAlign: 'center',
+  position: 'relative',
+  zIndex: 10
+};
+
+const sectionTitle = {
+  fontSize: '2rem',
+  color: '#FF6B6B',
+  marginBottom: '1rem'
+};
+
+const itemStyle = {
+  backgroundColor: '#ffecec',
+  padding: '1rem',
+  borderRadius: '1rem',
+  boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+};
+
+const userName = {
+  fontSize: '1.2rem',
+  fontWeight: 'bold'
+};
+
+const imageStyle = {
+  maxWidth: '100%',
+  borderRadius: '1rem',
+  marginTop: '0.5rem'
+};
+
+const deleteButton = {
+  marginTop: '0.75rem',
+  fontSize: '0.8rem',
+  color: '#FF6B6B',
+  border: 'none',
+  background: 'none',
+  cursor: 'pointer'
+};
+
+const noPostText = {
+  textAlign: 'center',
+  color: '#FF6B6B'
+};
+
+const arrowRight = {
+  position: 'absolute',
+  right: '1rem',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  zIndex: 20
+};
+
+const arrowLeft = {
+  position: 'absolute',
+  left: '1rem',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  zIndex: 20
 };
 
 const arrowStyle = {

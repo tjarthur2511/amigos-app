@@ -13,7 +13,7 @@ import {
   where,
   orderBy,
   Timestamp,
-  deleteDoc
+  deleteDoc,
 } from 'firebase/firestore';
 import FallingAEffect from './FallingAEffect';
 import PostDetailModal from '../common/PostDetailModal';
@@ -32,17 +32,14 @@ const HomePage = () => {
     const currentUser = auth.currentUser;
     if (!currentUser) return;
 
-    const feedQuery = query(collection(db, 'posts'));
+    const feedQuery = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
     const unsubscribe = onSnapshot(feedQuery, async (snapshot) => {
-      const posts = snapshot.docs
-        .map((doc) => ({ id: doc.id, ...doc.data() }))
-        .sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
-
+      const posts = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       setFeedItems(posts);
 
       const newCommentsMap = {};
       for (const post of posts) {
-        newCommentsMap[post.id] = await fetchComments(post.id);
+        newCommentsMap[post.id] = await fetchRecentComments(post.id);
       }
       setCommentsMap(newCommentsMap);
     });
@@ -50,14 +47,14 @@ const HomePage = () => {
     return () => unsubscribe();
   }, []);
 
-  const fetchComments = async (postId) => {
+  const fetchRecentComments = async (postId) => {
     const q = query(
       collection(db, 'comments'),
       where('postId', '==', postId),
       orderBy('createdAt', 'desc')
     );
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   };
 
   const handleReaction = async (postId, emoji, currentEmojis) => {
@@ -93,10 +90,18 @@ const HomePage = () => {
       postId,
       userId: auth.currentUser.uid,
       parentId: '',
-      emojis: {}
+      emojis: {},
     });
 
     setCommentInputs((prev) => ({ ...prev, [postId]: '' }));
+    const updatedComments = await fetchRecentComments(postId);
+    setCommentsMap((prev) => ({ ...prev, [postId]: updatedComments }));
+  };
+
+  const handleDeleteComment = async (commentId, postId) => {
+    await deleteDoc(doc(db, 'comments', commentId));
+    const updatedComments = await fetchRecentComments(postId);
+    setCommentsMap((prev) => ({ ...prev, [postId]: updatedComments }));
   };
 
   const handleDeletePost = async (postId) => {
@@ -132,7 +137,7 @@ const HomePage = () => {
               {feedItems.map((item) => {
                 const userReact = getUserReaction(item.emojis || {});
                 const totalReacts = Object.values(item.emojis || {}).reduce((acc, arr) => acc + arr.length, 0);
-                const comments = commentsMap[item.id] || [];
+                const comments = commentsMap[item.id]?.slice(0, 3) || [];
                 const isOwner = auth.currentUser?.uid === item.userId;
 
                 return (
@@ -145,9 +150,28 @@ const HomePage = () => {
                       </video>
                     )}
 
-                    {comments.slice(0, 3).map((comment) => (
-                      <div key={comment.id} style={{ backgroundColor: '#fff7f7', padding: '0.5rem 1rem', borderRadius: '0.5rem', margin: '0.25rem 0', textAlign: 'left', fontSize: '0.95rem' }}>
-                        <strong style={{ marginRight: '0.5rem' }}>🗨️</strong>{comment.content}
+                    {comments.map((comment) => (
+                      <div key={comment.id} style={{ backgroundColor: '#fff7f7', padding: '0.5rem 1rem', borderRadius: '0.5rem', margin: '0.25rem 0', textAlign: 'left', fontSize: '0.95rem', position: 'relative' }}>
+                        <strong style={{ marginRight: '0.5rem' }}>💬</strong>{comment.content}
+                        {comment.userId === auth.currentUser?.uid && (
+                          <button
+                            onClick={() => handleDeleteComment(comment.id, item.id)}
+                            style={{
+                              position: 'absolute',
+                              top: '4px',
+                              right: '4px',
+                              fontSize: '0.7rem',
+                              padding: '2px 6px',
+                              borderRadius: '9999px',
+                              background: '#FF6B6B',
+                              color: '#fff',
+                              border: 'none',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            ✖
+                          </button>
+                        )}
                       </div>
                     ))}
 
@@ -225,26 +249,26 @@ const tabStyle = {
   fontWeight: 'bold',
   fontFamily: 'Comfortaa, sans-serif',
   cursor: 'pointer',
-  boxShadow: '0 3px 8px rgba(0,0,0,0.2)'
+  boxShadow: '0 3px 8px rgba(0,0,0,0.2)',
 };
 
 const listStyle = {
   display: 'flex',
   flexDirection: 'column',
   gap: '1.5rem',
-  marginTop: '1rem'
+  marginTop: '1rem',
 };
 
 const itemStyle = {
   backgroundColor: '#ffecec',
   padding: '1rem',
   borderRadius: '1rem',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
 };
 
 const userName = {
   fontSize: '1.2rem',
-  fontWeight: 'bold'
+  fontWeight: 'bold',
 };
 
 const reactionButtonStyle = {
@@ -254,7 +278,7 @@ const reactionButtonStyle = {
   borderRadius: '9999px',
   padding: '0.4rem 0.8rem',
   fontFamily: 'Comfortaa, sans-serif',
-  cursor: 'pointer'
+  cursor: 'pointer',
 };
 
 export default HomePage;

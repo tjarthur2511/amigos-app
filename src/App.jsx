@@ -11,9 +11,10 @@ import ScrollToTop from './components/common/ScrollToTop';
 import FallingAEffect from './components/common/FallingAEffect';
 
 import SignOutButton from './components/common/SignOutButton';
-import NewPostButton from './components/common/NewPostButton'; // ✅ Restored
+import NewPostButton from './components/common/NewPostButton';
 import NotificationsBell from './components/common/NotificationsBell';
 import GoLiveButton from './components/common/GoLiveButton';
+import MapHangoutButton from './components/common/MapHangoutButton';
 import ThemeToggle from './components/common/ThemeToggle';
 import LanguageToggle from './components/common/LanguageToggle';
 import GlobalSearch from './components/common/GlobalSearch';
@@ -46,9 +47,10 @@ function AppContent({ user }) {
       {user && (
         <>
           <SignOutButton />
-          <NewPostButton /> {/* ✅ Button restored correctly */}
+          <NewPostButton />
           <NotificationsBell />
           <GoLiveButton />
+          <MapHangoutButton /> {/* ✅ NEW GLOBAL MAP BUTTON */}
           <ThemeToggle />
           <LanguageToggle />
           <GlobalSearch />
