@@ -5,7 +5,10 @@ import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 export const clearGrupos = async () => {
   const snapshot = await getDocs(collection(db, "grupos"));
   for (const docRef of snapshot.docs) {
-    await deleteDoc(doc(db, "grupos", docRef.id));
+    if (docRef.data()?.seeded === true) {
+      await deleteDoc(doc(db, "grupos", docRef.id));
+      console.log(`🗑️ Deleted seeded grupo: ${docRef.id}`);
+    }
   }
-  console.log("🧼 Cleared Grupos");
+  console.log("✅ Cleared seeded Grupos");
 };

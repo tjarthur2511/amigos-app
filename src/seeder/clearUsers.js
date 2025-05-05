@@ -8,14 +8,18 @@ export const clearUsers = async () => {
   for (const docRef of snapshot.docs) {
     const userData = docRef.data();
 
-    // ONLY delete if the user is marked as seeded
-    if (userData?.seeded === true) {
+    // Delete if user is a known bot or test account (customize list here)
+    const isSeededBot =
+      ["luna@amigos.ai", "zen@amigos.ai"].includes(userData?.email) ||
+      userData?.displayName?.includes("Bot");
+
+    if (isSeededBot) {
       await deleteDoc(doc(db, "users", docRef.id));
       console.log(`🧹 Deleted seeded user: ${docRef.id}`);
     } else {
-      console.log(`🛡️ Skipped real user (non-seeded): ${docRef.id}`);
+      console.log(`🛡️ Kept real user: ${userData?.displayName || docRef.id}`);
     }
   }
 
-  console.log("✅ Cleared only seeded users.");
+  console.log("✅ Done clearing seeded users.");
 };

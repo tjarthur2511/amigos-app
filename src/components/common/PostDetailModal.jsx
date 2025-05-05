@@ -1,4 +1,3 @@
-// src/components/common/PostDetailModal.jsx
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { db, auth } from '../../firebase';
@@ -58,18 +57,6 @@ const PostDetailModal = ({ post, onClose }) => {
     setNewComment('');
   };
 
-  const handleReply = async (text, parentId) => {
-    if (!text.trim()) return;
-    await addDoc(collection(db, 'comments'), {
-      content: text,
-      createdAt: Timestamp.now(),
-      postId: post.id,
-      userId: auth.currentUser.uid,
-      parentId,
-      emojis: {}
-    });
-  };
-
   const handleEmojiReact = async (commentId, emoji, currentMap) => {
     const ref = doc(db, 'comments', commentId);
     const userId = auth.currentUser.uid;
@@ -87,9 +74,8 @@ const PostDetailModal = ({ post, onClose }) => {
       <div style={contentStyle}>
         <button onClick={onClose} style={closeStyle}>✖</button>
 
-        {/* Centered Post Card */}
         <div style={postCard}>
-          <h2 style={{ color: '#FF6B6B', marginBottom: '1rem', textAlign: 'center' }}>Full Post</h2>
+          <h2 style={{ color: '#FF6B6B', marginBottom: '1rem' }}>Full Post</h2>
           <p style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{post.content}</p>
           {post.imageUrl && <img src={post.imageUrl} alt="post" style={mediaStyle} />}
           {post.videoUrl && (
@@ -99,58 +85,54 @@ const PostDetailModal = ({ post, onClose }) => {
           )}
         </div>
 
-        <div style={{ marginTop: '2rem' }}>
-          <h3 style={{ color: '#FF6B6B' }}>Comments</h3>
+        <h3 style={{ color: '#FF6B6B', marginTop: '1rem' }}>Comments</h3>
 
-          <div style={{ marginTop: '1rem' }}>
-            <textarea
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Write a comment..."
-              style={inputStyle}
-            />
-            <button onClick={handleCommentSubmit} style={submitStyle}>Post</button>
-          </div>
+        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+          <textarea
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Write a comment..."
+            style={inputStyle}
+          />
+          <button onClick={handleCommentSubmit} style={submitStyle}>Post</button>
+        </div>
 
-          <div style={scrollBox}>
-            {comments.map((comment) => (
-              <div key={comment.id} style={commentStyle}>
-                <p>🗨️ {comment.content}</p>
-
-                <div style={{ marginTop: '0.5rem' }}>
-                  <button
-                    onClick={() =>
-                      setEmojiPickerVisible(
-                        emojiPickerVisible === comment.id ? null : comment.id
-                      )
-                    }
-                    style={emojiToggleStyle}
-                  >
-                    😀
-                  </button>
-                  {emojiPickerVisible === comment.id && (
-                    <div style={emojiPickerStyle}>
-                      {emojiOptions.map((e) => (
-                        <button
-                          key={e}
-                          onClick={() => handleEmojiReact(comment.id, e, comment.emojis || {})}
-                          style={emojiStyle}
-                        >
-                          {e}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {replies[comment.id]?.slice(0, 3).map((reply) => (
-                  <div key={reply.id} style={replyStyle}>
-                    ↳ {reply.content}
-                  </div>
-                ))}
+        <div style={scrollBox}>
+          {comments.map((comment) => (
+            <div key={comment.id} style={commentStyle}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <p style={{ margin: 0 }}>🗨️ {comment.content}</p>
+                <button
+                  onClick={() =>
+                    setEmojiPickerVisible(emojiPickerVisible === comment.id ? null : comment.id)
+                  }
+                  style={emojiToggleStyle}
+                >
+                  😀
+                </button>
               </div>
-            ))}
-          </div>
+
+              {emojiPickerVisible === comment.id && (
+                <div style={emojiPickerStyle}>
+                  {emojiOptions.map((e) => (
+                    <button
+                      key={e}
+                      onClick={() => handleEmojiReact(comment.id, e, comment.emojis || {})}
+                      style={emojiStyle}
+                    >
+                      {e}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {replies[comment.id]?.slice(0, 3).map((reply) => (
+                <div key={reply.id} style={replyStyle}>
+                  ↳ {reply.content}
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
     </div>,
@@ -158,7 +140,7 @@ const PostDetailModal = ({ post, onClose }) => {
   );
 };
 
-// Styling
+// Styles
 const modalStyle = {
   position: 'fixed',
   top: 0,
@@ -169,7 +151,7 @@ const modalStyle = {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  zIndex: 9999999
+  zIndex: 999999
 };
 
 const contentStyle = {
@@ -181,16 +163,7 @@ const contentStyle = {
   maxHeight: '90vh',
   overflowY: 'auto',
   position: 'relative',
-  zIndex: 99999999
-};
-
-const postCard = {
-  backgroundColor: '#fff0f0',
-  padding: '1rem',
-  borderRadius: '1rem',
-  boxShadow: '0 2px 10px rgba(0,0,0,0.15)',
-  textAlign: 'center',
-  marginBottom: '2rem'
+  fontFamily: 'Comfortaa, sans-serif'
 };
 
 const closeStyle = {
@@ -203,25 +176,23 @@ const closeStyle = {
   cursor: 'pointer'
 };
 
-const scrollBox = {
-  maxHeight: '300px',
-  overflowY: 'auto',
+const postCard = {
+  backgroundColor: '#fff0f0',
+  padding: '1rem',
+  borderRadius: '1rem',
+  boxShadow: '0 2px 10px rgba(0,0,0,0.15)',
+  textAlign: 'center',
+  marginBottom: '2rem'
+};
+
+const mediaStyle = {
+  maxWidth: '100%',
+  borderRadius: '1rem',
   marginTop: '1rem'
 };
 
-const commentStyle = {
-  padding: '0.75rem',
-  borderBottom: '1px solid #eee'
-};
-
-const replyStyle = {
-  marginLeft: '1rem',
-  fontSize: '0.9rem',
-  color: '#555'
-};
-
 const inputStyle = {
-  width: '100%',
+  flex: 1,
   padding: '0.5rem',
   borderRadius: '0.5rem',
   border: '1px solid #ccc',
@@ -229,13 +200,33 @@ const inputStyle = {
 };
 
 const submitStyle = {
-  marginTop: '0.5rem',
   backgroundColor: '#FF6B6B',
   color: '#fff',
   border: 'none',
   padding: '0.5rem 1rem',
   borderRadius: '1rem',
-  cursor: 'pointer'
+  cursor: 'pointer',
+  fontWeight: 'bold'
+};
+
+const scrollBox = {
+  maxHeight: '300px',
+  overflowY: 'auto',
+  marginTop: '1rem',
+  paddingRight: '0.5rem'
+};
+
+const commentStyle = {
+  padding: '0.75rem',
+  borderBottom: '1px solid #eee',
+  marginBottom: '0.75rem'
+};
+
+const replyStyle = {
+  marginLeft: '1.5rem',
+  fontSize: '0.9rem',
+  color: '#555',
+  marginTop: '0.25rem'
 };
 
 const emojiToggleStyle = {
@@ -248,21 +239,15 @@ const emojiToggleStyle = {
 const emojiPickerStyle = {
   marginTop: '0.5rem',
   display: 'flex',
-  flexWrap: 'wrap',
-  gap: '0.5rem'
+  gap: '0.4rem',
+  flexWrap: 'wrap'
 };
 
 const emojiStyle = {
-  fontSize: '1.4rem',
+  fontSize: '1.2rem',
   background: 'none',
   border: 'none',
   cursor: 'pointer'
-};
-
-const mediaStyle = {
-  maxWidth: '100%',
-  borderRadius: '1rem',
-  marginTop: '1rem'
 };
 
 export default PostDetailModal;

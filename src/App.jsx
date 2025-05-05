@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebase';
+import { auth, db } from './firebase';
+import { doc, onSnapshot } from 'firebase/firestore';
 
-// Pages and Components
 import LoadingScreen from './components/LoadingScreen';
 import NavBar from './components/NavBar';
 import ScrollToTop from './components/common/ScrollToTop';
@@ -34,13 +34,13 @@ import AmigosPage from './components/pages/Amigos/AmigosPage';
 import LivePage from './components/pages/Live/LivePage';
 import TailwindTest from './components/pages/TailwindTest';
 
-function AppContent({ user }) {
+function AppContent({ user, themeColor, textColor }) {
   const location = useLocation();
   const hideNavOnPaths = ['/'];
   const showNav = user && !hideNavOnPaths.includes(location.pathname);
 
   return (
-    <>
+    <div style={{ backgroundColor: themeColor || '#FF6B6B', color: textColor || '#FFFFFF', minHeight: '100vh' }}>
       <ScrollToTop />
       <FallingAEffect />
 
@@ -50,7 +50,7 @@ function AppContent({ user }) {
           <NewPostButton />
           <NotificationsBell />
           <GoLiveButton />
-          <MapHangoutButton /> {/* ✅ NEW GLOBAL MAP BUTTON */}
+          <MapHangoutButton />
           <ThemeToggle />
           <LanguageToggle />
           <GlobalSearch />
@@ -85,27 +85,41 @@ function AppContent({ user }) {
           )}
         </Routes>
       </div>
-    </>
+    </div>
   );
 }
 
 function App() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [themeColor, setThemeColor] = useState("#FF6B6B");
+  const [textColor, setTextColor] = useState("#FFFFFF");
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
+
+      if (currentUser) {
+        const userRef = doc(db, "users", currentUser.uid);
+        const unsubscribeTheme = onSnapshot(userRef, (docSnap) => {
+          const data = docSnap.data();
+          if (data?.themeColor) setThemeColor(data.themeColor);
+          if (data?.textColor) setTextColor(data.textColor);
+        });
+
+        return () => unsubscribeTheme();
+      }
     });
-    return () => unsubscribe();
+
+    return () => unsubscribeAuth();
   }, []);
 
   if (loading) return <LoadingScreen />;
 
   return (
     <Router>
-      <AppContent user={user} />
+      <AppContent user={user} themeColor={themeColor} textColor={textColor} />
     </Router>
   );
 }

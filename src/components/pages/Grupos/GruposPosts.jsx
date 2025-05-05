@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { db, auth } from '../../../firebase';
 import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
+import PostCard from '../../common/PostCard';
 
 const GruposPosts = () => {
   const [posts, setPosts] = useState([]);
@@ -10,7 +11,6 @@ const GruposPosts = () => {
       const user = auth.currentUser;
       if (!user) return;
 
-      // Get posts made in any grupo the user is part of
       const userDoc = await db.collection('users').doc(user.uid).get();
       const userData = userDoc.data();
       const joinedGrupos = userData?.joinedGrupos || [];
@@ -38,13 +38,7 @@ const GruposPosts = () => {
         <ul style={listStyle}>
           {posts.map(post => (
             <li key={post.id} style={postItemStyle}>
-              <p style={postText}>{post.content || 'No text provided'}</p>
-              {post.imageUrl && <img src={post.imageUrl} alt="Grupo Post" style={mediaStyle} />}
-              {post.videoUrl && (
-                <video controls style={mediaStyle}>
-                  <source src={post.videoUrl} type="video/mp4" />
-                </video>
-              )}
+              <PostCard post={post} />
             </li>
           ))}
         </ul>
@@ -81,16 +75,6 @@ const postItemStyle = {
   padding: '1rem',
   borderRadius: '1rem',
   boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
-};
-
-const postText = {
-  fontSize: '1rem',
-  marginBottom: '0.5rem'
-};
-
-const mediaStyle = {
-  width: '100%',
-  borderRadius: '0.5rem'
 };
 
 const noPostStyle = {

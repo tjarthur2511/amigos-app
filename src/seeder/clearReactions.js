@@ -5,7 +5,10 @@ import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 export const clearReactions = async () => {
   const snapshot = await getDocs(collection(db, "reactions"));
   for (const docRef of snapshot.docs) {
-    await deleteDoc(doc(db, "reactions", docRef.id));
+    if (docRef.data()?.seeded === true) {
+      await deleteDoc(doc(db, "reactions", docRef.id));
+      console.log(`🗑️ Deleted seeded reaction: ${docRef.id}`);
+    }
   }
-  console.log("🧼 Cleared Reactions");
+  console.log("✅ Cleared seeded Reactions");
 };

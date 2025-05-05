@@ -4,47 +4,47 @@ import seedGrupos from "./seedGrupos.js";
 import seedEvents from "./seedEvents.js";
 import seedQuestionSets from "./seedQuestionSets.js";
 import seedReactions from "./seedReactions.js";
+import seedNotifications from "./seedNotifications.js"; // ✅ NEW
 
 import { clearUsers } from "./clearUsers.js";
 import { clearGrupos } from "./clearGrupos.js";
 import { clearEvents } from "./clearEvents.js";
 import { clearReactions } from "./clearReactions.js";
 import { clearQuestionSets } from "./clearQuestionSets.js";
-import { clearWeeklyQuestion } from "./clearWeeklyQuestion.js";
 import { clearAll } from "./clearAll.js";
 
 import clearSeededData from "./clearSeededData.js";
 
-// ✅ Keep these named exports
+// ✅ Named exports
 export {
   seedUsers,
   seedGrupos,
   seedEvents,
   seedQuestionSets,
   seedReactions,
+  seedNotifications, // ✅ NEW
   clearUsers,
   clearGrupos,
   clearEvents,
   clearReactions,
   clearQuestionSets,
-  clearWeeklyQuestion,
   clearAll,
   clearSeededData,
 };
 
-// ✅ ADD THIS grouped export
+// ✅ Grouped export for Admin use
 export const SeederScripts = {
   seedUsers,
   seedGrupos,
   seedEvents,
   seedQuestionSets,
   seedReactions,
+  seedNotifications, // ✅ NEW
   clearUsers,
   clearGrupos,
   clearEvents,
   clearReactions,
   clearQuestionSets,
-  clearWeeklyQuestion,
   clearAll,
   clearSeededData,
 };

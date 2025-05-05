@@ -10,7 +10,8 @@ const seedEvents = async () => {
       grupoId: "demo-grupo-1",
       date: "2025-05-01",
       creatorId: "Boss1",
-      attendees: ["Boss1", "user123"]
+      attendees: ["Boss1", "user123"],
+      seeded: true
     },
     {
       name: "Coffee & Code Meetup",
@@ -18,7 +19,8 @@ const seedEvents = async () => {
       grupoId: "demo-grupo-2",
       date: "2025-05-04",
       creatorId: "user123",
-      attendees: ["user123"]
+      attendees: ["user123"],
+      seeded: true
     }
   ];
 
@@ -29,4 +31,4 @@ const seedEvents = async () => {
   console.log("✅ Seeded Events");
 };
 
-export default seedEvents();
+export default seedEvents;

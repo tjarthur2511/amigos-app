@@ -9,14 +9,14 @@ const containerStyle = {
 };
 
 const center = {
-  lat: 42.3314, // Michigan
+  lat: 42.3314, // Michigan default
   lng: -83.0458,
 };
 
 const MapHangoutsModal = ({ onClose }) => {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: "AIzaSyDx4pT2nVGzixl1k7r54GkSTI8Yab8fOAk", // ✅ your real key
+    googleMapsApiKey: "AIzaSyC635cp2x54I0JHITYia5Cy0j540BRKr2Q", // ✅ Your real key
   });
 
   return (

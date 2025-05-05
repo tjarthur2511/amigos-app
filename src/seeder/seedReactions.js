@@ -14,10 +14,13 @@ const seedReactions = async () => {
   ];
 
   for (const reaction of reactions) {
-    await addDoc(collection(db, "reactions"), reaction);
+    await addDoc(collection(db, "reactions"), {
+      ...reaction,
+      seeded: true // ✅ Mark as seeded so it's safe to clear
+    });
   }
 
   console.log("✅ Seeded Reactions");
 };
 
-export default seedReactions();
+export default seedReactions;

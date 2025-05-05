@@ -1,12 +1,31 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { db, auth } from "../../firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  getDocs,
+} from "firebase/firestore";
 
 const PostForm = ({ onClose }) => {
   const [content, setContent] = useState("");
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [allAmigos, setAllAmigos] = useState([]);
+  const [allGrupos, setAllGrupos] = useState([]);
+  const [taggedAmigos, setTaggedAmigos] = useState([]);
+  const [taggedGrupos, setTaggedGrupos] = useState([]);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const amigosSnap = await getDocs(collection(db, "users"));
+      const gruposSnap = await getDocs(collection(db, "grupos"));
+      setAllAmigos(amigosSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setAllGrupos(gruposSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    };
+    loadData();
+  }, []);
 
   const extractHashtags = (text) => {
     return text.match(/#[a-zA-Z0-9_]+/g) || [];
@@ -17,16 +36,14 @@ const PostForm = ({ onClose }) => {
     const trimmedContent = content.trim();
     const hasText = trimmedContent.length > 0;
     const hasMedia = file !== null;
-
     if (!hasText && !hasMedia) {
       alert("You must write something or select a file.");
       return;
     }
 
     setLoading(true);
-
     const mediaType = file ? (file.type.startsWith("video") ? "video" : "image") : "";
-    const mediaUrl = ""; // No upload yet, keep blank
+    const mediaUrl = ""; // No upload storage yet
 
     try {
       await addDoc(collection(db, "posts"), {
@@ -39,11 +56,15 @@ const PostForm = ({ onClose }) => {
         hashtags: extractHashtags(trimmedContent),
         imageUrl: mediaType === "image" ? mediaUrl : "",
         videoUrl: mediaType === "video" ? mediaUrl : "",
-        type: "amigo",
+        taggedAmigos,
+        taggedGrupos,
+        type: "amigo"
       });
 
       setContent("");
       setFile(null);
+      setTaggedAmigos([]);
+      setTaggedGrupos([]);
       if (typeof onClose === "function") onClose();
     } catch (err) {
       console.error("Firestore error:", err);
@@ -73,6 +94,58 @@ const PostForm = ({ onClose }) => {
         }}
       />
 
+      {/* Tag amigos and grupos */}
+      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+        <select
+          multiple
+          value={taggedAmigos}
+          onChange={(e) =>
+            setTaggedAmigos(Array.from(e.target.selectedOptions, option => option.value))
+          }
+          style={{
+            flex: 1,
+            padding: "0.6rem",
+            borderRadius: "1rem",
+            fontFamily: "Comfortaa, sans-serif",
+            fontSize: "0.95rem",
+            border: "1px solid #ccc",
+            backgroundColor: "#fff",
+            color: "#444",
+            minWidth: "48%"
+          }}
+        >
+          <option disabled value="">Tag amigos</option>
+          {allAmigos.map(a => (
+            <option key={a.id} value={a.id}>{a.displayName || a.email}</option>
+          ))}
+        </select>
+
+        <select
+          multiple
+          value={taggedGrupos}
+          onChange={(e) =>
+            setTaggedGrupos(Array.from(e.target.selectedOptions, option => option.value))
+          }
+          style={{
+            flex: 1,
+            padding: "0.6rem",
+            borderRadius: "1rem",
+            fontFamily: "Comfortaa, sans-serif",
+            fontSize: "0.95rem",
+            border: "1px solid #ccc",
+            backgroundColor: "#fff",
+            color: "#444",
+            minWidth: "48%"
+          }}
+        >
+          <option disabled value="">Tag grupos</option>
+          {allGrupos.map(g => (
+            <option key={g.id} value={g.id}>{g.name}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Media upload */}
       <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
         <button
           type="button"
@@ -126,6 +199,7 @@ const PostForm = ({ onClose }) => {
         </div>
       )}
 
+      {/* Post button */}
       <button
         type="submit"
         disabled={loading}
@@ -138,6 +212,7 @@ const PostForm = ({ onClose }) => {
           borderRadius: "9999px",
           fontWeight: "bold",
           fontFamily: "Comfortaa, sans-serif",
+          fontSize: "1rem",
           cursor: "pointer",
           transition: "0.2s ease-in-out",
         }}

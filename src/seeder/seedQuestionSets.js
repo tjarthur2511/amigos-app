@@ -6,17 +6,20 @@ const seedQuestionSets = async () => {
   const questions = [
     {
       text: "Do you enjoy hiking?",
-      type: "yesno"
+      type: "yesno",
+      seeded: true
     },
     {
       text: "What genres of games do you play?",
       type: "multiple",
-      options: ["FPS", "RPG", "MOBA", "Puzzle", "Sim"]
+      options: ["FPS", "RPG", "MOBA", "Puzzle", "Sim"],
+      seeded: true
     },
     {
       text: "What hobbies do you enjoy?",
       type: "multiple",
-      options: ["Gaming", "Cooking", "Sports", "Art", "Music", "Coding"]
+      options: ["Gaming", "Cooking", "Sports", "Art", "Music", "Coding"],
+      seeded: true
     }
   ];
 
@@ -27,4 +30,4 @@ const seedQuestionSets = async () => {
   console.log("✅ Seeded Question Sets");
 };
 
-export default seedQuestionSets();
+export default seedQuestionSets;

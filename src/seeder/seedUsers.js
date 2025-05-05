@@ -11,18 +11,21 @@ const seedUsers = async () => {
       monthlyQuiz: {},
       isAdmin: true,
       uid: "Boss1"
+      // No seeded flag – this is your real user
     },
     {
       displayName: "LunaBot",
       email: "luna@amigos.ai",
       quizAnswers: {},
-      monthlyQuiz: {}
+      monthlyQuiz: {},
+      seeded: true
     },
     {
       displayName: "ZenBot",
       email: "zen@amigos.ai",
       quizAnswers: {},
-      monthlyQuiz: {}
+      monthlyQuiz: {},
+      seeded: true
     }
   ];
 
@@ -30,7 +33,7 @@ const seedUsers = async () => {
     await addDoc(collection(db, "users"), user);
   }
 
-  console.log("✅ Seeded Users");
+  console.log("✅ Seeded demo users added.");
 };
 
-export default seedUsers();
+export default seedUsers;

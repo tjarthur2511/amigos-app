@@ -10,7 +10,8 @@ const seedGrupos = async () => {
       location: "Monroe, MI",
       creatorId: "Boss1",
       members: ["Boss1"],
-      isPublic: true
+      isPublic: true,
+      seeded: true
     },
     {
       name: "Creative Collective",
@@ -18,7 +19,8 @@ const seedGrupos = async () => {
       location: "Detroit, MI",
       creatorId: "user123",
       members: ["user123"],
-      isPublic: true
+      isPublic: true,
+      seeded: true
     }
   ];
 
@@ -29,4 +31,4 @@ const seedGrupos = async () => {
   console.log("✅ Seeded Grupos");
 };
 
-export default seedGrupos();
+export default seedGrupos;

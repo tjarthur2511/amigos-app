@@ -7,6 +7,7 @@ import {
   getDocs,
   orderBy
 } from 'firebase/firestore';
+import PostCard from '../../common/PostCard';
 
 const AmigosPosts = () => {
   const [amigosPosts, setAmigosPosts] = useState([]);
@@ -26,15 +27,18 @@ const AmigosPosts = () => {
         return;
       }
 
-      const q = query(
-        collection(db, 'posts'),
-        where('userId', 'in', following),
-        orderBy('createdAt', 'desc')
+      const postSnap = await getDocs(
+        query(collection(db, 'posts'), orderBy('createdAt', 'desc'))
       );
 
-      const postDocs = await getDocs(q);
-      const posts = postDocs.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setAmigosPosts(posts);
+      const allPosts = postSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      const filtered = allPosts.filter(post =>
+        Array.isArray(post.taggedAmigos) &&
+        post.taggedAmigos.some(tagged => following.includes(tagged))
+      );
+
+      setAmigosPosts(filtered);
     };
 
     loadAmigosPosts();
@@ -47,13 +51,7 @@ const AmigosPosts = () => {
         <ul style={listStyle}>
           {amigosPosts.map(post => (
             <li key={post.id} style={itemStyle}>
-              <p style={postContent}>{post.content || 'No content provided'}</p>
-              {post.imageUrl && <img src={post.imageUrl} alt="Amigo post" style={mediaStyle} />}
-              {post.videoUrl && (
-                <video controls style={mediaStyle}>
-                  <source src={post.videoUrl} type="video/mp4" />
-                </video>
-              )}
+              <PostCard post={post} />
             </li>
           ))}
         </ul>
@@ -91,19 +89,6 @@ const itemStyle = {
   padding: '1rem',
   borderRadius: '1rem',
   boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
-};
-
-const postContent = {
-  fontSize: '1rem',
-  fontWeight: 'bold',
-  color: '#333',
-  marginBottom: '0.5rem'
-};
-
-const mediaStyle = {
-  maxWidth: '100%',
-  borderRadius: '1rem',
-  marginTop: '0.5rem'
 };
 
 const noPostText = {

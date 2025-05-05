@@ -5,7 +5,10 @@ import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 export const clearQuestionSets = async () => {
   const snapshot = await getDocs(collection(db, "questionSets"));
   for (const docRef of snapshot.docs) {
-    await deleteDoc(doc(db, "questionSets", docRef.id));
+    if (docRef.data()?.seeded === true) {
+      await deleteDoc(doc(db, "questionSets", docRef.id));
+      console.log(`🗑️ Deleted seeded question set: ${docRef.id}`);
+    }
   }
-  console.log("🧼 Cleared Question Sets");
+  console.log("✅ Cleared seeded Question Sets");
 };
