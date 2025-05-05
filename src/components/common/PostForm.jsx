@@ -17,25 +17,34 @@ const PostForm = ({ onClose }) => {
   const [taggedGrupos, setTaggedGrupos] = useState([]);
   const fileInputRef = useRef(null);
 
+  // Load all amigos and grupos
   useEffect(() => {
     const loadData = async () => {
-      const amigosSnap = await getDocs(collection(db, "users"));
-      const gruposSnap = await getDocs(collection(db, "grupos"));
-      setAllAmigos(amigosSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      setAllGrupos(gruposSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      try {
+        const amigosSnap = await getDocs(collection(db, "users"));
+        const gruposSnap = await getDocs(collection(db, "grupos"));
+        setAllAmigos(amigosSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        setAllGrupos(gruposSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      } catch (err) {
+        console.error("Error loading data: ", err);
+        alert("Failed to load amigos and grupos.");
+      }
     };
     loadData();
   }, []);
 
+  // Extract hashtags from the content
   const extractHashtags = (text) => {
     return text.match(/#[a-zA-Z0-9_]+/g) || [];
   };
 
+  // Handle post submission
   const handlePost = async (e) => {
     e.preventDefault();
     const trimmedContent = content.trim();
     const hasText = trimmedContent.length > 0;
     const hasMedia = file !== null;
+
     if (!hasText && !hasMedia) {
       alert("You must write something or select a file.");
       return;
@@ -43,7 +52,7 @@ const PostForm = ({ onClose }) => {
 
     setLoading(true);
     const mediaType = file ? (file.type.startsWith("video") ? "video" : "image") : "";
-    const mediaUrl = ""; // No upload storage yet
+    const mediaUrl = ""; // No upload storage yet (implement later)
 
     try {
       await addDoc(collection(db, "posts"), {

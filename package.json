@@ -17,7 +17,7 @@
     "@firebase/component": "^0.6.5",
     "@firebase/util": "^1.9.3",
     "@react-google-maps/api": "^2.20.6",
-    "firebase": "^9.22.2",
+    "firebase": "^9.23.0",
     "framer-motion": "^12.9.2",
     "i18next": "^25.0.1",
     "react": "^19.0.0",

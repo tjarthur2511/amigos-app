@@ -1,4 +1,3 @@
-// src/firebase.js
 import { initializeApp } from "firebase/app";
 import {
   getFirestore,
@@ -30,6 +29,9 @@ const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 const auth = getAuth(app);
+
+// Firebase Storage initialization - commented out since you don't need it for now
+// const storage = getStorage(app);  // You can uncomment this when you're ready to use storage
 
 export {
   db,

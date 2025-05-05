@@ -1,10 +1,23 @@
+/* Import Comfortaa font from Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* General global styles */
+body {
+  background-color: #FF6B6B; /* Your coral background color */
+  font-family: 'Comfortaa', sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
 
-/* Fall Animation */
+/* Pulse animation */
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Animation for falling items (for falling amigos in background) */
 @keyframes fall {
   0% { transform: translateY(0); opacity: 0.7; }
   100% { transform: translateY(100vh); opacity: 0; }
@@ -15,15 +28,11 @@
     animation: fall linear infinite;
   }
 }
-body {
-  background-color: #FF6B6B;
-  font-family: 'Comfortaa', sans-serif;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
+
+/* Define Tailwind colors for your theme */
+:root {
+  --theme-color: 255, 107, 107; /* coral red */
+  --text-color: 255, 255, 255; /* white text */
+  --hover-color: 230, 85, 85; /* slightly darker coral */
 }
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.1); opacity: 0.7; }
-  100% { transform: scale(1); opacity: 1; }
-}
+
