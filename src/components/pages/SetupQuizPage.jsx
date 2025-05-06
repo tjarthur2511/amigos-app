@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth, db } from "../../firebase";
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { motion } from 'framer-motion';
-import FallingAEffect from './FallingAEffect';
+import FallingAEffect from '../common/FallingAEffect';
 
 const staticQuestions = [
   "What's your favorite way to relax?",

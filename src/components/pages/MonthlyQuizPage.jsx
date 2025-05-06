@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../firebase.js';
 import { doc, updateDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { motion } from 'framer-motion';
-import FallingAEffect from './FallingAEffect';
+import FallingAEffect from '../common/FallingAEffect';
 
 const MonthlyQuizPage = () => {
   const [questions, setQuestions] = useState([]);

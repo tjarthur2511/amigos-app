@@ -1,38 +1,44 @@
-/* Import Comfortaa font from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Comfortaa&display=swap');
-
-/* General global styles */
-body {
-  background-color: #FF6B6B; /* Your coral background color */
-  font-family: 'Comfortaa', sans-serif;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-}
-
-/* Pulse animation */
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.1); opacity: 0.7; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-/* Animation for falling items (for falling amigos in background) */
 @keyframes fall {
-  0% { transform: translateY(0); opacity: 0.7; }
-  100% { transform: translateY(100vh); opacity: 0; }
-}
-
-@layer utilities {
-  .animate-fall {
-    animation: fall linear infinite;
+  0% {
+    transform: translateY(-100px);
+  }
+  100% {
+    transform: translateY(120vh);
   }
 }
 
-/* Define Tailwind colors for your theme */
-:root {
-  --theme-color: 255, 107, 107; /* coral red */
-  --text-color: 255, 255, 255; /* white text */
-  --hover-color: 230, 85, 85; /* slightly darker coral */
+@keyframes spin-slow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+.animate-fall {
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.animate-spin-slow {
+  animation-name: spin-slow;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.animate-wiggle {
+  animation-name: wiggle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}

@@ -1,6 +1,6 @@
 // src/i18n.js
-import i18n from "i18next";
-import { initReactI18next } from "react-i18next";
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
 
 const resources = {
   en: {
@@ -16,7 +16,7 @@ const resources = {
       yourProfile: "Your Profile",
       yourPosts: "Your Posts",
       yourGrupos: "Your Grupos",
-      syncing: "Syncing vibes… loading your amigos 🧠💬",
+      syncing: "Syncing vibes… loading your amigos",
       feed: "Feed",
       live: "Live",
       suggestions: "Suggestions",
@@ -28,8 +28,8 @@ const resources = {
       untitledPost: "Untitled Post",
       noContent: "No content",
       noGrupos: "No grupos created yet.",
-      settings: "Settings",
-    },
+      settings: "Settings"
+    }
   },
   es: {
     translation: {
@@ -44,7 +44,7 @@ const resources = {
       yourProfile: "Tu Perfil",
       yourPosts: "Tus Publicaciones",
       yourGrupos: "Tus Grupos",
-      syncing: "Sincronizando energías… cargando tus amigos 🧠💬",
+      syncing: "Sincronizando energías… cargando tus amigos",
       feed: "Noticias",
       live: "En Vivo",
       suggestions: "Sugerencias",
@@ -56,23 +56,91 @@ const resources = {
       untitledPost: "Publicación sin título",
       noContent: "Sin contenido",
       noGrupos: "Aún no has creado grupos.",
-      settings: "Configuraciones",
-    },
+      settings: "Configuración"
+    }
   },
+  fr: { translation: Object.fromEntries([
+    "home","profile","amigos","grupos","admin","post","commentPlaceholder","save",
+    "yourProfile","yourPosts","yourGrupos","syncing","feed","live","suggestions",
+    "addPhoto","photoURL","yourName","shortBio","noPosts","untitledPost",
+    "noContent","noGrupos","settings"
+  ].map(key => [key, `[French] ${key}`])) },
+  de: { translation: Object.fromEntries([
+    "home","profile","amigos","grupos","admin","post","commentPlaceholder","save",
+    "yourProfile","yourPosts","yourGrupos","syncing","feed","live","suggestions",
+    "addPhoto","photoURL","yourName","shortBio","noPosts","untitledPost",
+    "noContent","noGrupos","settings"
+  ].map(key => [key, `[German] ${key}`])) },
+  zh: { translation: Object.fromEntries([
+    "home","profile","amigos","grupos","admin","post","commentPlaceholder","save",
+    "yourProfile","yourPosts","yourGrupos","syncing","feed","live","suggestions",
+    "addPhoto","photoURL","yourName","shortBio","noPosts","untitledPost",
+    "noContent","noGrupos","settings"
+  ].map(key => [key, `[Chinese] ${key}`])) },
+  hi: { translation: Object.fromEntries([
+    "home","profile","amigos","grupos","admin","post","commentPlaceholder","save",
+    "yourProfile","yourPosts","yourGrupos","syncing","feed","live","suggestions",
+    "addPhoto","photoURL","yourName","shortBio","noPosts","untitledPost",
+    "noContent","noGrupos","settings"
+  ].map(key => [key, `[Hindi] ${key}`])) },
+  ar: { translation: Object.fromEntries([
+    "home","profile","amigos","grupos","admin","post","commentPlaceholder","save",
+    "yourProfile","yourPosts","yourGrupos","syncing","feed","live","suggestions",
+    "addPhoto","photoURL","yourName","shortBio","noPosts","untitledPost",
+    "noContent","noGrupos","settings"
+  ].map(key => [key, `[Arabic] ${key}`])) },
+  pt: { translation: Object.fromEntries([
+    "home","profile","amigos","grupos","admin","post","commentPlaceholder","save",
+    "yourProfile","yourPosts","yourGrupos","syncing","feed","live","suggestions",
+    "addPhoto","photoURL","yourName","shortBio","noPosts","untitledPost",
+    "noContent","noGrupos","settings"
+  ].map(key => [key, `[Portuguese] ${key}`])) },
+  ru: { translation: Object.fromEntries([
+    "home","profile","amigos","grupos","admin","post","commentPlaceholder","save",
+    "yourProfile","yourPosts","yourGrupos","syncing","feed","live","suggestions",
+    "addPhoto","photoURL","yourName","shortBio","noPosts","untitledPost",
+    "noContent","noGrupos","settings"
+  ].map(key => [key, `[Russian] ${key}`])) },
+  ja: { translation: Object.fromEntries([
+    "home","profile","amigos","grupos","admin","post","commentPlaceholder","save",
+    "yourProfile","yourPosts","yourGrupos","syncing","feed","live","suggestions",
+    "addPhoto","photoURL","yourName","shortBio","noPosts","untitledPost",
+    "noContent","noGrupos","settings"
+  ].map(key => [key, `[Japanese] ${key}`])) },
+  ko: { translation: Object.fromEntries([
+    "home","profile","amigos","grupos","admin","post","commentPlaceholder","save",
+    "yourProfile","yourPosts","yourGrupos","syncing","feed","live","suggestions",
+    "addPhoto","photoURL","yourName","shortBio","noPosts","untitledPost",
+    "noContent","noGrupos","settings"
+  ].map(key => [key, `[Korean] ${key}`])) },
+  tr: { translation: Object.fromEntries([
+    "home","profile","amigos","grupos","admin","post","commentPlaceholder","save",
+    "yourProfile","yourPosts","yourGrupos","syncing","feed","live","suggestions",
+    "addPhoto","photoURL","yourName","shortBio","noPosts","untitledPost",
+    "noContent","noGrupos","settings"
+  ].map(key => [key, `[Turkish] ${key}`])) },
+  ur: { translation: Object.fromEntries([
+    "home","profile","amigos","grupos","admin","post","commentPlaceholder","save",
+    "yourProfile","yourPosts","yourGrupos","syncing","feed","live","suggestions",
+    "addPhoto","photoURL","yourName","shortBio","noPosts","untitledPost",
+    "noContent","noGrupos","settings"
+  ].map(key => [key, `[Urdu] ${key}`])) },
+  bn: { translation: Object.fromEntries([
+    "home","profile","amigos","grupos","admin","post","commentPlaceholder","save",
+    "yourProfile","yourPosts","yourGrupos","syncing","feed","live","suggestions",
+    "addPhoto","photoURL","yourName","shortBio","noPosts","untitledPost",
+    "noContent","noGrupos","settings"
+  ].map(key => [key, `[Bengali] ${key}`])) }
 };
 
 i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: "en", // default language
-    fallbackLng: "en",
-    interpolation: {
-      escapeValue: false, // react already safes from xss
-    },
-    react: {
-      useSuspense: true, // optional: fallback UI for loading
-    },
+    lng: 'en',
+    fallbackLng: 'en',
+    interpolation: { escapeValue: false },
+    react: { useSuspense: true },
   });
 
 export default i18n;

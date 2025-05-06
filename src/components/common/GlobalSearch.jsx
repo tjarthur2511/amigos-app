@@ -1,27 +1,46 @@
-// src/components/common/GlobalSearch.jsx
-import React, { useState } from "react";
+import React from "react";
 
 const GlobalSearch = () => {
-  const [query, setQuery] = useState("");
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    alert(`Search for: ${query}`);
+  const handleClick = () => {
+    alert("Open search modal or perform global search...");
   };
 
   return (
-    <form
-      onSubmit={handleSearch}
-      className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[9999] flex items-center bg-white rounded-full shadow-md px-4 py-2 w-[280px]"
+    <div
+      style={{
+        position: "fixed",
+        top: "1rem",
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 10000,
+        pointerEvents: "auto",
+      }}
     >
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search amigos, grupos..."
-        className="w-full bg-[#fef2f2] rounded-full px-3 py-1 outline-none text-[#FF6B6B] font-[Comfortaa] placeholder-gray-400"
-      />
-    </form>
+      <button
+        onClick={handleClick}
+        style={{
+          backgroundColor: "#FFFFFF",
+          border: "2px solid #FF6B6B",
+          borderRadius: "9999px",
+          padding: "0.5rem 1.2rem",
+          fontSize: "0.9rem",
+          color: "#FF6B6B",
+          fontFamily: "Comfortaa, sans-serif",
+          cursor: "pointer",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+        }}
+        onMouseOver={(e) => {
+          e.target.style.backgroundColor = "#FF6B6B";
+          e.target.style.color = "#FFFFFF";
+        }}
+        onMouseOut={(e) => {
+          e.target.style.backgroundColor = "#FFFFFF";
+          e.target.style.color = "#FF6B6B";
+        }}
+      >
+        🔍 Search
+      </button>
+    </div>
   );
 };
 

@@ -11,11 +11,12 @@ import {
   deleteDoc,
   doc
 } from 'firebase/firestore';
-import FallingAEffect from '../FallingAEffect';
+import FallingAEffect from '../../common/FallingAEffect'; // ✅ use shared FallingAEffect
 import ProfilePhotos from './ProfilePhotos';
 import ProfileGrupos from './ProfileGrupos';
 import ProfileAmigos from './ProfileAmigos';
 import ProfilePreferences from './ProfilePreferences';
+
 
 const ProfilePage = () => {
   const navigate = useNavigate();

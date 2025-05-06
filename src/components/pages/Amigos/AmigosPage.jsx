@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import FallingAEffect from '../FallingAEffect';
+import FallingAEffect from '../../common/FallingAEffect'; // ✅ fixed path
 import SuggestedAmigos from './SuggestedAmigos';
 import AmigosUnidos from './AmigosUnidos';
 import AmigosPosts from './AmigosPosts';

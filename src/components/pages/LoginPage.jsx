@@ -4,7 +4,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase.js';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import FallingAEffect from './FallingAEffect'; // ✅ imported falling background
+import FallingAEffect from '../common/FallingAEffect'; // ✅ imported falling background
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');

@@ -54,7 +54,7 @@ const NotificationsBell = () => {
       <button
         onClick={handleClick}
         style={{
-          position: "absolute",
+          position: "fixed",
           top: "12.25rem",
           right: "21rem",
           backgroundColor: "#FFFFFF",

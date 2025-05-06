@@ -1,9 +1,8 @@
-// src/components/pages/Grupos/GruposPage.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import FallingAEffect from '../FallingAEffect';
+import FallingAEffect from '../../common/FallingAEffect'; // ✅ fixed
 import SuggestedGrupos from './SuggestedGrupos';
 import GruposUnidos from './GruposUnidos';
 import GruposPosts from './GruposPosts';
@@ -75,6 +74,7 @@ const GruposPage = () => {
   );
 };
 
+// All styles remain unchanged...
 const pageStyle = {
   fontFamily: 'Comfortaa, sans-serif',
   backgroundColor: '#FF6B6B',

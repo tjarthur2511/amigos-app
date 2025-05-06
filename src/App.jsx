@@ -19,7 +19,6 @@ import ThemeToggle from './components/common/ThemeToggle';
 import LanguageToggle from './components/common/LanguageToggle';
 import GlobalSearch from './components/common/GlobalSearch';
 import HelpButton from './components/common/HelpButton';
-import ProfileMenu from './components/common/ProfileMenu';
 
 import LandingPage from './components/pages/LandingPage';
 import HomePage from './components/pages/HomePage';
@@ -40,7 +39,15 @@ function AppContent({ user, themeColor, textColor }) {
   const showNav = user && !hideNavOnPaths.includes(location.pathname);
 
   return (
-    <div style={{ backgroundColor: themeColor || '#FF6B6B', color: textColor || '#FFFFFF', minHeight: '100vh' }}>
+    <div
+      style={{
+        backgroundColor: themeColor || '#FF6B6B',
+        color: textColor || '#FFFFFF',
+        minHeight: '100vh',
+        position: 'relative',
+        overflowX: 'hidden',
+      }}
+    >
       <ScrollToTop />
       <FallingAEffect />
 
@@ -55,7 +62,6 @@ function AppContent({ user, themeColor, textColor }) {
           <LanguageToggle />
           <GlobalSearch />
           <HelpButton />
-          <ProfileMenu />
         </>
       )}
 
