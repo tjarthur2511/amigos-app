@@ -1,3 +1,4 @@
+// src/components/common/PostWithModal.jsx
 import React, { useState } from "react";
 import PostCard from "./PostCard";
 import PostDetailModal from "./PostDetailModal";

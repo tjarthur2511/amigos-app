@@ -1,9 +1,6 @@
 /** tailwind.config.js */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,jsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
     extend: {
       fontFamily: {
@@ -11,9 +8,9 @@ export default {
       },
       colors: {
         theme: {
-          DEFAULT: "rgb(var(--theme-color) / <alpha-value>)",
-          text: "rgb(var(--text-color) / <alpha-value>)",
-          hover: "rgb(var(--hover-color) / <alpha-value>)",
+          DEFAULT: "var(--theme-color)",
+          text: "var(--text-color)",
+          hover: "var(--hover-color)",
         },
       },
       keyframes: {

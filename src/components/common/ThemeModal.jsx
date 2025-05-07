@@ -3,43 +3,38 @@ import React, { useState, useEffect } from "react";
 import { db } from "../../firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import { useAuth } from "../../context/AuthContext";
-import { motion } from "framer-motion";
-
-const colorOptions = [
-  "#FF6B6B", "#4CAF50", "#2196F3", "#FFC107", "#9C27B0",
-  "#00BCD4", "#FF9800", "#E91E63", "#3F51B5", "#8BC34A",
-  "#673AB7", "#F44336", "#607D8B", "#795548", "#009688",
-  "#CDDC39", "#FF5722", "#BDBDBD", "#03A9F4", "#A1887F",
-  // Darker Colors
-  "#1a1a1a", "#2d2d2d", "#333333", "#444444", "#555555",
-  "#111827", "#0f172a", "#1e293b", "#1f2937", "#374151"
-];
 
 const presets = [
   {
     name: "Amigo Light",
     primary: "#FF6B6B",
     text: "#FFFFFF",
-    hover: "#FFA3A3"
+    hover: "#FFA3A3",
   },
   {
     name: "Amigo Dark",
     primary: "#1a1a1a",
     text: "#FFFFFF",
-    hover: "#333333"
+    hover: "#333333",
   },
   {
     name: "Ocean Night",
     primary: "#0f172a",
     text: "#FFFFFF",
-    hover: "#1e293b"
+    hover: "#1e293b",
   },
   {
     name: "Sunset Punch",
     primary: "#FF7043",
     text: "#FFFFFF",
-    hover: "#FF5722"
-  }
+    hover: "#FF5722",
+  },
+];
+
+const colorSwatch = [
+  "#FF6B6B", "#4CAF50", "#2196F3", "#FFC107", "#9C27B0",
+  "#00BCD4", "#FF9800", "#E91E63", "#3F51B5", "#8BC34A",
+  "#212121", "#1a1a1a", "#0f172a", "#283593", "#FFD700"
 ];
 
 const ThemeModal = ({ onClose }) => {
@@ -47,13 +42,18 @@ const ThemeModal = ({ onClose }) => {
   const [primary, setPrimary] = useState("#FF6B6B");
   const [text, setText] = useState("#FFFFFF");
   const [hover, setHover] = useState("#FFA3A3");
-  const [activeSection, setActiveSection] = useState(null);
 
   useEffect(() => {
     document.documentElement.style.setProperty("--primary", primary);
     document.documentElement.style.setProperty("--text", text);
     document.documentElement.style.setProperty("--hover", hover);
   }, [primary, text, hover]);
+
+  const applyPreset = (preset) => {
+    setPrimary(preset.primary);
+    setText(preset.text);
+    setHover(preset.hover);
+  };
 
   const handleSave = async () => {
     if (!currentUser) return;
@@ -64,24 +64,18 @@ const ThemeModal = ({ onClose }) => {
     onClose();
   };
 
-  const applyPreset = (preset) => {
-    setPrimary(preset.primary);
-    setText(preset.text);
-    setHover(preset.hover);
-  };
-
-  const renderColorPicker = (setter, current) => (
-    <div className="grid grid-cols-5 gap-2 mt-3">
-      {colorOptions.map((color) => (
+  const renderColors = (current, setter) => (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.5rem" }}>
+      {colorSwatch.map((color) => (
         <button
           key={color}
           onClick={() => setter(color)}
           style={{
-            backgroundColor: color,
-            border: color === current ? "3px solid #000" : "2px solid #ccc",
             width: "32px",
             height: "32px",
-            borderRadius: "9999px",
+            borderRadius: "50%",
+            backgroundColor: color,
+            border: color === current ? "3px solid black" : "1px solid #ccc",
             cursor: "pointer",
           }}
         />
@@ -93,131 +87,92 @@ const ThemeModal = ({ onClose }) => {
     <div
       style={{
         position: "fixed",
-        inset: 0,
-        backgroundColor: "rgba(0,0,0,0.6)",
-        zIndex: 10000,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        top: "6rem",
+        right: "1rem",
+        width: "340px",
+        backgroundColor: "#fff",
+        color: "#FF6B6B",
+        padding: "1.5rem",
+        borderRadius: "1.5rem",
+        boxShadow: "0 4px 20px rgba(255, 107, 107, 0.4)",
+        fontFamily: "Comfortaa, sans-serif",
+        zIndex: 1000010,
+        maxHeight: "80vh",
+        overflowY: "auto",
       }}
     >
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
+      <h2 style={{ fontSize: "1.6rem", marginBottom: "1rem", fontWeight: "bold", textAlign: "center" }}>
+        Customize Theme
+      </h2>
+
+      <div style={{ marginBottom: "1.5rem" }}>
+        <h3 style={labelStyle}>Presets</h3>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+          {presets.map((preset) => (
+            <button
+              key={preset.name}
+              onClick={() => applyPreset(preset)}
+              style={{
+                padding: "0.4rem 0.8rem",
+                backgroundColor: preset.primary,
+                color: preset.text,
+                borderRadius: "9999px",
+                fontWeight: "bold",
+                fontSize: "0.8rem",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              {preset.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div style={sectionStyle}>
+        <h3 style={labelStyle}>Base Color</h3>
+        {renderColors(primary, setPrimary)}
+      </div>
+
+      <div style={sectionStyle}>
+        <h3 style={labelStyle}>Text Color</h3>
+        {renderColors(text, setText)}
+      </div>
+
+      <div style={sectionStyle}>
+        <h3 style={labelStyle}>Hover Color</h3>
+        {renderColors(hover, setHover)}
+      </div>
+
+      <button
+        onClick={handleSave}
         style={{
-          background: "#fff",
-          padding: "2rem",
-          borderRadius: "1.5rem",
-          width: "90%",
-          maxWidth: "500px",
-          fontFamily: "Comfortaa, sans-serif",
-          boxShadow: "0 8px 30px rgba(0,0,0,0.25)",
-          maxHeight: "90vh",
-          overflowY: "auto",
-          position: "relative",
+          marginTop: "1.5rem",
+          backgroundColor: primary,
+          color: text,
+          padding: "0.7rem",
+          width: "100%",
+          border: "none",
+          borderRadius: "9999px",
+          fontWeight: "bold",
+          fontSize: "1rem",
+          cursor: "pointer",
         }}
       >
-        <button
-          onClick={onClose}
-          style={{
-            position: "absolute",
-            top: "1rem",
-            right: "1rem",
-            background: "transparent",
-            border: "none",
-            fontSize: "1.5rem",
-            color: "#FF6B6B",
-            cursor: "pointer",
-          }}
-        >
-          ✕
-        </button>
-
-        <h2
-          style={{
-            textAlign: "center",
-            color: "#FF6B6B",
-            marginBottom: "1.5rem",
-            fontSize: "1.75rem",
-          }}
-        >
-          Customize Theme
-        </h2>
-
-        <div className="space-y-4">
-          <div>
-            <p className="font-bold text-sm mb-1">Presets</p>
-            <div className="grid grid-cols-2 gap-2">
-              {presets.map((preset) => (
-                <button
-                  key={preset.name}
-                  onClick={() => applyPreset(preset)}
-                  className="py-2 px-3 rounded-full text-sm font-semibold shadow-md"
-                  style={{ backgroundColor: preset.primary, color: preset.text }}
-                >
-                  {preset.name}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <p className="font-bold text-sm mb-1">Base Color</p>
-            <button
-              className="w-full py-2 rounded-full border"
-              style={{ backgroundColor: primary, color: text }}
-              onClick={() => setActiveSection(activeSection === "primary" ? null : "primary")}
-            >
-              Choose Base Color
-            </button>
-            {activeSection === "primary" && renderColorPicker(setPrimary, primary)}
-          </div>
-
-          <div>
-            <p className="font-bold text-sm mb-1">Text Color</p>
-            <button
-              className="w-full py-2 rounded-full border"
-              style={{ backgroundColor: text, color: primary }}
-              onClick={() => setActiveSection(activeSection === "text" ? null : "text")}
-            >
-              Choose Text Color
-            </button>
-            {activeSection === "text" && renderColorPicker(setText, text)}
-          </div>
-
-          <div>
-            <p className="font-bold text-sm mb-1">Hover Color</p>
-            <button
-              className="w-full py-2 rounded-full border"
-              style={{ backgroundColor: hover, color: text }}
-              onClick={() => setActiveSection(activeSection === "hover" ? null : "hover")}
-            >
-              Choose Hover Color
-            </button>
-            {activeSection === "hover" && renderColorPicker(setHover, hover)}
-          </div>
-        </div>
-
-        <button
-          onClick={handleSave}
-          style={{
-            marginTop: "2rem",
-            backgroundColor: primary,
-            color: text,
-            border: "none",
-            padding: "0.75rem 1.5rem",
-            borderRadius: "9999px",
-            cursor: "pointer",
-            fontWeight: "bold",
-            width: "100%",
-          }}
-        >
-          Save Theme
-        </button>
-      </motion.div>
+        Save Theme
+      </button>
     </div>
   );
+};
+
+const sectionStyle = {
+  marginBottom: "1.5rem",
+};
+
+const labelStyle = {
+  fontSize: "1.1rem",
+  fontWeight: "bold",
+  marginBottom: "0.25rem",
 };
 
 export default ThemeModal;

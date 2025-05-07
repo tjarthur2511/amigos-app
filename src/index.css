@@ -1,44 +1,28 @@
-@keyframes fall {
-  0% {
-    transform: translateY(-100px);
-  }
-  100% {
-    transform: translateY(120vh);
-  }
+:root {
+  --theme-color: 255, 107, 107;      /* #FF6B6B */
+  --text-color: 255, 107, 107;       /* #FF6B6B */
+  --hover-color: 230, 80, 80;
 }
 
-@keyframes spin-slow {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+body {
+  font-family: 'Comfortaa', cursive;
+  background-color: white;
+  color: rgb(var(--text-color));
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-@keyframes wiggle {
-  0%, 100% {
-    transform: rotate(-5deg);
-  }
-  50% {
-    transform: rotate(5deg);
-  }
+body[data-theme='dark'] {
+  --theme-color: 255 255 255;
+  --text-color: 255 255 255;
+  --hover-color: 200 200 200;
+  background-color: #121212;
+  color: white;
 }
 
-.animate-fall {
-  animation-name: fall;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-
-.animate-spin-slow {
-  animation-name: spin-slow;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-
-.animate-wiggle {
-  animation-name: wiggle;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
+body[data-theme='coral'] {
+  --theme-color: 255 107 107;
+  --text-color: 255 107 107;
+  --hover-color: 230 80 80;
+  background-color: #fff;
+  color: rgb(var(--text-color));
 }

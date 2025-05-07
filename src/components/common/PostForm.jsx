@@ -1,3 +1,4 @@
+// src/components/common/PostForm.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { db, auth } from "../../firebase";
 import {
@@ -17,69 +18,53 @@ const PostForm = ({ onClose }) => {
   const [taggedGrupos, setTaggedGrupos] = useState([]);
   const fileInputRef = useRef(null);
 
-  // Load all amigos and grupos
   useEffect(() => {
     const loadData = async () => {
-      try {
-        const amigosSnap = await getDocs(collection(db, "users"));
-        const gruposSnap = await getDocs(collection(db, "grupos"));
-        setAllAmigos(amigosSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-        setAllGrupos(gruposSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      } catch (err) {
-        console.error("Error loading data: ", err);
-        alert("Failed to load amigos and grupos.");
-      }
+      const amigosSnap = await getDocs(collection(db, "users"));
+      const gruposSnap = await getDocs(collection(db, "grupos"));
+      setAllAmigos(amigosSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setAllGrupos(gruposSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     };
     loadData();
   }, []);
 
-  // Extract hashtags from the content
   const extractHashtags = (text) => {
     return text.match(/#[a-zA-Z0-9_]+/g) || [];
   };
 
-  // Handle post submission
   const handlePost = async (e) => {
     e.preventDefault();
-    const trimmedContent = content.trim();
-    const hasText = trimmedContent.length > 0;
-    const hasMedia = file !== null;
-
-    if (!hasText && !hasMedia) {
-      alert("You must write something or select a file.");
-      return;
-    }
-
+    const trimmed = content.trim();
+    if (!trimmed && !file) return alert("Add text or media.");
     setLoading(true);
+
     const mediaType = file ? (file.type.startsWith("video") ? "video" : "image") : "";
-    const mediaUrl = ""; // No upload storage yet (implement later)
+    const mediaUrl = ""; // Placeholder for upload later
 
     try {
       await addDoc(collection(db, "posts"), {
-        content: trimmedContent,
+        content: trimmed,
         userId: auth.currentUser?.uid || "anon",
         createdAt: serverTimestamp(),
         emojis: {},
         likes: [],
         dislikes: [],
-        hashtags: extractHashtags(trimmedContent),
+        hashtags: extractHashtags(trimmed),
         imageUrl: mediaType === "image" ? mediaUrl : "",
         videoUrl: mediaType === "video" ? mediaUrl : "",
         taggedAmigos,
         taggedGrupos,
-        type: "amigo"
+        type: "amigo",
       });
-
       setContent("");
       setFile(null);
       setTaggedAmigos([]);
       setTaggedGrupos([]);
       if (typeof onClose === "function") onClose();
     } catch (err) {
-      console.error("Firestore error:", err);
-      alert("Post failed to save.");
+      console.error("Post failed:", err);
+      alert("Post failed.");
     }
-
     setLoading(false);
   };
 
@@ -103,7 +88,6 @@ const PostForm = ({ onClose }) => {
         }}
       />
 
-      {/* Tag amigos and grupos */}
       <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
         <select
           multiple
@@ -154,8 +138,7 @@ const PostForm = ({ onClose }) => {
         </select>
       </div>
 
-      {/* Media upload */}
-      <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
+      <div style={{ display: "flex", justifyContent: "center" }}>
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
@@ -165,9 +148,10 @@ const PostForm = ({ onClose }) => {
             border: "none",
             cursor: "pointer",
             animation: "pulse 2s infinite",
+            color: "#FF6B6B",
           }}
         >
-          📸/🎥
+          📸 / 🎥
         </button>
       </div>
 
@@ -208,7 +192,6 @@ const PostForm = ({ onClose }) => {
         </div>
       )}
 
-      {/* Post button */}
       <button
         type="submit"
         disabled={loading}

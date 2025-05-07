@@ -10,7 +10,7 @@ const HelpButton = () => {
         onClick={() => setShowHelp(true)}
         style={{
           position: "fixed",
-          top: "8.75rem",
+          top: "3.75rem",
           right: "1rem",
           backgroundColor: "#FFFFFF",
           color: "#FF6B6B",

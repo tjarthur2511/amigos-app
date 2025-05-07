@@ -1,6 +1,8 @@
-// src/components/common/MapHangoutsModal.jsx
-import React from "react";
-import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
+import React, { useEffect, useState } from "react";
+import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from "@react-google-maps/api";
+import { db } from "../../firebase";
+import { collection, getDocs } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 const containerStyle = {
   width: "100%",
@@ -8,16 +10,83 @@ const containerStyle = {
   borderRadius: "0.75rem",
 };
 
-const center = {
-  lat: 42.3314, // Michigan default
+const fallbackCenter = {
+  lat: 42.3314,
   lng: -83.0458,
 };
 
 const MapHangoutsModal = ({ onClose }) => {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: "AIzaSyC635cp2x54I0JHITYia5Cy0j540BRKr2Q", // ✅ Your real key
+    googleMapsApiKey: "AIzaSyC635cp2x54I0JHITYia5Cy0j540BRKr2Q",
   });
+
+  const navigate = useNavigate();
+  const [mapCenter, setMapCenter] = useState(fallbackCenter);
+  const [grupos, setGrupos] = useState([]);
+  const [amigos, setAmigos] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [activeInfo, setActiveInfo] = useState(null);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setMapCenter({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        () => setMapCenter(fallbackCenter)
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [gruposSnap, amigosSnap, eventsSnap] = await Promise.all([
+        getDocs(collection(db, "grupos")),
+        getDocs(collection(db, "users")),
+        getDocs(collection(db, "events")),
+      ]);
+
+      setGrupos(gruposSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      setAmigos(amigosSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      setEvents(eventsSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+    };
+
+    fetchData();
+  }, []);
+
+  const handleInfoClick = (type, item) => {
+    setActiveInfo({ type, item });
+  };
+
+  const handleInfoClose = () => {
+    setActiveInfo(null);
+  };
+
+  const handleViewClick = () => {
+    if (!activeInfo) return;
+    if (activeInfo.type === "amigo") navigate(`/profile/${activeInfo.item.id}`);
+    if (activeInfo.type === "grupo") navigate(`/grupos/${activeInfo.item.id}`);
+    if (activeInfo.type === "event") navigate(`/events/${activeInfo.item.id}`);
+  };
+
+  const renderMarker = (type, item) => (
+    <Marker
+      key={`${type}-${item.id}`}
+      position={item.location}
+      title={`${type === "amigo" ? "Amigo" : type === "grupo" ? "Grupo" : "Event"}: ${
+        item.displayName || item.name || item.title
+      }`}
+      icon={{
+        url: "/assets/redalogo.png",
+        scaledSize: new window.google.maps.Size(36, 36),
+      }}
+      onClick={() => handleInfoClick(type, item)}
+    />
+  );
 
   return (
     <div
@@ -85,11 +154,30 @@ const MapHangoutsModal = ({ onClose }) => {
         </h2>
 
         {isLoaded ? (
-          <GoogleMap
-            mapContainerStyle={containerStyle}
-            center={center}
-            zoom={10}
-          />
+          <GoogleMap mapContainerStyle={containerStyle} center={mapCenter} zoom={10}>
+            {grupos.map((grupo) => renderMarker("grupo", grupo))}
+            {amigos.map((amigo) => renderMarker("amigo", amigo))}
+            {events.map((event) => renderMarker("event", event))}
+
+            {activeInfo && activeInfo.item.location && (
+              <InfoWindow
+                position={activeInfo.item.location}
+                onCloseClick={handleInfoClose}
+              >
+                <div className="text-sm p-2">
+                  <p className="font-bold text-[#FF6B6B]">
+                    {activeInfo.item.displayName || activeInfo.item.name || activeInfo.item.title}
+                  </p>
+                  <button
+                    onClick={handleViewClick}
+                    className="mt-2 text-white bg-[#FF6B6B] px-2 py-1 rounded hover:bg-red-500 transition"
+                  >
+                    View
+                  </button>
+                </div>
+              </InfoWindow>
+            )}
+          </GoogleMap>
         ) : (
           <p style={{ textAlign: "center", color: "#888" }}>Loading map...</p>
         )}

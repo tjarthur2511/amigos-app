@@ -8,28 +8,27 @@ const PostModal = ({ onClose }) => {
         position: "fixed",
         top: 0,
         left: 0,
-        right: 0,
-        bottom: 0,
+        width: "100%",
+        height: "100%",
         backgroundColor: "rgba(0, 0, 0, 0.6)",
-        zIndex: 1000001,
+        zIndex: 999999,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         padding: "1rem",
-        transition: "opacity 0.3s ease-in-out",
+        fontFamily: "Comfortaa, sans-serif",
       }}
     >
       <div
         style={{
-          backgroundColor: "#fff",
+          backgroundColor: "#ffffff",
           borderRadius: "1.5rem",
           padding: "2rem",
           width: "100%",
-          maxWidth: "640px",
+          maxWidth: "600px",
           maxHeight: "90vh",
           overflowY: "auto",
           boxShadow: "0 8px 30px rgba(0,0,0,0.25)",
-          fontFamily: "Comfortaa, sans-serif",
           position: "relative",
         }}
       >

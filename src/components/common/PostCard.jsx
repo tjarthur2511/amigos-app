@@ -1,3 +1,4 @@
+// src/components/common/PostCard.jsx
 import React, { useEffect, useState } from "react";
 import { db } from "../../firebase";
 import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
@@ -35,18 +36,28 @@ const PostCard = ({ post }) => {
         borderRadius: "1.5rem",
         padding: "1.5rem",
         marginBottom: "2rem",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
         fontFamily: "Comfortaa, sans-serif",
       }}
     >
       {/* 🧑 Author */}
-      <div style={{ marginBottom: "0.5rem", fontWeight: "bold", color: "#FF6B6B" }}>
+      <div style={{
+        marginBottom: "0.5rem",
+        fontWeight: "bold",
+        color: "var(--theme-color)"
+      }}>
         @{author?.displayName || "anon"}
       </div>
 
-      {/* 📝 Text */}
+      {/* 📝 Content */}
       {post.content && (
-        <p style={{ fontSize: "1rem", color: "#FF6B6B", marginBottom: "1rem" }}>
+        <p style={{
+          fontSize: "1rem",
+          color: "var(--theme-color)",
+          marginBottom: "1rem",
+          wordWrap: "break-word",
+          whiteSpace: "pre-line",
+        }}>
           {post.content}
         </p>
       )}
@@ -77,7 +88,7 @@ const PostCard = ({ post }) => {
       )}
 
       {/* 🔖 Hashtags */}
-      <div style={{ fontSize: "0.9rem", color: "#FF6B6B", marginBottom: "0.5rem" }}>
+      <div style={{ fontSize: "0.9rem", color: "var(--theme-color)", marginBottom: "0.5rem" }}>
         {post.hashtags?.map((tag) => (
           <span key={tag} style={{ marginRight: "0.5rem" }}>{tag}</span>
         ))}
@@ -97,32 +108,37 @@ const PostCard = ({ post }) => {
       {/* 💬 Top 3 Comments */}
       <div style={{ marginTop: "1rem" }}>
         {comments.map((comment) => (
-          <div key={comment.id} style={{
-            backgroundColor: "#ffecec",
-            padding: "0.5rem",
-            borderRadius: "0.75rem",
-            marginBottom: "0.5rem",
-            fontSize: "0.95rem"
-          }}>
-            <strong style={{ color: "#FF6B6B" }}>{comment.userId}</strong>: {comment.content}
+          <div
+            key={comment.id}
+            style={{
+              backgroundColor: "#FFF0F0",
+              padding: "0.5rem",
+              borderRadius: "0.75rem",
+              marginBottom: "0.5rem",
+              fontSize: "0.95rem",
+              color: "var(--theme-color)",
+              fontWeight: "500",
+            }}
+          >
+            <strong>{comment.userId}</strong>: {comment.content}
           </div>
         ))}
       </div>
 
-      {/* 🔎 View All */}
+      {/* 🔎 View All Comments */}
       <div style={{ textAlign: "right" }}>
         <button
           onClick={() => setShowModal(true)}
           style={{
-            backgroundColor: "#FF6B6B",
-            color: "white",
+            backgroundColor: "var(--theme-color)",
+            color: "#fff",
             border: "none",
             padding: "0.6rem 1.2rem",
             borderRadius: "1rem",
             fontWeight: "bold",
             fontSize: "0.9rem",
             marginTop: "1rem",
-            cursor: "pointer"
+            cursor: "pointer",
           }}
         >
           View All Comments

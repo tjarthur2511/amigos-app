@@ -21,6 +21,7 @@ const GoLiveModal = ({ onClose }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [visibility, setVisibility] = useState("public");
+  const [cameraError, setCameraError] = useState(false);
 
   const videoRef = useRef(null);
   const mediaStream = useRef(null);
@@ -29,6 +30,13 @@ const GoLiveModal = ({ onClose }) => {
     if (!currentUser) return alert("Sign in to go live.");
 
     try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      mediaStream.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+
       const docRef = await addDoc(collection(db, "livestreams"), {
         userId: currentUser.uid,
         username: currentUser.displayName || "Anonymous",
@@ -37,18 +45,13 @@ const GoLiveModal = ({ onClose }) => {
         endedAt: null,
         visibility,
       });
+
       setStreamId(docRef.id);
       setHostId(currentUser.uid);
       setIsLive(true);
-
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      mediaStream.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play();
-      }
     } catch (err) {
-      console.error("Start Live Error:", err);
+      console.error("🚨 Camera access failed:", err);
+      setCameraError(true);
     }
   };
 
@@ -74,7 +77,7 @@ const GoLiveModal = ({ onClose }) => {
         userId: currentUser.uid,
         username: currentUser.displayName || "Anonymous",
         content: newComment,
-        emoji: "\uD83D\uDCAC",
+        emoji: "💬",
         createdAt: serverTimestamp(),
       });
       setNewComment("");
@@ -112,30 +115,28 @@ const GoLiveModal = ({ onClose }) => {
     <div
       style={{
         position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
+        inset: 0,
         backgroundColor: "rgba(0,0,0,0.6)",
+        zIndex: 10000000,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        zIndex: 1000000,
         fontFamily: "Comfortaa, sans-serif",
       }}
     >
       <div
         style={{
-          backgroundColor: isLive ? "#FF6B6B" : "#ffffff",
-          color: isLive ? "#ffffff" : "#333",
+          backgroundColor: isLive ? "#FF6B6B" : "#fff",
+          color: isLive ? "#fff" : "#333",
           borderRadius: "1.5rem",
           padding: "2rem",
-          width: "90%",
-          maxWidth: "640px",
+          width: "95%",
+          maxWidth: "680px",
           maxHeight: "90vh",
           overflowY: "auto",
           position: "relative",
           boxShadow: "0 10px 40px rgba(0,0,0,0.2)",
+          zIndex: 10000001,
         }}
       >
         <button
@@ -154,31 +155,12 @@ const GoLiveModal = ({ onClose }) => {
           ✕
         </button>
 
-        {isLive && (
-          <div
-            style={{
-              position: "absolute",
-              top: "1rem",
-              left: "1rem",
-              backgroundColor: "white",
-              color: "#FF6B6B",
-              fontWeight: "bold",
-              borderRadius: "9999px",
-              padding: "0.25rem 0.75rem",
-              animation: "pulse 1.5s infinite",
-            }}
-          >
-            a
-          </div>
-        )}
-
         <h2
           style={{
             textAlign: "center",
             fontSize: "1.75rem",
-            color: isLive ? "white" : "#FF6B6B",
             marginBottom: "1.5rem",
-            textTransform: "lowercase",
+            color: isLive ? "#fff" : "#FF6B6B",
           }}
         >
           go live
@@ -215,8 +197,12 @@ const GoLiveModal = ({ onClose }) => {
             justifyContent: "center",
           }}
         >
-          {isLive ? (
+          {!cameraError && isLive ? (
             <video ref={videoRef} muted playsInline style={{ width: "100%", height: "100%" }} />
+          ) : cameraError ? (
+            <span style={{ color: "#fff", fontWeight: "bold" }}>
+              🎥 Camera not available. Please check permissions.
+            </span>
           ) : (
             <span style={{ color: "#FF6B6B", fontWeight: "bold" }}>Waiting to go live...</span>
           )}
@@ -226,28 +212,68 @@ const GoLiveModal = ({ onClose }) => {
           {!isLive ? (
             <button
               onClick={handleStartLive}
-              style={{ backgroundColor: "#FF6B6B", color: "white", padding: "0.5rem 1.2rem", borderRadius: "9999px", border: "none" }}
+              style={{
+                backgroundColor: "#FF6B6B",
+                color: "white",
+                padding: "0.6rem 1.5rem",
+                borderRadius: "9999px",
+                border: "none",
+                fontWeight: "bold",
+              }}
             >
               Start Live
             </button>
           ) : (
             <button
               onClick={handleStopLive}
-              style={{ backgroundColor: "white", color: "#FF6B6B", padding: "0.5rem 1.2rem", borderRadius: "9999px", border: "none" }}
+              style={{
+                backgroundColor: "#fff",
+                color: "#FF6B6B",
+                padding: "0.6rem 1.5rem",
+                borderRadius: "9999px",
+                border: "none",
+                fontWeight: "bold",
+              }}
             >
               Stop Live
             </button>
           )}
         </div>
 
-        <div style={{ maxHeight: "150px", overflowY: "auto", marginBottom: "1rem", border: "1px solid #eee", borderRadius: "0.75rem" }}>
+        <div
+          style={{
+            maxHeight: "150px",
+            overflowY: "auto",
+            marginBottom: "1rem",
+            border: "1px solid #eee",
+            borderRadius: "0.75rem",
+            backgroundColor: "#fff",
+            color: "#333",
+          }}
+        >
           {comments.map((c) => (
-            <div key={c.id} style={{ padding: "0.5rem 1rem", display: "flex", justifyContent: "space-between" }}>
+            <div
+              key={c.id}
+              style={{
+                padding: "0.5rem 1rem",
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
               <span>
                 <strong>{c.username}:</strong> {c.content}
               </span>
               {(currentUser?.uid === c.userId || currentUser?.uid === hostId) && (
-                <button onClick={() => handleDeleteComment(c.id, c.userId)} style={{ color: "#FF6B6B", background: "none", border: "none" }}>✕</button>
+                <button
+                  onClick={() => handleDeleteComment(c.id, c.userId)}
+                  style={{
+                    color: "#FF6B6B",
+                    background: "none",
+                    border: "none",
+                  }}
+                >
+                  ✕
+                </button>
               )}
             </div>
           ))}
@@ -259,11 +285,23 @@ const GoLiveModal = ({ onClose }) => {
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Leave a comment..."
-            style={{ flex: 1, padding: "0.5rem 1rem", borderRadius: "9999px", border: "1px solid #ccc" }}
+            style={{
+              flex: 1,
+              padding: "0.5rem 1rem",
+              borderRadius: "9999px",
+              border: "1px solid #ccc",
+            }}
           />
           <button
             onClick={handleCommentSubmit}
-            style={{ backgroundColor: "#FF6B6B", color: "white", border: "none", padding: "0.5rem 1rem", borderRadius: "9999px" }}
+            style={{
+              backgroundColor: "#FF6B6B",
+              color: "white",
+              border: "none",
+              padding: "0.5rem 1rem",
+              borderRadius: "9999px",
+              fontWeight: "bold",
+            }}
           >
             ➤
           </button>

@@ -1,21 +1,33 @@
 // src/components/common/HelpCard.jsx
-import React from "react";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const HelpCard = ({ onClose }) => {
+  const { i18n } = useTranslation();
+  const [accessibility, setAccessibility] = useState(false);
+  const [pushAlerts, setPushAlerts] = useState(false);
+  const [weeklySuggestions, setWeeklySuggestions] = useState(false);
+
+  const handleLanguageChange = (e) => {
+    const lng = e.target.value;
+    i18n.changeLanguage(lng);
+    document.documentElement.lang = lng;
+  };
+
   return (
     <div
       style={{
         position: "fixed",
-        top: "6rem",
-        right: "1rem",
-        width: "320px",
+        bottom: "1.5rem",
+        right: "26rem",
+        width: "360px",
         backgroundColor: "#fff",
         color: "#FF6B6B",
         padding: "1.5rem",
         borderRadius: "1.5rem",
         boxShadow: "0 4px 20px rgba(255, 107, 107, 0.4)",
         fontFamily: "Comfortaa, sans-serif",
-        zIndex: 10010,
+        zIndex: 1000010,
         maxHeight: "80vh",
         overflowY: "auto",
       }}
@@ -26,45 +38,42 @@ const HelpCard = ({ onClose }) => {
       <div style={sectionStyle}>
         <h3 style={labelStyle}>Language</h3>
         <p>Change your preferred language.</p>
-        <select style={inputStyle}>
-          <option>English</option>
-          <option>Español</option>
-          <option>Français</option>
-          <option>Deutsch</option>
-          <option>Português</option>
-          <option>日本語 (Japanese)</option>
-          <option>한국어 (Korean)</option>
-          <option>Italiano</option>
-          <option>Hindi</option>
-          <option>Arabic</option>
-          <option>Russian</option>
-          <option>Chinese</option>
+        <select defaultValue={i18n.language} onChange={handleLanguageChange} style={inputStyle}>
+          <option value="en">English</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+          <option value="it">Italiano</option>
+          <option value="hi">Hindi</option>
+          <option value="ar">Arabic</option>
+          <option value="ru">Russian</option>
+          <option value="zh">Chinese</option>
         </select>
       </div>
 
       {/* Accessibility */}
       <div style={sectionStyle}>
         <h3 style={labelStyle}>Accessibility</h3>
-        <p>Enable features for easier use like larger text or contrast mode.</p>
-        <button style={buttonStyle}>Toggle Accessibility Mode</button>
-      </div>
-
-      {/* Privacy & Security */}
-      <div style={sectionStyle}>
-        <h3 style={labelStyle}>Privacy & Security</h3>
-        <button style={buttonStyle}>Manage Data</button>
-        <button style={buttonStyle}>Two-Factor Auth</button>
+        <p>Enable features like larger text or high contrast mode.</p>
+        <button style={buttonStyle} onClick={() => setAccessibility(!accessibility)}>
+          {accessibility ? "Disable" : "Enable"} Accessibility Mode
+        </button>
       </div>
 
       {/* Notifications */}
       <div style={sectionStyle}>
         <h3 style={labelStyle}>Notifications</h3>
         <label>
-          <input type="checkbox" style={{ marginRight: "0.5rem" }} /> Enable push alerts
+          <input type="checkbox" checked={pushAlerts} onChange={() => setPushAlerts(!pushAlerts)} style={{ marginRight: "0.5rem" }} />
+          Enable push alerts
         </label>
         <br />
         <label>
-          <input type="checkbox" style={{ marginRight: "0.5rem" }} /> Weekly suggestions
+          <input type="checkbox" checked={weeklySuggestions} onChange={() => setWeeklySuggestions(!weeklySuggestions)} style={{ marginRight: "0.5rem" }} />
+          Weekly suggestions
         </label>
       </div>
 
@@ -75,7 +84,7 @@ const HelpCard = ({ onClose }) => {
         <button style={buttonStyle}>Change Password</button>
       </div>
 
-      {/* Help Topics */}
+      {/* Privacy & Support */}
       <div style={sectionStyle}>
         <h3 style={labelStyle}>Support</h3>
         <button style={buttonStyle}>Report a Bug</button>

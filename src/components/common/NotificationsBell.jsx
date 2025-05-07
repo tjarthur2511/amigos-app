@@ -57,7 +57,7 @@ const NotificationsBell = () => {
         style={{
           position: "absolute",
           top: "12rem",
-          right: "29.5rem",
+          right: "21rem",
           backgroundColor: "#FF6B6B", // Amigos coral
           border: "none",
           padding: "0.5rem",

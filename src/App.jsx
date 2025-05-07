@@ -15,8 +15,6 @@ import NewPostButton from './components/common/NewPostButton';
 import NotificationsBell from './components/common/NotificationsBell';
 import GoLiveButton from './components/common/GoLiveButton';
 import MapHangoutButton from './components/common/MapHangoutButton';
-import ThemeToggle from './components/common/ThemeToggle';
-import LanguageToggle from './components/common/LanguageToggle';
 import GlobalSearch from './components/common/GlobalSearch';
 import HelpButton from './components/common/HelpButton';
 
@@ -58,8 +56,6 @@ function AppContent({ user, themeColor, textColor }) {
           <NotificationsBell />
           <GoLiveButton />
           <MapHangoutButton />
-          <ThemeToggle />
-          <LanguageToggle />
           <GlobalSearch />
           <HelpButton />
         </>

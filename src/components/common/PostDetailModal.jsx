@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
-import { db, auth } from '../../firebase';
+import React, { useEffect, useState } from "react";
+import ReactDOM from "react-dom";
+import { db, auth } from "../../firebase";
 import {
   collection,
   addDoc,
@@ -10,21 +10,21 @@ import {
   Timestamp,
   onSnapshot,
   doc,
-  updateDoc
-} from 'firebase/firestore';
+  updateDoc,
+} from "firebase/firestore";
 
 const PostDetailModal = ({ post, onClose }) => {
   const [comments, setComments] = useState([]);
-  const [newComment, setNewComment] = useState('');
+  const [newComment, setNewComment] = useState("");
   const [replies, setReplies] = useState({});
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(null);
-  const emojiOptions = ['👍', '👎', '😂', '😢', '😮', '😡', '😍', '👏', '🔥', '🎉', '🤔', '💯'];
+  const emojiOptions = ["👍", "👎", "😂", "😢", "😮", "😍", "👏", "🔥", "💯"];
 
   useEffect(() => {
     const q = query(
-      collection(db, 'comments'),
-      where('postId', '==', post.id),
-      orderBy('createdAt', 'desc')
+      collection(db, "comments"),
+      where("postId", "==", post.id),
+      orderBy("createdAt", "desc")
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -46,79 +46,174 @@ const PostDetailModal = ({ post, onClose }) => {
 
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
-    await addDoc(collection(db, 'comments'), {
+    await addDoc(collection(db, "comments"), {
       content: newComment,
       createdAt: Timestamp.now(),
       postId: post.id,
-      userId: auth.currentUser.uid,
-      parentId: '',
-      emojis: {}
+      userId: auth.currentUser?.uid || "anon",
+      parentId: "",
+      emojis: {},
     });
-    setNewComment('');
+    setNewComment("");
   };
 
-  const handleEmojiReact = async (commentId, emoji, currentMap) => {
-    const ref = doc(db, 'comments', commentId);
-    const userId = auth.currentUser.uid;
+  const handleEmojiReact = async (commentId, emoji, currentMap = {}) => {
+    const ref = doc(db, "comments", commentId);
+    const userId = auth.currentUser?.uid || "anon";
     const updated = {};
-    Object.keys(currentMap || {}).forEach((key) => {
+
+    Object.keys(currentMap).forEach((key) => {
       updated[key] = currentMap[key].filter((id) => id !== userId);
     });
     updated[emoji] = [...(updated[emoji] || []), userId];
+
     await updateDoc(ref, { emojis: updated });
     setEmojiPickerVisible(null);
   };
 
   return ReactDOM.createPortal(
-    <div style={modalStyle}>
-      <div style={contentStyle}>
-        <button onClick={onClose} style={closeStyle}>✖</button>
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "rgba(0,0,0,0.6)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 999999,
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: "#fff",
+          padding: "2rem",
+          borderRadius: "1rem",
+          maxWidth: "700px",
+          width: "90%",
+          maxHeight: "90vh",
+          overflowY: "auto",
+          position: "relative",
+          fontFamily: "Comfortaa, sans-serif",
+        }}
+      >
+        <button
+          onClick={onClose}
+          style={{
+            position: "absolute",
+            top: "1rem",
+            right: "1rem",
+            border: "none",
+            background: "none",
+            fontSize: "1.5rem",
+            cursor: "pointer",
+            color: "#FF6B6B",
+          }}
+        >
+          ✖
+        </button>
 
-        <div style={postCard}>
-          <h2 style={{ color: '#FF6B6B', marginBottom: '1rem' }}>Full Post</h2>
-          <p style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{post.content}</p>
-          {post.imageUrl && <img src={post.imageUrl} alt="post" style={mediaStyle} />}
+        <div
+          style={{
+            backgroundColor: "#fff0f0",
+            padding: "1rem",
+            borderRadius: "1rem",
+            boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
+            textAlign: "center",
+            marginBottom: "2rem",
+          }}
+        >
+          <h2 style={{ color: "#FF6B6B", marginBottom: "1rem" }}>Full Post</h2>
+          <p style={{ fontWeight: "bold", fontSize: "1.1rem", color: "#444" }}>
+            {post.content}
+          </p>
+          {post.imageUrl && (
+            <img
+              src={post.imageUrl}
+              alt="post"
+              style={{ maxWidth: "100%", borderRadius: "1rem", marginTop: "1rem" }}
+            />
+          )}
           {post.videoUrl && (
-            <video controls style={mediaStyle}>
+            <video controls style={{ maxWidth: "100%", borderRadius: "1rem", marginTop: "1rem" }}>
               <source src={post.videoUrl} type="video/mp4" />
             </video>
           )}
         </div>
 
-        <h3 style={{ color: '#FF6B6B', marginTop: '1rem' }}>Comments</h3>
+        <h3 style={{ color: "#FF6B6B", marginTop: "1rem" }}>Comments</h3>
 
-        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+        <div style={{ display: "flex", gap: "0.5rem", marginTop: "1rem" }}>
           <textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Write a comment..."
-            style={inputStyle}
+            style={{
+              flex: 1,
+              padding: "0.5rem",
+              borderRadius: "0.5rem",
+              border: "1px solid #ccc",
+              fontFamily: "Comfortaa, sans-serif",
+            }}
           />
-          <button onClick={handleCommentSubmit} style={submitStyle}>Post</button>
+          <button
+            onClick={handleCommentSubmit}
+            style={{
+              backgroundColor: "#FF6B6B",
+              color: "#fff",
+              border: "none",
+              padding: "0.5rem 1rem",
+              borderRadius: "1rem",
+              cursor: "pointer",
+              fontWeight: "bold",
+            }}
+          >
+            Post
+          </button>
         </div>
 
-        <div style={scrollBox}>
+        <div style={{ maxHeight: "300px", overflowY: "auto", marginTop: "1rem", paddingRight: "0.5rem" }}>
           {comments.map((comment) => (
-            <div key={comment.id} style={commentStyle}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div
+              key={comment.id}
+              style={{
+                padding: "0.75rem",
+                borderBottom: "1px solid #eee",
+                marginBottom: "0.75rem",
+                color: "#444",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <p style={{ margin: 0 }}>🗨️ {comment.content}</p>
                 <button
                   onClick={() =>
                     setEmojiPickerVisible(emojiPickerVisible === comment.id ? null : comment.id)
                   }
-                  style={emojiToggleStyle}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "1.2rem",
+                    cursor: "pointer",
+                  }}
                 >
                   😀
                 </button>
               </div>
 
               {emojiPickerVisible === comment.id && (
-                <div style={emojiPickerStyle}>
+                <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
                   {emojiOptions.map((e) => (
                     <button
                       key={e}
                       onClick={() => handleEmojiReact(comment.id, e, comment.emojis || {})}
-                      style={emojiStyle}
+                      style={{
+                        fontSize: "1.2rem",
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                      }}
                     >
                       {e}
                     </button>
@@ -127,7 +222,7 @@ const PostDetailModal = ({ post, onClose }) => {
               )}
 
               {replies[comment.id]?.slice(0, 3).map((reply) => (
-                <div key={reply.id} style={replyStyle}>
+                <div key={reply.id} style={{ marginLeft: "1.5rem", fontSize: "0.9rem", color: "#666" }}>
                   ↳ {reply.content}
                 </div>
               ))}
@@ -136,118 +231,8 @@ const PostDetailModal = ({ post, onClose }) => {
         </div>
       </div>
     </div>,
-    document.getElementById('modal-root')
+    document.getElementById("modal-root")
   );
-};
-
-// Styles
-const modalStyle = {
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '100%',
-  backgroundColor: 'rgba(0,0,0,0.6)',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  zIndex: 999999
-};
-
-const contentStyle = {
-  backgroundColor: '#fff',
-  padding: '2rem',
-  borderRadius: '1rem',
-  maxWidth: '700px',
-  width: '90%',
-  maxHeight: '90vh',
-  overflowY: 'auto',
-  position: 'relative',
-  fontFamily: 'Comfortaa, sans-serif'
-};
-
-const closeStyle = {
-  position: 'absolute',
-  top: '1rem',
-  right: '1rem',
-  border: 'none',
-  background: 'none',
-  fontSize: '1.5rem',
-  cursor: 'pointer'
-};
-
-const postCard = {
-  backgroundColor: '#fff0f0',
-  padding: '1rem',
-  borderRadius: '1rem',
-  boxShadow: '0 2px 10px rgba(0,0,0,0.15)',
-  textAlign: 'center',
-  marginBottom: '2rem'
-};
-
-const mediaStyle = {
-  maxWidth: '100%',
-  borderRadius: '1rem',
-  marginTop: '1rem'
-};
-
-const inputStyle = {
-  flex: 1,
-  padding: '0.5rem',
-  borderRadius: '0.5rem',
-  border: '1px solid #ccc',
-  fontFamily: 'Comfortaa, sans-serif'
-};
-
-const submitStyle = {
-  backgroundColor: '#FF6B6B',
-  color: '#fff',
-  border: 'none',
-  padding: '0.5rem 1rem',
-  borderRadius: '1rem',
-  cursor: 'pointer',
-  fontWeight: 'bold'
-};
-
-const scrollBox = {
-  maxHeight: '300px',
-  overflowY: 'auto',
-  marginTop: '1rem',
-  paddingRight: '0.5rem'
-};
-
-const commentStyle = {
-  padding: '0.75rem',
-  borderBottom: '1px solid #eee',
-  marginBottom: '0.75rem'
-};
-
-const replyStyle = {
-  marginLeft: '1.5rem',
-  fontSize: '0.9rem',
-  color: '#555',
-  marginTop: '0.25rem'
-};
-
-const emojiToggleStyle = {
-  background: 'none',
-  border: 'none',
-  fontSize: '1.2rem',
-  cursor: 'pointer'
-};
-
-const emojiPickerStyle = {
-  marginTop: '0.5rem',
-  display: 'flex',
-  gap: '0.4rem',
-  flexWrap: 'wrap'
-};
-
-const emojiStyle = {
-  fontSize: '1.2rem',
-  background: 'none',
-  border: 'none',
-  cursor: 'pointer'
 };
 
 export default PostDetailModal;
