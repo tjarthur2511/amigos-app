@@ -22,7 +22,7 @@ const NewPostButton = () => {
           fontWeight: "bold",
           cursor: "pointer",
           boxShadow: "0 3px 8px rgba(0,0,0,0.2)",
-          zIndex: 9999,
+          zIndex: 999999,
           transition: "background-color 0.3s ease, color 0.3s ease",
         }}
         onMouseOver={(e) => {

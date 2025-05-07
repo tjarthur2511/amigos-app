@@ -6,7 +6,7 @@ const NavBar = () => {
   const { t } = useTranslation();
 
   return (
-    <nav className="navbar z-30 flex items-center justify-between px-6 py-3 bg-white shadow-md">
+    <nav className="navbar z-0 flex items-center justify-between px-6 py-3 bg-white shadow-md">
       {/* Left-side logo */}
       <NavLink to="/" className="text-3xl font-bold flex items-center space-x-2">
         <span className="bg-[#FF6B6B] text-white rounded-full px-3 py-1 animate-pulse">a</span>

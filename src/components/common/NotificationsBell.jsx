@@ -30,7 +30,9 @@ const NotificationsBell = () => {
         id: doc.id,
         ...doc.data(),
       }));
-      setNotifications(items.sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds));
+      setNotifications(
+        items.sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds)
+      );
     });
 
     return () => unsubscribe();
@@ -39,7 +41,6 @@ const NotificationsBell = () => {
   const handleClick = async () => {
     setShowModal(true);
 
-    // Mark all unseen notifications as seen
     const unseen = notifications.filter((n) => !n.seen);
     for (const n of unseen) {
       const ref = doc(db, "notifications", n.id);
@@ -54,33 +55,36 @@ const NotificationsBell = () => {
       <button
         onClick={handleClick}
         style={{
-          position: "fixed",
-          top: "12.25rem",
-          right: "21rem",
-          backgroundColor: "#FFFFFF",
-          color: "#FF6B6B",
+          position: "absolute",
+          top: "12rem",
+          right: "29.5rem",
+          backgroundColor: "#FF6B6B", // Amigos coral
           border: "none",
-          padding: "0.5rem 1.1rem",
+          padding: "0.5rem",
           borderRadius: "9999px",
-          fontSize: "1.25rem",
-          fontFamily: "Comfortaa, sans-serif",
-          fontWeight: "bold",
           cursor: "pointer",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
-          zIndex: 9999,
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.23)",
+          zIndex: 999999,
           animation: unseenCount > 0 ? "pulse 1.5s infinite" : "none",
           transition: "all 0.3s ease",
         }}
         onMouseOver={(e) => {
-          e.target.style.backgroundColor = "#FF6B6B";
-          e.target.style.color = "#FFFFFF";
+          e.target.style.backgroundColor = "#e15555";
         }}
         onMouseOut={(e) => {
-          e.target.style.backgroundColor = "#FFFFFF";
-          e.target.style.color = "#FF6B6B";
+          e.target.style.backgroundColor = "#FF6B6B";
         }}
       >
-        a
+        <img
+          src="/assets/amigosaonly.png"
+          alt="notification a"
+          style={{
+            height: "1.6rem",
+            width: "auto",
+            display: "block",
+            filter: "drop-shadow(0 0 2px #fff)",
+          }}
+        />
       </button>
 
       {showModal && (

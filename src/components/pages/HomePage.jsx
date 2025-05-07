@@ -136,7 +136,7 @@ const HomePage = () => {
       </div>
 
       {/* Page content */}
-      <div style={{ position: 'relative', zIndex: 0 }}>
+      <div style={{ position: 'relative', zIndex: 300000 }}>
         <header style={{ textAlign: 'center', paddingTop: '2rem' }}>
           <h1 style={{ fontSize: '3.5rem', color: 'white' }}>amigos</h1>
         </header>
@@ -146,7 +146,7 @@ const HomePage = () => {
             backgroundColor: 'white',
             padding: '0.8rem 1rem',
             borderRadius: '30px',
-            boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
+            boxShadow: '0 5px 15px color: #ff6b6b',
             display: 'flex',
             gap: '1rem'
           }}>
@@ -189,7 +189,7 @@ const HomePage = () => {
 
                       {comments.map((comment) => (
                         <div key={comment.id} style={{
-                          backgroundColor: '#fff7f7',
+                          backgroundColor: '#ff6b6b',
                           padding: '0.5rem 1rem',
                           borderRadius: '0.5rem',
                           margin: '0.25rem 0',

@@ -48,7 +48,7 @@ const LanguageToggle = () => {
   }, []);
 
   return (
-    <div style={{ position: "fixed", top: "3.75rem", right: "1rem", zIndex: 10010 }} ref={menuRef}>
+    <div style={{ position: "fixed", top: "3.75rem", right: "1rem", zIndex: 1001000 }} ref={menuRef}>
       <button
         onClick={toggleMenu}
         style={{
@@ -81,7 +81,7 @@ const LanguageToggle = () => {
             width: "160px",
             maxHeight: "250px",
             overflowY: "auto",
-            zIndex: 10011,
+            zIndex: 10001111,
           }}
         >
           {languages.map(({ code, name }) => (

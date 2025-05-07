@@ -28,7 +28,7 @@ const MapHangoutsModal = ({ onClose }) => {
         width: "100vw",
         height: "100vh",
         backgroundColor: "rgba(0, 0, 0, 0.6)",
-        zIndex: 10000,
+        zIndex: 1000000,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

@@ -8,11 +8,11 @@ const GlobalSearch = () => {
   return (
     <div
       style={{
-        position: "fixed",
+        position: "absolute",
         top: "1rem",
         left: "50%",
         transform: "translateX(-50%)",
-        zIndex: 10000,
+        zIndex: 1000000,
         pointerEvents: "auto",
       }}
     >

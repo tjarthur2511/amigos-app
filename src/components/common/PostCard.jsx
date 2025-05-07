@@ -46,7 +46,7 @@ const PostCard = ({ post }) => {
 
       {/* 📝 Text */}
       {post.content && (
-        <p style={{ fontSize: "1rem", color: "#333", marginBottom: "1rem" }}>
+        <p style={{ fontSize: "1rem", color: "#FF6B6B", marginBottom: "1rem" }}>
           {post.content}
         </p>
       )}
