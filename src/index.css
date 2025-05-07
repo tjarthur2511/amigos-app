@@ -2,6 +2,11 @@
   --theme-color: 255, 107, 107;      /* #FF6B6B */
   --text-color: 255, 107, 107;       /* #FF6B6B */
   --hover-color: 230, 80, 80;
+  --text-scale: 1;                   /* Default scale for accessibility */
+}
+
+html {
+  font-size: calc(16px * var(--text-scale));
 }
 
 body {

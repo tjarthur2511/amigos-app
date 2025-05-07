@@ -1,8 +1,9 @@
+// src/components/pages/Grupos/GruposPage.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import FallingAEffect from '../../common/FallingAEffect'; // ✅ fixed
+import FallingAEffect from '../../common/FallingAEffect';
 import SuggestedGrupos from './SuggestedGrupos';
 import GruposUnidos from './GruposUnidos';
 import GruposPosts from './GruposPosts';
@@ -12,21 +13,21 @@ const GruposPage = () => {
   const [currentCard, setCurrentCard] = useState(1);
   const [userGrupos, setUserGrupos] = useState([]);
 
-  const feedCards = ['Suggested Grupos', 'Joined Grupos', 'Your Grupos Posts'];
+  const feedCards = ['Suggested Grupos', 'Your Grupos', 'Your Grupos Posts'];
 
   useEffect(() => {
-    const fetchUserGrupos = async () => {
+    const fetchGrupos = async () => {
       const user = auth.currentUser;
       if (!user) return;
 
       const userRef = doc(db, 'users', user.uid);
       const userSnap = await getDoc(userRef);
       if (userSnap.exists()) {
-        const { joinedGrupos = [] } = userSnap.data();
-        setUserGrupos(joinedGrupos);
+        const { grupos = [] } = userSnap.data();
+        setUserGrupos(grupos);
       }
     };
-    fetchUserGrupos();
+    fetchGrupos();
   }, []);
 
   const nextCard = () => setCurrentCard((prev) => (prev + 1) % feedCards.length);
@@ -36,7 +37,7 @@ const GruposPage = () => {
     switch (feedCards[currentCard]) {
       case 'Suggested Grupos':
         return <SuggestedGrupos gruposToExclude={userGrupos} />;
-      case 'Joined Grupos':
+      case 'Your Grupos':
         return <GruposUnidos />;
       case 'Your Grupos Posts':
         return <GruposPosts />;
@@ -66,6 +67,7 @@ const GruposPage = () => {
         <div style={mainCardStyle}>
           <h2 style={sectionTitle}>{feedCards[currentCard]}</h2>
           {renderCurrentFeed()}
+
           <div style={arrowRight}><button onClick={nextCard} style={arrowStyle}>→</button></div>
           <div style={arrowLeft}><button onClick={prevCard} style={arrowStyle}>←</button></div>
         </div>
@@ -74,13 +76,14 @@ const GruposPage = () => {
   );
 };
 
-// All styles remain unchanged...
 const pageStyle = {
   fontFamily: 'Comfortaa, sans-serif',
   backgroundColor: '#FF6B6B',
   minHeight: '100vh',
   overflow: 'hidden',
-  position: 'relative'
+  position: 'relative',
+  margin: 0,               // ✅ fix white outer margin
+  padding: 0               // ✅ fix white outer padding
 };
 
 const bgEffect = {

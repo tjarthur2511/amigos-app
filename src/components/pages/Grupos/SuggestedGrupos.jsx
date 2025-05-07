@@ -1,33 +1,55 @@
 // src/components/pages/Grupos/SuggestedGrupos.jsx
 import React, { useEffect, useState } from 'react';
 import { db, auth } from '../../../firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 
 const SuggestedGrupos = ({ gruposToExclude = [] }) => {
   const [grupos, setGrupos] = useState([]);
 
   useEffect(() => {
-    const fetchGrupos = async () => {
+    const fetchSuggestedGrupos = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const userRef = doc(db, 'users', user.uid);
+      const userSnap = await getDoc(userRef);
+      if (!userSnap.exists()) return;
+
+      const userData = userSnap.data();
+      const userTags = userData.interestTags || [];
+      const userLocation = userData.location || {};
+      const blockedGrupos = userData.blockedGrupos || [];
+
       const snapshot = await getDocs(collection(db, 'grupos'));
       const all = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      const filtered = all.filter(grupo => !gruposToExclude.includes(grupo.id));
+
+      const filtered = all.filter(grupo =>
+        !gruposToExclude.includes(grupo.id) &&
+        !blockedGrupos.includes(grupo.id) &&
+        grupo.tags?.some(tag => userTags.includes(tag)) &&
+        grupo.location?.state === userLocation.state
+      );
+
       setGrupos(filtered);
     };
-    fetchGrupos();
+
+    fetchSuggestedGrupos();
   }, [gruposToExclude]);
 
   return (
     <div style={containerStyle}>
       <h3 style={titleStyle}>Suggested Grupos</h3>
       {grupos.length > 0 ? (
-        <ul style={listStyle}>
-          {grupos.map(grupo => (
-            <li key={grupo.id} style={itemStyle}>
-              <p style={groupName}>{grupo.name}</p>
-              <p style={groupDetail}>{grupo.description}</p>
-            </li>
-          ))}
-        </ul>
+        <div style={scrollBox}>
+          <ul style={listStyle}>
+            {grupos.map(grupo => (
+              <li key={grupo.id} style={itemStyle}>
+                <p style={groupName}>{grupo.name}</p>
+                <p style={groupDetail}>{grupo.description}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
       ) : (
         <p style={noDataStyle}>No suggested grupos yet.</p>
       )}
@@ -43,6 +65,12 @@ const containerStyle = {
   fontFamily: 'Comfortaa, sans-serif'
 };
 
+const scrollBox = {
+  maxHeight: '300px',
+  overflowY: 'auto',
+  marginTop: '1rem'
+};
+
 const titleStyle = {
   fontSize: '1.5rem',
   color: '#FF6B6B',
@@ -52,8 +80,7 @@ const titleStyle = {
 const listStyle = {
   display: 'flex',
   flexDirection: 'column',
-  gap: '1rem',
-  marginTop: '1rem'
+  gap: '1rem'
 };
 
 const itemStyle = {

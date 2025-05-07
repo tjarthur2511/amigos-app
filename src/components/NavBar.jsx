@@ -1,3 +1,4 @@
+// src/components/NavBar.jsx
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -6,24 +7,47 @@ const NavBar = () => {
   const { t } = useTranslation();
 
   return (
-    <nav className="navbar z-0 flex items-center justify-between px-6 py-3 bg-white shadow-md">
-      {/* Left-side logo */}
-      <NavLink to="/" className="text-3xl font-bold flex items-center space-x-2">
-        <span className="bg-[#FF6B6B] text-white rounded-full px-3 py-1 animate-pulse">a</span>
-        <span className="text-gray-800">migos</span>
-      </NavLink>
-
-      {/* Right-side navigation links */}
-      <div className="flex items-center space-x-6 text-lg">
-        <NavLink to="/">{t('home')}</NavLink>
-        <NavLink to="/profile">{t('profile')}</NavLink>
-        <NavLink to="/grupos">{t('grupos')}</NavLink>
-        <NavLink to="/amigos">{t('amigos')}</NavLink>
-        <NavLink to="/map-hangouts">Map Hangouts</NavLink>
-        <NavLink to="/live">Go Live</NavLink>
+    <div style={navWrapper}>
+      <div style={navStyle}>
+        <NavLink to="/" style={tabStyle}>{t('home') || 'Home'}</NavLink>
+        <NavLink to="/amigos" style={tabStyle}>{t('amigos') || 'Amigos'}</NavLink>
+        <NavLink to="/grupos" style={tabStyle}>{t('grupos') || 'Grupos'}</NavLink>
+        <NavLink to="/profile" style={tabStyle}>{t('profile') || 'Profile'}</NavLink>
       </div>
-    </nav>
+    </div>
   );
+};
+
+const navWrapper = {
+  display: 'flex',
+  justifyContent: 'center',
+  marginTop: '2rem',
+  marginBottom: '2rem',
+  zIndex: 5,
+  position: 'relative',
+};
+
+const navStyle = {
+  backgroundColor: 'white',
+  padding: '0.8rem 1rem',
+  borderRadius: '30px',
+  boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
+  display: 'flex',
+  gap: '1rem',
+};
+
+const tabStyle = {
+  backgroundColor: '#FF6B6B',
+  color: 'white',
+  border: 'none',
+  padding: '12px 20px',
+  borderRadius: '30px',
+  fontSize: '1rem',
+  fontWeight: 'bold',
+  fontFamily: 'Comfortaa, sans-serif',
+  cursor: 'pointer',
+  textDecoration: 'none',
+  boxShadow: '0 3px 8px rgba(0,0,0,0.2)',
 };
 
 export default NavBar;

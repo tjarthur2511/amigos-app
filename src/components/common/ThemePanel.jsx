@@ -1,59 +1,114 @@
-// src/components/common/ThemePanel.jsx
 import React, { useState, useEffect } from "react";
 import { db } from "../../firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { useAuth } from "../../context/AuthContext";
 
-const COLORS = [
-  { name: "Amigo Coral", value: "#FF6B6B" },
-  { name: "Sky Blue", value: "#4FC3F7" },
-  { name: "Forest Green", value: "#2E7D32" },
-  { name: "Sunset Orange", value: "#FF7043" },
-  { name: "Royal Purple", value: "#9575CD" },
-  { name: "Dark Mode Gray", value: "#212121" },
-  { name: "Ocean Teal", value: "#00897B" },
-  { name: "Candy Pink", value: "#EC407A" },
-  { name: "Gold", value: "#FFD700" },
-  { name: "Navy", value: "#283593" },
+const presets = [
+  {
+    name: "Amigo Light",
+    primary: "#FF6B6B",
+    text: "#FFFFFF",
+    hover: "#FFA3A3",
+  },
+  {
+    name: "Amigo Dark",
+    primary: "#1a1a1a",
+    text: "#FFFFFF",
+    hover: "#333333",
+  },
+  {
+    name: "Ocean Night",
+    primary: "#0f172a",
+    text: "#FFFFFF",
+    hover: "#1e293b",
+  },
+  {
+    name: "Sunset Punch",
+    primary: "#FF7043",
+    text: "#FFFFFF",
+    hover: "#FF5722",
+  },
+];
+
+const swatches = [
+  "#FF6B6B", "#4CAF50", "#2196F3", "#FFC107", "#9C27B0",
+  "#00BCD4", "#FF9800", "#E91E63", "#3F51B5", "#8BC34A",
+  "#212121", "#1a1a1a", "#0f172a", "#283593", "#FFD700"
 ];
 
 const ThemePanel = ({ onClose }) => {
   const { currentUser } = useAuth();
-  const [selectedColor, setSelectedColor] = useState("#FF6B6B");
+  const [primary, setPrimary] = useState("#FF6B6B");
+  const [text, setText] = useState("#FFFFFF");
+  const [hover, setHover] = useState("#FFA3A3");
 
   useEffect(() => {
-    const fetchTheme = async () => {
-      if (!currentUser) return;
+    if (!currentUser) return;
+    const loadTheme = async () => {
       const ref = doc(db, "users", currentUser.uid);
       const snap = await getDoc(ref);
       if (snap.exists()) {
-        const data = snap.data();
-        if (data.themeColor) {
-          setSelectedColor(data.themeColor);
-          document.documentElement.style.setProperty("--theme-color", data.themeColor);
+        const theme = snap.data()?.theme;
+        if (theme) {
+          setPrimary(theme.primary || "#FF6B6B");
+          setText(theme.text || "#FFFFFF");
+          setHover(theme.hover || "#FFA3A3");
+          applyTheme(theme.primary, theme.text, theme.hover);
         }
       }
     };
-    fetchTheme();
+    loadTheme();
   }, [currentUser]);
 
-  const handleColorSelect = async (color) => {
-    setSelectedColor(color);
-    document.documentElement.style.setProperty("--theme-color", color);
+  const applyTheme = (p, t, h) => {
+    document.documentElement.style.setProperty("--primary", p);
+    document.documentElement.style.setProperty("--text", t);
+    document.documentElement.style.setProperty("--hover", h);
+  };
+
+  const applyPreset = (preset) => {
+    setPrimary(preset.primary);
+    setText(preset.text);
+    setHover(preset.hover);
+    applyTheme(preset.primary, preset.text, preset.hover);
+  };
+
+  const handleSave = async () => {
+    applyTheme(primary, text, hover);
     if (currentUser) {
       await updateDoc(doc(db, "users", currentUser.uid), {
-        themeColor: color,
+        theme: { primary, text, hover },
       });
     }
+    onClose();
   };
+
+  const renderSwatch = (current, setter) => (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.5rem" }}>
+      {swatches.map((color) => (
+        <button
+          key={color}
+          onClick={() => setter(color)}
+          style={{
+            width: "32px",
+            height: "32px",
+            borderRadius: "50%",
+            backgroundColor: color,
+            border: color === current ? "3px solid black" : "1px solid #ccc",
+            cursor: "pointer",
+          }}
+        />
+      ))}
+    </div>
+  );
 
   return (
     <div
       style={{
         position: "fixed",
-        top: "6rem",
+        top: "2.5rem",
         right: "1rem",
-        width: "320px",
+        width: "360px",
         backgroundColor: "#fff",
         color: "#FF6B6B",
         padding: "1.5rem",
@@ -65,56 +120,94 @@ const ThemePanel = ({ onClose }) => {
         overflowY: "auto",
       }}
     >
-      <h2 style={{ fontSize: "1.6rem", marginBottom: "1rem", fontWeight: "bold" }}>
-        Theme Settings
+      <h2 style={{ fontSize: "1.6rem", marginBottom: "1rem", fontWeight: "bold", textAlign: "center" }}>
+        Customize Theme
       </h2>
 
-      <div style={{ marginBottom: "1.5rem" }}>
-        <h3 style={{ fontSize: "1.1rem", fontWeight: "bold", marginBottom: "0.5rem" }}>
-          Pick a Color
-        </h3>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: "0.5rem",
-          }}
-        >
-          {COLORS.map((color) => (
+      <div style={sectionStyle}>
+        <h3 style={labelStyle}>Presets</h3>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+          {presets.map((preset) => (
             <button
-              key={color.value}
-              onClick={() => handleColorSelect(color.value)}
-              title={color.name}
+              key={preset.name}
+              onClick={() => applyPreset(preset)}
               style={{
-                width: "100%",
-                height: "2.5rem",
+                padding: "0.4rem 0.8rem",
+                backgroundColor: preset.primary,
+                color: preset.text,
                 borderRadius: "9999px",
-                backgroundColor: color.value,
-                border: selectedColor === color.value ? "3px solid black" : "1px solid #ccc",
+                fontWeight: "bold",
+                fontSize: "0.8rem",
+                border: "none",
                 cursor: "pointer",
               }}
-            />
+            >
+              {preset.name}
+            </button>
           ))}
         </div>
       </div>
 
+      <div style={sectionStyle}>
+        <h3 style={labelStyle}>Base Color</h3>
+        {renderSwatch(primary, setPrimary)}
+      </div>
+
+      <div style={sectionStyle}>
+        <h3 style={labelStyle}>Text Color</h3>
+        {renderSwatch(text, setText)}
+      </div>
+
+      <div style={sectionStyle}>
+        <h3 style={labelStyle}>Hover Color</h3>
+        {renderSwatch(hover, setHover)}
+      </div>
+
+      <button
+        onClick={handleSave}
+        style={{
+          marginTop: "1rem",
+          backgroundColor: primary,
+          color: text,
+          padding: "0.5rem 1rem",
+          width: "100%",
+          border: "none",
+          borderRadius: "9999px",
+          fontWeight: "bold",
+          cursor: "pointer",
+        }}
+      >
+        Save Theme
+      </button>
+
       <button
         onClick={onClose}
         style={{
+          marginTop: "0.5rem",
           backgroundColor: "#FF6B6B",
           color: "#fff",
           padding: "0.5rem 1rem",
-          borderRadius: "9999px",
+          width: "100%",
           border: "none",
+          borderRadius: "9999px",
           fontWeight: "bold",
           cursor: "pointer",
-          width: "100%",
         }}
       >
         Close
       </button>
     </div>
   );
+};
+
+const sectionStyle = {
+  marginBottom: "1.5rem",
+};
+
+const labelStyle = {
+  fontSize: "1.1rem",
+  fontWeight: "bold",
+  marginBottom: "0.25rem",
 };
 
 export default ThemePanel;

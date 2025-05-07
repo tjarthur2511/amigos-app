@@ -6,7 +6,6 @@ import { auth, db } from './firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 
 import LoadingScreen from './components/LoadingScreen';
-import NavBar from './components/NavBar';
 import ScrollToTop from './components/common/ScrollToTop';
 import FallingAEffect from './components/common/FallingAEffect';
 
@@ -46,8 +45,31 @@ function AppContent({ user, themeColor, textColor }) {
         overflowX: 'hidden',
       }}
     >
+      {/* 🔴 Global Coral Background */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: themeColor || '#FF6B6B',
+        zIndex: -5000,
+      }} />
+
+      {/* 🔴 Falling Amigos Animation */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        zIndex: -1000,
+        pointerEvents: 'none'
+      }}>
+        <FallingAEffect />
+      </div>
+
       <ScrollToTop />
-      <FallingAEffect />
 
       {user && (
         <>
@@ -62,7 +84,6 @@ function AppContent({ user, themeColor, textColor }) {
       )}
 
       <div className="relative z-10">
-        {showNav && <NavBar />}
         <Routes>
           {user ? (
             <>

@@ -182,4 +182,4 @@ const arrowStyle = {
   cursor: 'pointer'
 };
 
-export default AmigosPage;
+export default AmigosPage

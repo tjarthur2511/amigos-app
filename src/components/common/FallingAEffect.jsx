@@ -33,7 +33,7 @@ const FallingAEffect = () => {
         width: "100%",
         height: "100%",
         overflow: "hidden",
-        zIndex: 0, // ⬅️ This ensures it’s above coral bg but below buttons
+        zIndex: 5000, // ⬅️ This ensures it’s above coral bg but below buttons
         pointerEvents: "none",
       }}
     >
