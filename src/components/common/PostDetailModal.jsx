@@ -14,18 +14,19 @@ import {
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
+import ReactionPicker from "./ReactionPicker";
 
 const PostDetailModal = ({ post, onClose }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editedContent, setEditedContent] = useState("");
-  const [replies, setReplies] = useState({});
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(null);
   const currentUser = auth.currentUser;
-  const emojiOptions = ["👍", "👎", "😂", "😢", "😮", "😍", "👏", "🔥", "💯"];
 
   useEffect(() => {
+    console.log("PostDetailModal received post:", post);
+
     const q = query(
       collection(db, "comments"),
       where("postId", "==", post.id),
@@ -33,17 +34,8 @@ const PostDetailModal = ({ post, onClose }) => {
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const allComments = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      const topLevel = allComments.filter((c) => !c.parentId);
-      const replyMap = {};
-      allComments.forEach((c) => {
-        if (c.parentId) {
-          if (!replyMap[c.parentId]) replyMap[c.parentId] = [];
-          replyMap[c.parentId].push(c);
-        }
-      });
-      setComments(topLevel);
-      setReplies(replyMap);
+      const commentList = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setComments(commentList.filter((c) => !c.parentId));
     });
 
     return () => unsubscribe();
@@ -70,7 +62,12 @@ const PostDetailModal = ({ post, onClose }) => {
     Object.keys(currentMap).forEach((key) => {
       updated[key] = currentMap[key].filter((id) => id !== userId);
     });
+
     updated[emoji] = [...(updated[emoji] || []), userId];
+
+    Object.keys(updated).forEach((key) => {
+      if (updated[key].length === 0) delete updated[key];
+    });
 
     await updateDoc(ref, { emojis: updated });
     setEmojiPickerVisible(null);
@@ -93,7 +90,6 @@ const PostDetailModal = ({ post, onClose }) => {
   const handleDeleteComment = async (commentId) => {
     const confirmed = window.confirm("Are you sure you want to delete this comment?");
     if (!confirmed) return;
-
     try {
       await deleteDoc(doc(db, "comments", commentId));
     } catch (err) {
@@ -158,7 +154,7 @@ const PostDetailModal = ({ post, onClose }) => {
         >
           <h2 style={{ color: "#FF6B6B", marginBottom: "1rem" }}>Full Post</h2>
           <p style={{ fontWeight: "bold", fontSize: "1.1rem", color: "#FF6B6B" }}>
-            {post.content}
+            {post.content || "Untitled Post"}
           </p>
           {post.imageUrl && (
             <img
@@ -209,8 +205,8 @@ const PostDetailModal = ({ post, onClose }) => {
         <div style={{ maxHeight: "300px", overflowY: "auto", marginTop: "1rem", paddingRight: "0.5rem" }}>
           {comments.map((comment) => {
             const canEdit = currentUser?.uid === comment.userId;
-            const canDelete =
-              currentUser?.uid === comment.userId || currentUser?.uid === post.userId;
+            const canDelete = currentUser?.uid === comment.userId || currentUser?.uid === post.userId;
+            const reactions = comment.emojis || {};
 
             return (
               <div
@@ -321,6 +317,25 @@ const PostDetailModal = ({ post, onClose }) => {
                           </button>
                         )}
                       </div>
+                    </div>
+
+                    {emojiPickerVisible === comment.id && (
+                      <ReactionPicker
+                        onSelect={(emoji) => handleEmojiReact(comment.id, emoji, reactions)}
+                      />
+                    )}
+
+                    <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
+                      {Object.entries(reactions).map(([emoji, users]) =>
+                        users.length > 0 ? (
+                          <span
+                            key={emoji}
+                            style={{ fontSize: "1.1rem", color: "#FF6B6B", marginRight: "0.5rem" }}
+                          >
+                            {emoji} {users.length}
+                          </span>
+                        ) : null
+                      )}
                     </div>
                   </>
                 )}

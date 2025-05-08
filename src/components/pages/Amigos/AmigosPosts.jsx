@@ -5,7 +5,9 @@ import {
   query,
   where,
   getDocs,
-  orderBy
+  orderBy,
+  doc,
+  getDoc
 } from 'firebase/firestore';
 import PostCard from '../../common/PostCard';
 
@@ -17,10 +19,11 @@ const AmigosPosts = () => {
       const user = auth.currentUser;
       if (!user) return;
 
-      const userRef = await db.collection('users').doc(user.uid).get();
-      if (!userRef.exists) return;
+      const userRef = doc(db, 'users', user.uid);
+      const userSnap = await getDoc(userRef);
+      if (!userSnap.exists()) return;
 
-      const { following = [] } = userRef.data();
+      const { following = [] } = userSnap.data();
 
       if (!following.length) {
         setAmigosPosts([]);

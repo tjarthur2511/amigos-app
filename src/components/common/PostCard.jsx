@@ -1,15 +1,17 @@
 // src/components/common/PostCard.jsx
 import React, { useEffect, useState } from "react";
 import { db, auth } from "../../firebase";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, getDocs, updateDoc } from "firebase/firestore";
 import PostDetailModal from "./PostDetailModal";
 import PostModal from "./PostModal";
+import ReactionPicker from "./ReactionPicker";
 
 const PostCard = ({ post }) => {
   const [author, setAuthor] = useState(null);
   const [comments, setComments] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [emojiPickerVisible, setEmojiPickerVisible] = useState(null);
 
   const currentUser = auth.currentUser;
 
@@ -33,6 +35,24 @@ const PostCard = ({ post }) => {
     fetchData();
   }, [post]);
 
+  const handleEmojiReact = async (commentId, emoji, currentMap = {}) => {
+    const ref = doc(db, "comments", commentId);
+    const userId = currentUser?.uid || "anon";
+    const updated = {};
+
+    Object.keys(currentMap).forEach((key) => {
+      updated[key] = currentMap[key].filter((id) => id !== userId);
+    });
+
+    const alreadyReacted = (currentMap[emoji] || []).includes(userId);
+    if (!alreadyReacted) {
+      updated[emoji] = [...(updated[emoji] || []), userId];
+    }
+
+    await updateDoc(ref, { emojis: updated });
+    setEmojiPickerVisible(null);
+  };
+
   return (
     <div
       style={{
@@ -45,7 +65,6 @@ const PostCard = ({ post }) => {
         position: "relative",
       }}
     >
-      {/* ✏️ Edit button for post owner */}
       {currentUser?.uid === post.userId && (
         <button
           onClick={() => setShowEditModal(true)}
@@ -64,16 +83,10 @@ const PostCard = ({ post }) => {
         </button>
       )}
 
-      {/* 🧑 Author */}
-      <div style={{
-        marginBottom: "0.5rem",
-        fontWeight: "bold",
-        color: "#FF6B6B"
-      }}>
+      <div style={{ marginBottom: "0.5rem", fontWeight: "bold", color: "#FF6B6B" }}>
         @{author?.displayName || "anon"}
       </div>
 
-      {/* 📝 Content */}
       {post.content && (
         <p style={{
           fontSize: "1rem",
@@ -86,7 +99,6 @@ const PostCard = ({ post }) => {
         </p>
       )}
 
-      {/* 🖼️ Media */}
       {post.imageUrl && (
         <img
           src={post.imageUrl}
@@ -111,14 +123,12 @@ const PostCard = ({ post }) => {
         />
       )}
 
-      {/* 🔖 Hashtags */}
       <div style={{ fontSize: "0.9rem", color: "#FF6B6B", marginBottom: "0.5rem" }}>
         {post.hashtags?.map((tag) => (
           <span key={tag} style={{ marginRight: "0.5rem" }}>{tag}</span>
         ))}
       </div>
 
-      {/* 👤 Tag info */}
       <div style={{ fontSize: "0.9rem", color: "#999", marginBottom: "1rem" }}>
         Tagged:
         {(post.taggedAmigos || []).map(uid => (
@@ -129,30 +139,60 @@ const PostCard = ({ post }) => {
         ))}
       </div>
 
-      {/* 💬 Top 3 Comments */}
       <div style={{ marginTop: "1rem" }}>
-        {comments.map((comment) => (
-          <div
-            key={comment.id}
-            style={{
-              backgroundColor: "#ffffff",      // ✅ white background
-              padding: "0.5rem 1rem",
-              borderRadius: "0.75rem",
-              marginBottom: "0.5rem",
-              fontSize: "0.95rem",
-              color: "#FF6B6B",               // ✅ coral text
-              fontWeight: "500",
-              position: "relative",
-              border: "1px solid #FF6B6B",     // ✅ add border to match theme
-            }}
-          >
-            <strong style={{ marginRight: "0.3rem" }}>💬</strong>
-            {comment.content}
-          </div>
-        ))}
+        {comments.map((comment) => {
+          const reactions = comment.emojis || {};
+          return (
+            <div
+              key={comment.id}
+              style={{
+                backgroundColor: "#ffffff",
+                padding: "0.5rem 1rem",
+                borderRadius: "0.75rem",
+                marginBottom: "0.5rem",
+                fontSize: "0.95rem",
+                color: "#FF6B6B",
+                fontWeight: "500",
+                position: "relative",
+                border: "1px solid #FF6B6B",
+              }}
+            >
+              <strong style={{ marginRight: "0.3rem" }}>💬</strong>
+              {comment.content}
+              <div style={{ marginTop: "0.4rem", display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+                {Object.entries(reactions).map(([emoji, users]) => (
+                  <span
+                    key={emoji}
+                    style={{ fontSize: "1.1rem", color: "#FF6B6B", marginRight: "0.5rem" }}
+                  >
+                    {emoji} {users.length}
+                  </span>
+                ))}
+                <button
+                  onClick={() =>
+                    setEmojiPickerVisible(emojiPickerVisible === comment.id ? null : comment.id)
+                  }
+                  style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "1.1rem",
+                    cursor: "pointer",
+                    color: "#FF6B6B",
+                  }}
+                >
+                  😀
+                </button>
+              </div>
+              {emojiPickerVisible === comment.id && (
+                <ReactionPicker
+                  onSelect={(emoji) => handleEmojiReact(comment.id, emoji, reactions)}
+                />
+              )}
+            </div>
+          );
+        })}
       </div>
 
-      {/* 🔎 View All Comments */}
       <div style={{ textAlign: "right" }}>
         <button
           onClick={() => setShowModal(true)}

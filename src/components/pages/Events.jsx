@@ -1,4 +1,3 @@
-// src/components/pages/Events.jsx
 import React, { useEffect, useState } from "react";
 import { db } from "../firebase";
 import {
@@ -16,6 +15,9 @@ const Events = () => {
     description: "",
     location: "",
     date: "",
+    grupoId: "",
+    lat: "",
+    lng: "",
   });
 
   const fetchEvents = async () => {
@@ -39,9 +41,12 @@ const Events = () => {
       ...newEvent,
       createdAt: serverTimestamp(),
       date: Timestamp.fromDate(new Date(newEvent.date)),
+      lat: parseFloat(newEvent.lat),
+      lng: parseFloat(newEvent.lng),
+      type: "event",
     });
 
-    setNewEvent({ name: "", description: "", location: "", date: "" });
+    setNewEvent({ name: "", description: "", location: "", date: "", grupoId: "", lat: "", lng: "" });
     fetchEvents();
   };
 
@@ -85,6 +90,30 @@ const Events = () => {
           type="datetime-local"
           name="date"
           value={newEvent.date}
+          onChange={handleInputChange}
+          className="w-full p-3 border border-gray-300 rounded-xl"
+        />
+        <input
+          type="text"
+          name="grupoId"
+          placeholder="Grupo ID (optional)"
+          value={newEvent.grupoId}
+          onChange={handleInputChange}
+          className="w-full p-3 border border-gray-300 rounded-xl"
+        />
+        <input
+          type="text"
+          name="lat"
+          placeholder="Latitude"
+          value={newEvent.lat}
+          onChange={handleInputChange}
+          className="w-full p-3 border border-gray-300 rounded-xl"
+        />
+        <input
+          type="text"
+          name="lng"
+          placeholder="Longitude"
+          value={newEvent.lng}
           onChange={handleInputChange}
           className="w-full p-3 border border-gray-300 rounded-xl"
         />

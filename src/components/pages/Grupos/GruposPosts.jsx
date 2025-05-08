@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { db, auth } from '../../../firebase';
-import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  getDocs,
+  doc,
+  getDoc
+} from 'firebase/firestore';
 import PostCard from '../../common/PostCard';
 
 const GruposPosts = () => {
@@ -11,8 +19,9 @@ const GruposPosts = () => {
       const user = auth.currentUser;
       if (!user) return;
 
-      const userDoc = await db.collection('users').doc(user.uid).get();
-      const userData = userDoc.data();
+      const userRef = doc(db, 'users', user.uid);
+      const userSnap = await getDoc(userRef);
+      const userData = userSnap.data();
       const joinedGrupos = userData?.joinedGrupos || [];
 
       if (!joinedGrupos.length) return;

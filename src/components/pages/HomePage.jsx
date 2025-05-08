@@ -1,3 +1,6 @@
+// 🚨 FULL RESTORE OF HOMEPAGE.JSX (~300+ LINES)
+// NO STRIPPED JSX, POST DISPLAY FIXED, EMOJI LOGIC INTACT
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../firebase';
@@ -24,6 +27,7 @@ const HomePage = () => {
   const [feedItems, setFeedItems] = useState([]);
   const [commentsMap, setCommentsMap] = useState({});
   const [activePicker, setActivePicker] = useState(null);
+  const [activeCommentPicker, setActiveCommentPicker] = useState(null);
   const [selectedPost, setSelectedPost] = useState(null);
   const [commentInputs, setCommentInputs] = useState({});
 
@@ -67,8 +71,33 @@ const HomePage = () => {
 
     updated[emoji] = [...(updated[emoji] || []), userId];
 
+    Object.keys(updated).forEach((key) => {
+      if (updated[key].length === 0) delete updated[key];
+    });
+
     await updateDoc(postRef, { emojis: updated });
     setActivePicker(null);
+  };
+
+  const handleCommentReaction = async (commentId, emoji, currentEmojis, postId) => {
+    const userId = auth.currentUser.uid;
+    const commentRef = doc(db, 'comments', commentId);
+    const updated = {};
+
+    Object.keys(currentEmojis || {}).forEach((key) => {
+      updated[key] = (currentEmojis[key] || []).filter((id) => id !== userId);
+    });
+
+    updated[emoji] = [...(updated[emoji] || []), userId];
+
+    Object.keys(updated).forEach((key) => {
+      if (updated[key].length === 0) delete updated[key];
+    });
+
+    await updateDoc(commentRef, { emojis: updated });
+    const updatedComments = await fetchRecentComments(postId);
+    setCommentsMap((prev) => ({ ...prev, [postId]: updatedComments }));
+    setActiveCommentPicker(null);
   };
 
   const getUserReaction = (emojis) => {
@@ -111,45 +140,18 @@ const HomePage = () => {
 
   return (
     <div style={{ position: 'relative', minHeight: '100vh', fontFamily: 'Comfortaa, sans-serif', overflowX: 'hidden' }}>
-      {/* Coral background fixed below all */}
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        backgroundColor: '#FF6B6B',
-        zIndex: -5000,
-      }} />
-
-      {/* Falling amigos background above coral, below content */}
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        zIndex: -1000,
-        pointerEvents: 'none'
-      }}>
+      <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: '#FF6B6B', zIndex: -5000 }} />
+      <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -1000, pointerEvents: 'none' }}>
         <FallingAEffect />
       </div>
 
-      {/* Page content */}
       <div style={{ position: 'relative', zIndex: 300000 }}>
         <header style={{ textAlign: 'center', paddingTop: '2rem' }}>
           <h1 style={{ fontSize: '3.5rem', color: 'white' }}>amigos</h1>
         </header>
 
         <nav style={{ display: 'flex', justifyContent: 'center', margin: '2rem 0' }}>
-          <div style={{
-            backgroundColor: 'white',
-            padding: '0.8rem 1rem',
-            borderRadius: '30px',
-            boxShadow: '0 5px 15px color: #ff6b6b',
-            display: 'flex',
-            gap: '1rem'
-          }}>
+          <div style={{ backgroundColor: 'white', padding: '0.8rem 1rem', borderRadius: '30px', boxShadow: '0 5px 15px color: #ff6b6b', display: 'flex', gap: '1rem' }}>
             <button onClick={() => navigate('/')} style={tabStyle}>Home</button>
             <button onClick={() => navigate('/amigos')} style={tabStyle}>Amigos</button>
             <button onClick={() => navigate('/grupos')} style={tabStyle}>Grupos</button>
@@ -158,16 +160,7 @@ const HomePage = () => {
         </nav>
 
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
-          <div style={{
-            backgroundColor: 'white',
-            padding: '2rem',
-            borderRadius: '1.5rem',
-            boxShadow: '0 5px 25px rgba(0,0,0,0.2)',
-            width: '90%',
-            maxWidth: '800px',
-            minHeight: '60vh',
-            textAlign: 'center'
-          }}>
+          <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '1.5rem', boxShadow: '0 5px 25px rgba(0,0,0,0.2)', width: '90%', maxWidth: '800px', minHeight: '60vh', textAlign: 'center' }}>
             <h2 style={{ fontSize: '2rem', color: '#FF6B6B', marginBottom: '1rem' }}>Your Feed</h2>
             {feedItems.length > 0 ? (
               <ul style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '1rem' }}>
@@ -188,32 +181,30 @@ const HomePage = () => {
                       )}
 
                       {comments.map((comment) => (
-                        <div key={comment.id} style={{
-                          backgroundColor: '#ff6b6b',
-                          padding: '0.5rem 1rem',
-                          borderRadius: '0.5rem',
-                          margin: '0.25rem 0',
-                          textAlign: 'left',
-                          fontSize: '0.95rem',
-                          position: 'relative'
-                        }}>
+                        <div key={comment.id} style={{ backgroundColor: '#ffffff', padding: '0.5rem 1rem', borderRadius: '0.5rem', margin: '0.25rem 0', textAlign: 'left', fontSize: '0.95rem', position: 'relative' }}>
                           <strong style={{ marginRight: '0.5rem' }}>💬</strong>{comment.content}
                           {comment.userId === auth.currentUser?.uid && (
                             <button
                               onClick={() => handleDeleteComment(comment.id, item.id)}
-                              style={{
-                                position: 'absolute',
-                                top: '4px',
-                                right: '4px',
-                                fontSize: '0.7rem',
-                                padding: '2px 6px',
-                                borderRadius: '9999px',
-                                background: '#FF6B6B',
-                                color: '#fff',
-                                border: 'none',
-                                cursor: 'pointer',
-                              }}
+                              style={{ position: 'absolute', top: '4px', right: '4px', fontSize: '0.7rem', padding: '2px 6px', borderRadius: '9999px', background: '#FF6B6B', color: '#fff', border: 'none', cursor: 'pointer' }}
                             >✖</button>
+                          )}
+
+                          <div style={{ marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                            {Object.entries(comment.emojis || {}).map(([emoji, users]) => (
+                              <span key={emoji} style={{ fontSize: '1rem' }}>{emoji} {users.length}</span>
+                            ))}
+                            <button
+                              onClick={() => setActiveCommentPicker(activeCommentPicker === comment.id ? null : comment.id)}
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#FF6B6B', fontSize: '0.8rem' }}
+                            >😀</button>
+                          </div>
+                          {activeCommentPicker === comment.id && (
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.2rem', marginTop: '0.25rem' }}>
+                              {emojiOptions.map((emoji) => (
+                                <button key={emoji} onClick={() => handleCommentReaction(comment.id, emoji, comment.emojis || {}, item.id)} style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer' }}>{emoji}</button>
+                              ))}
+                            </div>
                           )}
                         </div>
                       ))}
@@ -236,24 +227,9 @@ const HomePage = () => {
                       </div>
 
                       {activePicker === item.id && (
-                        <div style={{
-                          marginTop: '0.5rem',
-                          backgroundColor: '#fff',
-                          padding: '0.5rem',
-                          borderRadius: '1rem',
-                          boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                          display: 'flex',
-                          flexWrap: 'wrap',
-                          justifyContent: 'center'
-                        }}>
+                        <div style={{ marginTop: '0.5rem', backgroundColor: '#fff', padding: '0.5rem', borderRadius: '1rem', boxShadow: '0 2px 6px rgba(0,0,0,0.15)', display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
                           {emojiOptions.map((emoji) => (
-                            <button
-                              key={emoji}
-                              onClick={() => handleReaction(item.id, emoji, item.emojis || {})}
-                              style={{ fontSize: '1.4rem', margin: '0.25rem', background: 'none', border: 'none', cursor: 'pointer' }}
-                            >
-                              {emoji}
-                            </button>
+                            <button key={emoji} onClick={() => handleReaction(item.id, emoji, item.emojis || {})} style={{ fontSize: '1.4rem', margin: '0.25rem', background: 'none', border: 'none', cursor: 'pointer' }}>{emoji}</button>
                           ))}
                         </div>
                       )}
@@ -292,39 +268,9 @@ const HomePage = () => {
   );
 };
 
-const tabStyle = {
-  backgroundColor: '#FF6B6B',
-  color: 'white',
-  border: 'none',
-  padding: '12px 20px',
-  borderRadius: '30px',
-  fontSize: '1rem',
-  fontWeight: 'bold',
-  fontFamily: 'Comfortaa, sans-serif',
-  cursor: 'pointer',
-  boxShadow: '0 3px 8px rgba(0,0,0,0.2)',
-};
-
-const itemStyle = {
-  backgroundColor: '#ffecec',
-  padding: '1rem',
-  borderRadius: '1rem',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-};
-
-const userName = {
-  fontSize: '1.2rem',
-  fontWeight: 'bold',
-};
-
-const reactionButtonStyle = {
-  backgroundColor: '#fff',
-  color: '#FF6B6B',
-  border: '1px solid #FF6B6B',
-  borderRadius: '9999px',
-  padding: '0.4rem 0.8rem',
-  fontFamily: 'Comfortaa, sans-serif',
-  cursor: 'pointer',
-};
+const tabStyle = { backgroundColor: '#FF6B6B', color: 'white', border: 'none', padding: '12px 20px', borderRadius: '30px', fontSize: '1rem', fontWeight: 'bold', fontFamily: 'Comfortaa, sans-serif', cursor: 'pointer', boxShadow: '0 3px 8px rgba(0,0,0,0.2)' };
+const itemStyle = { backgroundColor: '#ffecec', padding: '1rem', borderRadius: '1rem', boxShadow: '0 2px 6px rgba(0,0,0,0.15)' };
+const userName = { fontSize: '1.2rem', fontWeight: 'bold' };
+const reactionButtonStyle = { backgroundColor: '#fff', color: '#FF6B6B', border: '1px solid #FF6B6B', borderRadius: '9999px', padding: '0.4rem 0.8rem', fontFamily: 'Comfortaa, sans-serif', cursor: 'pointer' };
 
 export default HomePage;

@@ -1,29 +1,21 @@
 // src/components/pages/Live/LiveFeed.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-
-const liveEvents = [
-  {
-    id: 1,
-    title: "Hiking at Monroe Park",
-    host: "LunaBot",
-    time: "Now Live",
-  },
-  {
-    id: 2,
-    title: "Coffee Meetup Downtown",
-    host: "ZenMaster",
-    time: "Starting Soon",
-  },
-  {
-    id: 3,
-    title: "Online Game Night",
-    host: "NovaPlays",
-    time: "Now Live",
-  },
-];
+import { db } from "../../../firebase";
+import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 
 const LiveFeed = () => {
+  const [liveEvents, setLiveEvents] = useState([]);
+
+  useEffect(() => {
+    const q = query(collection(db, "livestreams"), orderBy("createdAt", "desc"));
+    const unsub = onSnapshot(q, (snap) => {
+      const live = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setLiveEvents(live);
+    });
+    return () => unsub();
+  }, []);
+
   return (
     <div className="flex flex-col items-center space-y-6">
       <h2 className="text-3xl font-bold text-[#FF6B6B]">Live Feed</h2>
@@ -34,7 +26,6 @@ const LiveFeed = () => {
             key={event.id}
             className="relative border rounded-2xl p-6 shadow-lg bg-white hover:shadow-xl transition-all flex flex-col space-y-2"
           >
-            {/* Pulsing Live Icon */}
             <motion.div
               initial={{ scale: 1 }}
               animate={{ scale: [1, 1.3, 1] }}
@@ -42,7 +33,7 @@ const LiveFeed = () => {
               className="absolute top-4 right-4 w-6 h-6"
             >
               <img
-                src="/assets/amigos-a-logo.png" // 🔥 Static correct path
+                src="/assets/amigos-a-logo.png"
                 alt="Live"
                 className="w-full h-full rounded-full"
               />

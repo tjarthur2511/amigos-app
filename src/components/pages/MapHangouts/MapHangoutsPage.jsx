@@ -1,5 +1,8 @@
-import React from 'react';
-import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
+// src/components/pages/MapHangoutsPage.jsx
+import React, { useEffect, useState } from 'react';
+import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../../firebase';
 import FallingAEffect from '../FallingAEffect';
 
 const containerStyle = {
@@ -9,14 +12,34 @@ const containerStyle = {
 };
 
 const center = {
-  lat: 42.3314, // Default to Detroit, MI
+  lat: 42.3314, // Detroit
   lng: -83.0458,
 };
 
 const MapHangoutsPage = () => {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: 'YOUR_GOOGLE_MAPS_API_KEY', // 🔑 Auto-filled
+    googleMapsApiKey: 'YOUR_GOOGLE_MAPS_API_KEY',
   });
+
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const snapshot = await getDocs(collection(db, 'events'));
+      const eventList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setEvents(eventList);
+    };
+    fetchEvents();
+  }, []);
+
+  const getPinIcon = (type) => {
+    switch (type) {
+      case 'amigo': return '/assets/amigosaonly.png';
+      case 'grupo': return '/assets/g-logo.png'; // Add g Comfortaa image
+      case 'event': return '/assets/e-logo.png'; // Add e Comfortaa image
+      default: return '/assets/amigosaonly.png';
+    }
+  };
 
   return (
     <div style={pageStyle}>
@@ -34,7 +57,19 @@ const MapHangoutsPage = () => {
               mapContainerStyle={containerStyle}
               center={center}
               zoom={10}
-            />
+            >
+              {events.map((event) => (
+                <Marker
+                  key={event.id}
+                  position={{ lat: event.lat, lng: event.lng }}
+                  icon={{
+                    url: getPinIcon(event.type),
+                    scaledSize: new window.google.maps.Size(32, 32),
+                  }}
+                  title={event.title || 'Untitled'}
+                />
+              ))}
+            </GoogleMap>
           ) : (
             <p style={comingSoonText}>Loading map...</p>
           )}
@@ -44,7 +79,6 @@ const MapHangoutsPage = () => {
   );
 };
 
-// Styles (unchanged)
 const pageStyle = {
   fontFamily: 'Comfortaa, sans-serif',
   backgroundColor: '#FF6B6B',
