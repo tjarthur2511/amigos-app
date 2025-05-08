@@ -4,18 +4,21 @@ import { db, auth } from "../../firebase";
 import {
   collection,
   addDoc,
+  updateDoc,
+  doc,
   serverTimestamp,
   getDocs,
 } from "firebase/firestore";
 
-const PostForm = ({ onClose }) => {
-  const [content, setContent] = useState("");
-  const [file, setFile] = useState(null);
+const PostForm = ({ onClose, post = null }) => {
+  const isEdit = !!post;
+  const [content, setContent] = useState(post?.content || "");
+  const [file, setFile] = useState(null); // New upload
   const [loading, setLoading] = useState(false);
   const [allAmigos, setAllAmigos] = useState([]);
   const [allGrupos, setAllGrupos] = useState([]);
-  const [taggedAmigos, setTaggedAmigos] = useState([]);
-  const [taggedGrupos, setTaggedGrupos] = useState([]);
+  const [taggedAmigos, setTaggedAmigos] = useState(post?.taggedAmigos || []);
+  const [taggedGrupos, setTaggedGrupos] = useState(post?.taggedGrupos || []);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -39,27 +42,35 @@ const PostForm = ({ onClose }) => {
     setLoading(true);
 
     const mediaType = file ? (file.type.startsWith("video") ? "video" : "image") : "";
-    const mediaUrl = ""; // Placeholder for upload later
+    const mediaUrl = ""; // Placeholder
 
     try {
-      await addDoc(collection(db, "posts"), {
-        content: trimmed,
-        userId: auth.currentUser?.uid || "anon",
-        createdAt: serverTimestamp(),
-        emojis: {},
-        likes: [],
-        dislikes: [],
-        hashtags: extractHashtags(trimmed),
-        imageUrl: mediaType === "image" ? mediaUrl : "",
-        videoUrl: mediaType === "video" ? mediaUrl : "",
-        taggedAmigos,
-        taggedGrupos,
-        type: "amigo",
-      });
-      setContent("");
-      setFile(null);
-      setTaggedAmigos([]);
-      setTaggedGrupos([]);
+      if (isEdit) {
+        const postRef = doc(db, "posts", post.id);
+        await updateDoc(postRef, {
+          content: trimmed,
+          hashtags: extractHashtags(trimmed),
+          taggedAmigos,
+          taggedGrupos,
+          updatedAt: serverTimestamp(),
+        });
+      } else {
+        await addDoc(collection(db, "posts"), {
+          content: trimmed,
+          userId: auth.currentUser?.uid || "anon",
+          createdAt: serverTimestamp(),
+          emojis: {},
+          likes: [],
+          dislikes: [],
+          hashtags: extractHashtags(trimmed),
+          imageUrl: mediaType === "image" ? mediaUrl : "",
+          videoUrl: mediaType === "video" ? mediaUrl : "",
+          taggedAmigos,
+          taggedGrupos,
+          type: "amigo",
+        });
+      }
+
       if (typeof onClose === "function") onClose();
     } catch (err) {
       console.error("Post failed:", err);
@@ -138,58 +149,62 @@ const PostForm = ({ onClose }) => {
         </select>
       </div>
 
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          style={{
-            fontSize: "1.5rem",
-            backgroundColor: "transparent",
-            border: "none",
-            cursor: "pointer",
-            animation: "pulse 2s infinite",
-            color: "#FF6B6B",
-          }}
-        >
-          📸 / 🎥
-        </button>
-      </div>
-
-      <input
-        type="file"
-        ref={fileInputRef}
-        accept="image/*,video/*"
-        onChange={(e) => setFile(e.target.files[0])}
-        style={{ display: "none" }}
-      />
-
-      {file && (
-        <div style={{ textAlign: "center" }}>
-          {file.type.startsWith("image") ? (
-            <img
-              src={URL.createObjectURL(file)}
-              alt="Preview"
+      {!isEdit && (
+        <>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
               style={{
-                maxWidth: "100%",
-                maxHeight: "200px",
-                objectFit: "cover",
-                borderRadius: "1rem",
-                marginBottom: "1rem",
+                fontSize: "1.5rem",
+                backgroundColor: "transparent",
+                border: "none",
+                cursor: "pointer",
+                animation: "pulse 2s infinite",
+                color: "#FF6B6B",
               }}
-            />
-          ) : (
-            <video
-              src={URL.createObjectURL(file)}
-              controls
-              style={{
-                maxWidth: "100%",
-                maxHeight: "240px",
-                borderRadius: "1rem",
-                marginBottom: "1rem",
-              }}
-            />
+            >
+              📸 / 🎥
+            </button>
+          </div>
+
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*,video/*"
+            onChange={(e) => setFile(e.target.files[0])}
+            style={{ display: "none" }}
+          />
+
+          {file && (
+            <div style={{ textAlign: "center" }}>
+              {file.type.startsWith("image") ? (
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt="Preview"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "200px",
+                    objectFit: "cover",
+                    borderRadius: "1rem",
+                    marginBottom: "1rem",
+                  }}
+                />
+              ) : (
+                <video
+                  src={URL.createObjectURL(file)}
+                  controls
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "240px",
+                    borderRadius: "1rem",
+                    marginBottom: "1rem",
+                  }}
+                />
+              )}
+            </div>
           )}
-        </div>
+        </>
       )}
 
       <button
@@ -209,7 +224,7 @@ const PostForm = ({ onClose }) => {
           transition: "0.2s ease-in-out",
         }}
       >
-        {loading ? "Posting..." : "Post"}
+        {loading ? (isEdit ? "Saving..." : "Posting...") : isEdit ? "Save Changes" : "Post"}
       </button>
     </form>
   );

@@ -6,27 +6,27 @@ import { useAuth } from "../../context/AuthContext";
 const presets = [
   {
     name: "Amigo Light",
-    primary: "#FF6B6B",
-    text: "#FFFFFF",
-    hover: "#FFA3A3",
+    themeColor: "#FF6B6B",
+    textColor: "#FFFFFF",
+    hoverColor: "#FFA3A3",
   },
   {
     name: "Amigo Dark",
-    primary: "#1a1a1a",
-    text: "#FFFFFF",
-    hover: "#333333",
+    themeColor: "#1a1a1a",
+    textColor: "#FFFFFF",
+    hoverColor: "#333333",
   },
   {
     name: "Ocean Night",
-    primary: "#0f172a",
-    text: "#FFFFFF",
-    hover: "#1e293b",
+    themeColor: "#0f172a",
+    textColor: "#FFFFFF",
+    hoverColor: "#1e293b",
   },
   {
     name: "Sunset Punch",
-    primary: "#FF7043",
-    text: "#FFFFFF",
-    hover: "#FF5722",
+    themeColor: "#FF7043",
+    textColor: "#FFFFFF",
+    hoverColor: "#FF5722",
   },
 ];
 
@@ -50,10 +50,10 @@ const ThemePanel = ({ onClose }) => {
       if (snap.exists()) {
         const theme = snap.data()?.theme;
         if (theme) {
-          setPrimary(theme.primary || "#FF6B6B");
-          setText(theme.text || "#FFFFFF");
-          setHover(theme.hover || "#FFA3A3");
-          applyTheme(theme.primary, theme.text, theme.hover);
+          setPrimary(theme.themeColor || "#FF6B6B");
+          setText(theme.textColor || "#FFFFFF");
+          setHover(theme.hoverColor || "#FFA3A3");
+          applyTheme(theme.themeColor, theme.textColor, theme.hoverColor);
         }
       }
     };
@@ -61,23 +61,27 @@ const ThemePanel = ({ onClose }) => {
   }, [currentUser]);
 
   const applyTheme = (p, t, h) => {
-    document.documentElement.style.setProperty("--primary", p);
-    document.documentElement.style.setProperty("--text", t);
-    document.documentElement.style.setProperty("--hover", h);
+    document.documentElement.style.setProperty("--theme-color", p);
+    document.documentElement.style.setProperty("--text-color", t);
+    document.documentElement.style.setProperty("--hover-color", h);
   };
 
   const applyPreset = (preset) => {
-    setPrimary(preset.primary);
-    setText(preset.text);
-    setHover(preset.hover);
-    applyTheme(preset.primary, preset.text, preset.hover);
+    setPrimary(preset.themeColor);
+    setText(preset.textColor);
+    setHover(preset.hoverColor);
+    applyTheme(preset.themeColor, preset.textColor, preset.hoverColor);
   };
 
   const handleSave = async () => {
     applyTheme(primary, text, hover);
     if (currentUser) {
       await updateDoc(doc(db, "users", currentUser.uid), {
-        theme: { primary, text, hover },
+        theme: {
+          themeColor: primary,
+          textColor: text,
+          hoverColor: hover,
+        },
       });
     }
     onClose();
@@ -133,8 +137,8 @@ const ThemePanel = ({ onClose }) => {
               onClick={() => applyPreset(preset)}
               style={{
                 padding: "0.4rem 0.8rem",
-                backgroundColor: preset.primary,
-                color: preset.text,
+                backgroundColor: preset.themeColor,
+                color: preset.textColor,
                 borderRadius: "9999px",
                 fontWeight: "bold",
                 fontSize: "0.8rem",

@@ -1,7 +1,8 @@
+// src/components/common/PostModal.jsx
 import React from "react";
 import PostForm from "./PostForm";
 
-const PostModal = ({ onClose }) => {
+const PostModal = ({ onClose, isEdit = false, post = null }) => {
   return (
     <div
       style={{
@@ -59,10 +60,10 @@ const PostModal = ({ onClose }) => {
             textTransform: "lowercase",
           }}
         >
-          create post
+          {isEdit ? "edit post" : "create post"}
         </h2>
 
-        <PostForm onClose={onClose} />
+        <PostForm onClose={onClose} post={post} />
       </div>
     </div>
   );

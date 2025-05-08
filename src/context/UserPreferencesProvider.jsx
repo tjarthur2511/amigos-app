@@ -1,43 +1,45 @@
-// src/context/UserPreferencesProvider.jsx
-import React, { useEffect } from "react";
+import React, { createContext, useEffect, useState } from "react";
+import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { useAuth } from "./AuthContext";
-import { db } from "../firebase";
-import { useTranslation } from "react-i18next";
 
-const UserPreferencesProvider = ({ children }) => {
-  const { currentUser } = useAuth();
-  const { i18n } = useTranslation();
+export const ThemeContext = createContext();
+
+export const UserPreferencesProvider = ({ children }) => {
+  const [theme, setTheme] = useState("coral"); // unused but kept for future toggling
+  const [isThemeLoaded, setIsThemeLoaded] = useState(false);
 
   useEffect(() => {
-    const applyPreferences = async () => {
-      if (!currentUser) return;
-
-      const userRef = doc(db, "users", currentUser.uid);
-      const snap = await getDoc(userRef);
-      if (!snap.exists()) return;
-
-      const data = snap.data();
-
-      if (data.theme?.primary) {
-        document.documentElement.style.setProperty("--theme-color", data.theme.primary);
-      }
-      if (data.theme?.text) {
-        document.documentElement.style.setProperty("--text-color", data.theme.text);
-      }
-      if (data.theme?.hover) {
-        document.documentElement.style.setProperty("--hover-color", data.theme.hover);
-      }
-
-      if (data.language) {
-        i18n.changeLanguage(data.language);
-      }
+    const applyThemeVars = ({ themeColor, textColor, hoverColor }) => {
+      document.documentElement.style.setProperty("--theme-color", themeColor || "#FF6B6B");
+      document.documentElement.style.setProperty("--text-color", textColor || "#FFFFFF");
+      document.documentElement.style.setProperty("--hover-color", hoverColor || "#FFA3A3");
     };
 
-    applyPreferences();
-  }, [currentUser]);
+    const loadTheme = async () => {
+      const user = auth.currentUser;
+      if (!user) {
+        applyThemeVars({});
+        return setIsThemeLoaded(true);
+      }
 
-  return children;
+      const ref = doc(db, "users", user.uid);
+      const snap = await getDoc(ref);
+      if (snap.exists()) {
+        const theme = snap.data()?.theme || {};
+        applyThemeVars(theme);
+      } else {
+        applyThemeVars({});
+      }
+
+      setIsThemeLoaded(true);
+    };
+
+    loadTheme();
+  }, []);
+
+  return (
+    <ThemeContext.Provider value={{ theme }}>
+      {isThemeLoaded ? children : null}
+    </ThemeContext.Provider>
+  );
 };
-
-export default UserPreferencesProvider;

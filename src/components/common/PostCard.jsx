@@ -1,13 +1,17 @@
 // src/components/common/PostCard.jsx
 import React, { useEffect, useState } from "react";
-import { db } from "../../firebase";
+import { db, auth } from "../../firebase";
 import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 import PostDetailModal from "./PostDetailModal";
+import PostModal from "./PostModal";
 
 const PostCard = ({ post }) => {
   const [author, setAuthor] = useState(null);
   const [comments, setComments] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+
+  const currentUser = auth.currentUser;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,8 +42,28 @@ const PostCard = ({ post }) => {
         marginBottom: "2rem",
         boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
         fontFamily: "Comfortaa, sans-serif",
+        position: "relative",
       }}
     >
+      {/* ✏️ Edit button for post owner */}
+      {currentUser?.uid === post.userId && (
+        <button
+          onClick={() => setShowEditModal(true)}
+          style={{
+            position: "absolute",
+            top: "1rem",
+            right: "1rem",
+            background: "transparent",
+            border: "none",
+            fontSize: "1.25rem",
+            cursor: "pointer",
+            color: "#FF6B6B",
+          }}
+        >
+          ✏️
+        </button>
+      )}
+
       {/* 🧑 Author */}
       <div style={{
         marginBottom: "0.5rem",
@@ -53,7 +77,7 @@ const PostCard = ({ post }) => {
       {post.content && (
         <p style={{
           fontSize: "1rem",
-          color: "var(--theme-color)",
+          color: "#var(--amigos-color)",
           marginBottom: "1rem",
           wordWrap: "break-word",
           whiteSpace: "pre-line",
@@ -131,7 +155,7 @@ const PostCard = ({ post }) => {
           onClick={() => setShowModal(true)}
           style={{
             backgroundColor: "var(--theme-color)",
-            color: "#fff",
+            color: "#FF6B6B",
             border: "none",
             padding: "0.6rem 1.2rem",
             borderRadius: "1rem",
@@ -146,6 +170,13 @@ const PostCard = ({ post }) => {
       </div>
 
       {showModal && <PostDetailModal post={post} onClose={() => setShowModal(false)} />}
+      {showEditModal && (
+        <PostModal
+          post={post}
+          isEdit={true}
+          onClose={() => setShowEditModal(false)}
+        />
+      )}
     </div>
   );
 };

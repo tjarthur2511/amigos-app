@@ -11,13 +11,17 @@ import {
   onSnapshot,
   doc,
   updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
 
 const PostDetailModal = ({ post, onClose }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editedContent, setEditedContent] = useState("");
   const [replies, setReplies] = useState({});
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(null);
+  const currentUser = auth.currentUser;
   const emojiOptions = ["👍", "👎", "😂", "😢", "😮", "😍", "👏", "🔥", "💯"];
 
   useEffect(() => {
@@ -50,7 +54,7 @@ const PostDetailModal = ({ post, onClose }) => {
       content: newComment,
       createdAt: Timestamp.now(),
       postId: post.id,
-      userId: auth.currentUser?.uid || "anon",
+      userId: currentUser?.uid || "anon",
       parentId: "",
       emojis: {},
     });
@@ -59,7 +63,7 @@ const PostDetailModal = ({ post, onClose }) => {
 
   const handleEmojiReact = async (commentId, emoji, currentMap = {}) => {
     const ref = doc(db, "comments", commentId);
-    const userId = auth.currentUser?.uid || "anon";
+    const userId = currentUser?.uid || "anon";
     const updated = {};
 
     Object.keys(currentMap).forEach((key) => {
@@ -69,6 +73,31 @@ const PostDetailModal = ({ post, onClose }) => {
 
     await updateDoc(ref, { emojis: updated });
     setEmojiPickerVisible(null);
+  };
+
+  const handleEditStart = (comment) => {
+    setEditingCommentId(comment.id);
+    setEditedContent(comment.content);
+  };
+
+  const handleEditSave = async () => {
+    if (!editedContent.trim()) return;
+    await updateDoc(doc(db, "comments", editingCommentId), {
+      content: editedContent,
+    });
+    setEditingCommentId(null);
+    setEditedContent("");
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    const confirmed = window.confirm("Are you sure you want to delete this comment?");
+    if (!confirmed) return;
+
+    try {
+      await deleteDoc(doc(db, "comments", commentId));
+    } catch (err) {
+      alert("Failed to delete comment");
+    }
   };
 
   return ReactDOM.createPortal(
@@ -115,6 +144,7 @@ const PostDetailModal = ({ post, onClose }) => {
           ✖
         </button>
 
+        {/* 🧾 Full Post Display */}
         <div
           style={{
             backgroundColor: "#fff0f0",
@@ -143,8 +173,8 @@ const PostDetailModal = ({ post, onClose }) => {
           )}
         </div>
 
+        {/* 💬 Add Comment */}
         <h3 style={{ color: "#FF6B6B", marginTop: "1rem" }}>Comments</h3>
-
         <div style={{ display: "flex", gap: "0.5rem", marginTop: "1rem" }}>
           <textarea
             value={newComment}
@@ -174,60 +204,148 @@ const PostDetailModal = ({ post, onClose }) => {
           </button>
         </div>
 
+        {/* 💬 Display Comments */}
         <div style={{ maxHeight: "300px", overflowY: "auto", marginTop: "1rem", paddingRight: "0.5rem" }}>
-          {comments.map((comment) => (
-            <div
-              key={comment.id}
-              style={{
-                padding: "0.75rem",
-                borderBottom: "1px solid #eee",
-                marginBottom: "0.75rem",
-                color: "#444",
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <p style={{ margin: 0 }}>🗨️ {comment.content}</p>
-                <button
-                  onClick={() =>
-                    setEmojiPickerVisible(emojiPickerVisible === comment.id ? null : comment.id)
-                  }
-                  style={{
-                    background: "none",
-                    border: "none",
-                    fontSize: "1.2rem",
-                    cursor: "pointer",
-                  }}
-                >
-                  😀
-                </button>
-              </div>
+          {comments.map((comment) => {
+            const canEdit = currentUser?.uid === comment.userId;
+            const canDelete =
+              currentUser?.uid === comment.userId || currentUser?.uid === post.userId;
 
-              {emojiPickerVisible === comment.id && (
-                <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
-                  {emojiOptions.map((e) => (
-                    <button
-                      key={e}
-                      onClick={() => handleEmojiReact(comment.id, e, comment.emojis || {})}
+            return (
+              <div
+                key={comment.id}
+                style={{
+                  padding: "0.75rem",
+                  borderBottom: "1px solid #eee",
+                  marginBottom: "0.75rem",
+                  color: "#444",
+                }}
+              >
+                {/* Edit/Normal View */}
+                {editingCommentId === comment.id ? (
+                  <>
+                    <textarea
+                      value={editedContent}
+                      onChange={(e) => setEditedContent(e.target.value)}
+                      rows={2}
                       style={{
-                        fontSize: "1.2rem",
-                        background: "none",
-                        border: "none",
-                        cursor: "pointer",
+                        width: "100%",
+                        fontFamily: "Comfortaa, sans-serif",
+                        padding: "0.5rem",
+                        border: "1px solid #ccc",
+                        borderRadius: "0.5rem",
                       }}
-                    >
-                      {e}
-                    </button>
-                  ))}
-                </div>
-              )}
+                    />
+                    <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem" }}>
+                      <button
+                        onClick={handleEditSave}
+                        style={{
+                          backgroundColor: "#FF6B6B",
+                          color: "#fff",
+                          border: "none",
+                          borderRadius: "1rem",
+                          padding: "0.3rem 1rem",
+                          cursor: "pointer",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={() => setEditingCommentId(null)}
+                        style={{
+                          backgroundColor: "#ccc",
+                          color: "#333",
+                          border: "none",
+                          borderRadius: "1rem",
+                          padding: "0.3rem 1rem",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                      <p style={{ margin: 0 }}>🗨️ {comment.content}</p>
+                      <div style={{ display: "flex", gap: "0.5rem" }}>
+                        <button
+                          onClick={() =>
+                            setEmojiPickerVisible(emojiPickerVisible === comment.id ? null : comment.id)
+                          }
+                          style={{
+                            background: "none",
+                            border: "none",
+                            fontSize: "1.2rem",
+                            cursor: "pointer",
+                          }}
+                        >
+                          😀
+                        </button>
+                        {canEdit && (
+                          <button
+                            onClick={() => handleEditStart(comment)}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              fontSize: "1.1rem",
+                              cursor: "pointer",
+                              color: "#FF6B6B",
+                            }}
+                          >
+                            ✏️
+                          </button>
+                        )}
+                        {canDelete && (
+                          <button
+                            onClick={() => handleDeleteComment(comment.id)}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              fontSize: "1.1rem",
+                              cursor: "pointer",
+                              color: "#888",
+                            }}
+                          >
+                            ❌
+                          </button>
+                        )}
+                      </div>
+                    </div>
 
-              {replies[comment.id]?.slice(0, 3).map((reply) => (
-                <div key={reply.id} style={{ marginLeft: "1.5rem", fontSize: "0.9rem", color: "#666" }}>
-                  ↳ {reply.content}
-                </div>
-              ))}
-            </div>
-          ))}
+                    {/* Emoji Picker */}
+                    {emojiPickerVisible === comment.id && (
+                      <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
+                        {emojiOptions.map((e) => (
+                          <button
+                            key={e}
+                            onClick={() => handleEmojiReact(comment.id, e, comment.emojis || {})}
+                            style={{
+                              fontSize: "1.2rem",
+                              background: "none",
+                              border: "none",
+                              cursor: "pointer",
+                            }}
+                          >
+                            {e}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Replies */}
+                    {replies[comment.id]?.slice(0, 3).map((reply) => (
+                      <div key={reply.id} style={{ marginLeft: "1.5rem", fontSize: "0.9rem", color: "#666" }}>
+                        ↳ {reply.content}
+                      </div>
+                    ))}
+                  </>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>,
