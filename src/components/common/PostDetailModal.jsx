@@ -1,3 +1,4 @@
+// src/components/common/PostDetailModal.jsx
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { db, auth } from "../../firebase";
@@ -144,19 +145,19 @@ const PostDetailModal = ({ post, onClose }) => {
           ✖
         </button>
 
-        {/* 🧾 Full Post Display */}
+        {/* Full Post Display */}
         <div
           style={{
-            backgroundColor: "#fff0f0",
+            backgroundColor: "#ffffff",
             padding: "1rem",
             borderRadius: "1rem",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
+            boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
             textAlign: "center",
             marginBottom: "2rem",
           }}
         >
           <h2 style={{ color: "#FF6B6B", marginBottom: "1rem" }}>Full Post</h2>
-          <p style={{ fontWeight: "bold", fontSize: "1.1rem", color: "#444" }}>
+          <p style={{ fontWeight: "bold", fontSize: "1.1rem", color: "#FF6B6B" }}>
             {post.content}
           </p>
           {post.imageUrl && (
@@ -173,7 +174,7 @@ const PostDetailModal = ({ post, onClose }) => {
           )}
         </div>
 
-        {/* 💬 Add Comment */}
+        {/* Add Comment */}
         <h3 style={{ color: "#FF6B6B", marginTop: "1rem" }}>Comments</h3>
         <div style={{ display: "flex", gap: "0.5rem", marginTop: "1rem" }}>
           <textarea
@@ -204,7 +205,7 @@ const PostDetailModal = ({ post, onClose }) => {
           </button>
         </div>
 
-        {/* 💬 Display Comments */}
+        {/* Display Comments */}
         <div style={{ maxHeight: "300px", overflowY: "auto", marginTop: "1rem", paddingRight: "0.5rem" }}>
           {comments.map((comment) => {
             const canEdit = currentUser?.uid === comment.userId;
@@ -215,13 +216,17 @@ const PostDetailModal = ({ post, onClose }) => {
               <div
                 key={comment.id}
                 style={{
-                  padding: "0.75rem",
-                  borderBottom: "1px solid #eee",
+                  backgroundColor: "#ffffff",
+                  color: "#FF6B6B",
+                  padding: "0.75rem 1rem",
+                  borderRadius: "1rem",
                   marginBottom: "0.75rem",
-                  color: "#444",
+                  fontSize: "0.95rem",
+                  border: "1px solid #FF6B6B",
+                  position: "relative",
+                  fontFamily: "Comfortaa, sans-serif",
                 }}
               >
-                {/* Edit/Normal View */}
                 {editingCommentId === comment.id ? (
                   <>
                     <textarea
@@ -234,6 +239,8 @@ const PostDetailModal = ({ post, onClose }) => {
                         padding: "0.5rem",
                         border: "1px solid #ccc",
                         borderRadius: "0.5rem",
+                        color: "#FF6B6B",
+                        backgroundColor: "#ffffff",
                       }}
                     />
                     <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem" }}>
@@ -269,7 +276,7 @@ const PostDetailModal = ({ post, onClose }) => {
                 ) : (
                   <>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <p style={{ margin: 0 }}>🗨️ {comment.content}</p>
+                      <p style={{ margin: 0 }}>💬 {comment.content}</p>
                       <div style={{ display: "flex", gap: "0.5rem" }}>
                         <button
                           onClick={() =>
@@ -280,6 +287,7 @@ const PostDetailModal = ({ post, onClose }) => {
                             border: "none",
                             fontSize: "1.2rem",
                             cursor: "pointer",
+                            color: "#FF6B6B",
                           }}
                         >
                           😀
@@ -314,33 +322,6 @@ const PostDetailModal = ({ post, onClose }) => {
                         )}
                       </div>
                     </div>
-
-                    {/* Emoji Picker */}
-                    {emojiPickerVisible === comment.id && (
-                      <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
-                        {emojiOptions.map((e) => (
-                          <button
-                            key={e}
-                            onClick={() => handleEmojiReact(comment.id, e, comment.emojis || {})}
-                            style={{
-                              fontSize: "1.2rem",
-                              background: "none",
-                              border: "none",
-                              cursor: "pointer",
-                            }}
-                          >
-                            {e}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Replies */}
-                    {replies[comment.id]?.slice(0, 3).map((reply) => (
-                      <div key={reply.id} style={{ marginLeft: "1.5rem", fontSize: "0.9rem", color: "#666" }}>
-                        ↳ {reply.content}
-                      </div>
-                    ))}
                   </>
                 )}
               </div>

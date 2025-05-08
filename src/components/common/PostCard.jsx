@@ -68,7 +68,7 @@ const PostCard = ({ post }) => {
       <div style={{
         marginBottom: "0.5rem",
         fontWeight: "bold",
-        color: "var(--theme-color)"
+        color: "#FF6B6B"
       }}>
         @{author?.displayName || "anon"}
       </div>
@@ -77,7 +77,7 @@ const PostCard = ({ post }) => {
       {post.content && (
         <p style={{
           fontSize: "1rem",
-          color: "#var(--amigos-color)",
+          color: "#FF6B6B",
           marginBottom: "1rem",
           wordWrap: "break-word",
           whiteSpace: "pre-line",
@@ -112,7 +112,7 @@ const PostCard = ({ post }) => {
       )}
 
       {/* 🔖 Hashtags */}
-      <div style={{ fontSize: "0.9rem", color: "var(--theme-color)", marginBottom: "0.5rem" }}>
+      <div style={{ fontSize: "0.9rem", color: "#FF6B6B", marginBottom: "0.5rem" }}>
         {post.hashtags?.map((tag) => (
           <span key={tag} style={{ marginRight: "0.5rem" }}>{tag}</span>
         ))}
@@ -135,16 +135,19 @@ const PostCard = ({ post }) => {
           <div
             key={comment.id}
             style={{
-              backgroundColor: "#FFF0F0",
-              padding: "0.5rem",
+              backgroundColor: "#ffffff",      // ✅ white background
+              padding: "0.5rem 1rem",
               borderRadius: "0.75rem",
               marginBottom: "0.5rem",
               fontSize: "0.95rem",
-              color: "var(--theme-color)",
+              color: "#FF6B6B",               // ✅ coral text
               fontWeight: "500",
+              position: "relative",
+              border: "1px solid #FF6B6B",     // ✅ add border to match theme
             }}
           >
-            <strong>{comment.userId}</strong>: {comment.content}
+            <strong style={{ marginRight: "0.3rem" }}>💬</strong>
+            {comment.content}
           </div>
         ))}
       </div>
@@ -154,8 +157,8 @@ const PostCard = ({ post }) => {
         <button
           onClick={() => setShowModal(true)}
           style={{
-            backgroundColor: "var(--theme-color)",
-            color: "#FF6B6B",
+            backgroundColor: "#FF6B6B",
+            color: "#fff",
             border: "none",
             padding: "0.6rem 1.2rem",
             borderRadius: "1rem",

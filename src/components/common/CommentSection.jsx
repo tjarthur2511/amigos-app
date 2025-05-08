@@ -1,5 +1,5 @@
 // src/components/common/CommentSection.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   collection,
   addDoc,
@@ -15,12 +15,12 @@ import { db, auth } from "../../firebase";
 const CommentSection = ({ postId }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const inputRef = useRef(null);
 
   useEffect(() => {
     if (!postId) return;
 
-    const commentsRef = collection(db, "comments");
-    const q = query(commentsRef, orderBy("createdAt", "asc"));
+    const q = query(collection(db, "comments"), orderBy("createdAt", "asc"));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const postComments = snapshot.docs
@@ -44,6 +44,7 @@ const CommentSection = ({ postId }) => {
         createdAt: serverTimestamp(),
       });
       setNewComment("");
+      inputRef.current?.focus();
     } catch (err) {
       console.error("Error adding comment:", err);
     }
@@ -58,40 +59,76 @@ const CommentSection = ({ postId }) => {
   };
 
   return (
-    <div className="mt-4 text-sm">
-      <form onSubmit={handleSubmit} className="flex gap-2 mb-2">
+    <div className="mt-4 text-sm font-comfortaa">
+      <form onSubmit={handleSubmit} className="flex items-center gap-2 mb-3">
         <input
+          ref={inputRef}
           type="text"
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           placeholder="Add a comment..."
-          className="flex-grow px-3 py-1 rounded-full border border-[#FF6B6B] shadow-sm shadow-[#FF6B6B] focus:outline-none"
+          className="flex-grow px-4 py-2 rounded-full border border-[#FF6B6B] text-[#FF6B6B] placeholder-[#FF6B6B] bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
         />
         <button
           type="submit"
-          className="bg-[#FF6B6B] text-white px-4 py-1 rounded-full shadow-sm shadow-[#FF6B6B] hover:bg-red-500 transition"
+          className="bg-[#FF6B6B] text-white px-4 py-2 rounded-full hover:bg-[#e65050] transition font-bold shadow"
         >
           Post
         </button>
       </form>
-      <ul className="space-y-1">
-        {comments.map((comment) => (
-          <li
-            key={comment.id}
-            className="bg-[#FFF0F0] border border-[#FF6B6B] shadow-md shadow-[#FF6B6B] p-2 rounded-lg flex justify-between items-center"
-          >
-            <p className="text-[#FF6B6B]">{comment.content}</p>
-            {comment.userId === auth.currentUser?.uid && (
-              <button
-                onClick={() => handleDelete(comment.id)}
-                className="text-[#FF6B6B] hover:text-red-600"
+
+      {comments.length > 0 ? (
+        <ul className="space-y-3">
+          {comments.map((comment) => (
+            <li key={comment.id}>
+              <div
+                style={{
+                  backgroundColor: "#ffffff",
+                  color: "#FF6B6B",
+                  zIndex: 9999,
+                  position: "relative",
+                  padding: "0.75rem 1rem",
+                  borderRadius: "1rem",
+                  border: "1px solid #FF6B6B",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+                }}
               >
-                🗑️
-              </button>
-            )}
-          </li>
-        ))}
-      </ul>
+                <span
+                  style={{
+                    flex: 1,
+                    wordBreak: "break-word",
+                    fontSize: "0.95rem",
+                    fontWeight: "500",
+                  }}
+                >
+                  {comment.content}
+                </span>
+                {comment.userId === auth.currentUser?.uid && (
+                  <button
+                    onClick={() => handleDelete(comment.id)}
+                    style={{
+                      color: "#FF6B6B",
+                      fontSize: "1.2rem",
+                      marginLeft: "1rem",
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                    }}
+                    title="Delete comment"
+                  >
+                    🗑️
+                  </button>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-center text-[#FF6B6B] opacity-75 mt-2">No comments yet.</p>
+      )}
     </div>
   );
 };
