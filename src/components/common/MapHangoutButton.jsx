@@ -1,4 +1,3 @@
-// src/components/common/MapHangoutButton.jsx
 import React, { useState } from "react";
 import MapHangoutsModal from "./MapHangoutsModal";
 
@@ -11,20 +10,20 @@ const MapHangoutButton = () => {
         onClick={() => setShowModal(true)}
         style={{
           position: "fixed",
-          top: "297px", // slightly below + Post (255px)
-          left: "16px",
+          top: "18.5rem", // replaces 297px with rem
+          left: "1rem", // consistent left positioning
           backgroundColor: "#FFFFFF",
           color: "#FF6B6B",
           border: "none",
-          padding: ".5rem 1rem",
+          padding: "0.5rem 1.25rem",
           borderRadius: "9999px",
           fontSize: "0.9rem",
           fontFamily: "Comfortaa, sans-serif",
           fontWeight: "bold",
           cursor: "pointer",
           boxShadow: "0 3px 8px rgba(0,0,0,0.2)",
-          zIndex: 999999,
-          transition: "background-color 0.3s ease, color 0.3s ease",
+          zIndex: 1000000,
+          transition: "all 0.2s ease-in-out",
         }}
         onMouseOver={(e) => {
           e.target.style.backgroundColor = "#FF6B6B";
