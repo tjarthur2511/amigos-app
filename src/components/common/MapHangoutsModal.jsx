@@ -15,6 +15,15 @@ const fallbackCenter = {
   lng: -83.0458,
 };
 
+const getPinIcon = (type) => {
+  switch (type) {
+    case "amigo": return "/assets/amigosaonly.png";
+    case "grupo": return "/assets/g-logo.png";
+    case "event": return "/assets/e-logo.png";
+    default: return "/assets/redalogo.png";
+  }
+};
+
 const MapHangoutsModal = ({ onClose }) => {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -81,7 +90,7 @@ const MapHangoutsModal = ({ onClose }) => {
         item.displayName || item.name || item.title
       }`}
       icon={{
-        url: "/assets/redalogo.png",
+        url: getPinIcon(type),
         scaledSize: new window.google.maps.Size(36, 36),
       }}
       onClick={() => handleInfoClick(type, item)}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import FallingAEffect from '../../common/FallingAEffect'; // ✅ fixed path
+import FallingAEffect from '../../common/FallingAEffect';
 import SuggestedAmigos from './SuggestedAmigos';
 import AmigosUnidos from './AmigosUnidos';
 import AmigosPosts from './AmigosPosts';
@@ -35,7 +35,28 @@ const AmigosPage = () => {
   const renderCurrentFeed = () => {
     switch (feedCards[currentCard]) {
       case 'Suggested Amigos':
-        return <SuggestedAmigos amigosToExclude={userFollowing} />;
+        return (
+          <>
+            <div style={{ textAlign: 'right', marginBottom: '0.5rem' }}>
+              <button
+                onClick={() => navigate('/explore-amigos')}
+                style={{
+                  backgroundColor: 'white',
+                  color: '#FF6B6B',
+                  border: '1px solid #FF6B6B',
+                  borderRadius: '30px',
+                  padding: '4px 12px',
+                  fontSize: '0.9rem',
+                  cursor: 'pointer',
+                  fontFamily: 'Comfortaa, sans-serif',
+                }}
+              >
+                Explore ➜
+              </button>
+            </div>
+            <SuggestedAmigos amigosToExclude={userFollowing} />
+          </>
+        );
       case 'Followed Amigos':
         return <AmigosUnidos />;
       case 'Your Amigos Posts':
@@ -182,4 +203,4 @@ const arrowStyle = {
   cursor: 'pointer'
 };
 
-export default AmigosPage
+export default AmigosPage;

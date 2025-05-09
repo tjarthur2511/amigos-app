@@ -1,4 +1,3 @@
-// src/components/pages/Grupos/GruposPage.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../firebase';
@@ -7,6 +6,7 @@ import FallingAEffect from '../../common/FallingAEffect';
 import SuggestedGrupos from './SuggestedGrupos';
 import GruposUnidos from './GruposUnidos';
 import GruposPosts from './GruposPosts';
+import ExploreGruposPage from './ExploreGruposPage'; // ✅ new component
 
 const GruposPage = () => {
   const navigate = useNavigate();
@@ -36,7 +36,28 @@ const GruposPage = () => {
   const renderCurrentFeed = () => {
     switch (feedCards[currentCard]) {
       case 'Suggested Grupos':
-        return <SuggestedGrupos gruposToExclude={userGrupos} />;
+        return (
+          <>
+            <div style={{ textAlign: 'right', marginBottom: '0.5rem' }}>
+              <button
+                onClick={() => navigate('/explore-grupos')}
+                style={{
+                  backgroundColor: 'white',
+                  color: '#FF6B6B',
+                  border: '1px solid #FF6B6B',
+                  borderRadius: '30px',
+                  padding: '4px 12px',
+                  fontSize: '0.9rem',
+                  cursor: 'pointer',
+                  fontFamily: 'Comfortaa, sans-serif',
+                }}
+              >
+                Explore ➜
+              </button>
+            </div>
+            <SuggestedGrupos gruposToExclude={userGrupos} />
+          </>
+        );
       case 'Your Grupos':
         return <GruposUnidos />;
       case 'Your Grupos Posts':
@@ -82,8 +103,8 @@ const pageStyle = {
   minHeight: '100vh',
   overflow: 'hidden',
   position: 'relative',
-  margin: 0,               // ✅ fix white outer margin
-  padding: 0               // ✅ fix white outer padding
+  margin: 0,
+  padding: 0
 };
 
 const bgEffect = {

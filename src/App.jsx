@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 
@@ -25,12 +31,13 @@ import MonthlyQuizPage from './components/pages/MonthlyQuizPage';
 import ProfilePage from './components/pages/ProfilePage/ProfilePage';
 import GruposPage from './components/pages/Grupos/GruposPage';
 import AmigosPage from './components/pages/Amigos/AmigosPage';
+import ExploreAmigosPage from './components/pages/Amigos/ExploreAmigosPage'; // ✅ NEW
 import LivePage from './components/pages/Live/LivePage';
 import TailwindTest from './components/pages/TailwindTest';
 
 function AppContent({ user }) {
   const location = useLocation();
-  const hideNavOnPaths = ['/login', '/signup']; // ✅ FIXED: allow buttons on '/'
+  const hideNavOnPaths = ['/login', '/signup'];
   const showNav = user && !hideNavOnPaths.includes(location.pathname);
 
   return (
@@ -43,26 +50,30 @@ function AppContent({ user }) {
       }}
     >
       {/* 🔴 Background */}
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        backgroundColor: 'var(--theme-color)',
-        zIndex: -5000,
-      }} />
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          backgroundColor: 'var(--theme-color)',
+          zIndex: -5000,
+        }}
+      />
 
       {/* 🔴 Falling Amigos */}
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        zIndex: -1000,
-        pointerEvents: 'none'
-      }}>
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: -1000,
+          pointerEvents: 'none',
+        }}
+      >
         <FallingAEffect />
       </div>
 
@@ -88,6 +99,7 @@ function AppContent({ user }) {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/grupos" element={<GruposPage />} />
               <Route path="/amigos" element={<AmigosPage />} />
+              <Route path="/explore-amigos" element={<ExploreAmigosPage />} /> {/* ✅ NEW */}
               <Route path="/live" element={<LivePage />} />
               <Route path="/setup" element={<SetupQuizPage />} />
               <Route path="/monthly-quiz" element={<MonthlyQuizPage />} />

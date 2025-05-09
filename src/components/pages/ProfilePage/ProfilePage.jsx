@@ -16,6 +16,7 @@ import ProfilePhotos from './ProfilePhotos';
 import ProfileGrupos from './ProfileGrupos';
 import ProfileAmigos from './ProfileAmigos';
 import ProfileQuestionsCenter from './ProfileQuestionsCenter';
+import ProfileCard from './ProfileCard'; // ✅ added
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -101,6 +102,8 @@ const ProfilePage = () => {
       <header style={headerStyle}>
         <h1 style={titleStyle}>amigos</h1>
       </header>
+
+      <ProfileCard /> {/* ✅ new component for profile photo + info */}
 
       <nav style={navWrapper}>
         <div style={navStyle}>

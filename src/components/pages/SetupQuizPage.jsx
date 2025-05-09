@@ -1,4 +1,3 @@
-// src/components/pages/SetupQuizPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from "../../firebase";
@@ -24,8 +23,8 @@ const SetupQuizPage = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const navigate = useNavigate();
   const inputRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (inputRef.current) inputRef.current.focus();
@@ -71,6 +70,12 @@ const SetupQuizPage = () => {
     }
   };
 
+  const handleBack = () => {
+    if (currentQuestion > 0) setCurrentQuestion(currentQuestion - 1);
+  };
+
+  const getProgressWidth = () => `${((currentQuestion + 1) / staticQuestions.length) * 100}%`;
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -78,12 +83,22 @@ const SetupQuizPage = () => {
       transition={{ duration: 0.8 }}
       className="flex flex-col items-center justify-center min-h-screen p-6 bg-[#FF6B6B] relative font-[Comfortaa] overflow-hidden"
     >
-      {/* ✅ background layer */}
+      {/* 🔴 background animation */}
       <div className="absolute top-0 left-0 w-full h-full z-0 pointer-events-none">
         <FallingAEffect />
       </div>
 
-      {/* ✅ foreground content */}
+      {/* 🔴 progress bar */}
+      <div className="w-full max-w-xl z-10 mb-4">
+        <div className="h-2 bg-white rounded-full overflow-hidden">
+          <div
+            className="h-full bg-[#FF6B6B] transition-all duration-500"
+            style={{ width: getProgressWidth() }}
+          ></div>
+        </div>
+      </div>
+
+      {/* 🔴 card */}
       <div className="w-full max-w-xl bg-white p-8 rounded-2xl shadow-lg z-10">
         <h2 className="text-3xl font-bold text-[#FF6B6B] mb-6 text-center">
           Let's Get to Know You
@@ -103,17 +118,26 @@ const SetupQuizPage = () => {
           disabled={loading}
         />
 
-        <button
-          onClick={handleNext}
-          disabled={loading}
-          className="mt-6 w-full bg-[#FF6B6B] text-white py-3 rounded-xl hover:bg-[#e15555] transition"
-        >
-          {loading
-            ? 'Saving...'
-            : currentQuestion < staticQuestions.length - 1
-            ? 'Next'
-            : 'Finish'}
-        </button>
+        <div className="flex justify-between items-center gap-4 mt-6">
+          <button
+            onClick={handleBack}
+            disabled={currentQuestion === 0 || loading}
+            className="bg-gray-200 text-gray-700 py-3 px-6 rounded-xl hover:bg-gray-300 transition w-1/2"
+          >
+            ← Back
+          </button>
+          <button
+            onClick={handleNext}
+            disabled={loading}
+            className="bg-[#FF6B6B] text-white py-3 px-6 rounded-xl hover:bg-[#e15555] transition w-1/2"
+          >
+            {loading
+              ? 'Saving...'
+              : currentQuestion < staticQuestions.length - 1
+              ? 'Next'
+              : 'Finish'}
+          </button>
+        </div>
 
         {error && (
           <p className="text-red-500 text-center text-sm mt-4">{error}</p>

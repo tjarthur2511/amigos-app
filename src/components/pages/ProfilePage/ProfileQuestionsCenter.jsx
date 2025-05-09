@@ -16,6 +16,7 @@ const ProfileQuestionsCenter = () => {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [status, setStatus] = useState('');
+  const [history, setHistory] = useState({ quizAnswers: {}, monthlyQuiz: {} });
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -23,10 +24,11 @@ const ProfileQuestionsCenter = () => {
       if (!user) return;
       const userRef = doc(db, 'users', user.uid);
       const userSnap = await getDoc(userRef);
-
       const userData = userSnap.exists() ? userSnap.data() : {};
+
       const onboardingAnswers = userData.quizAnswers || {};
       const monthlyAnswers = userData.monthlyQuiz || {};
+      setHistory({ quizAnswers: onboardingAnswers, monthlyQuiz: monthlyAnswers });
 
       const qSnapshot = await getDocs(collection(db, 'questionSets'));
       let allQs = [];
@@ -39,7 +41,8 @@ const ProfileQuestionsCenter = () => {
             allQs.push({
               id: `${prefix}${index + 1}`,
               text: qText,
-              type: data.type
+              type: data.type,
+              month: data.month || null
             });
           });
         }
@@ -60,13 +63,12 @@ const ProfileQuestionsCenter = () => {
     const user = auth.currentUser;
     if (!user) return;
     const userRef = doc(db, 'users', user.uid);
-
     const updateField = id.startsWith('mq') ? 'monthlyQuiz' : 'quizAnswers';
 
     try {
       await updateDoc(userRef, {
         [updateField]: {
-          ...answers,
+          ...history[updateField],
           [id]: answers[id]
         }
       });
@@ -77,6 +79,21 @@ const ProfileQuestionsCenter = () => {
       setStatus('Failed to save.');
     }
   };
+
+  const renderHistory = (typeLabel, data) => (
+    <div className="space-y-4 mt-6">
+      <h3 className="text-xl font-bold text-[#FF6B6B]">{typeLabel}</h3>
+      {Object.entries(data).map(([key, val]) => (
+        <div
+          key={key}
+          className="bg-white border border-[#FF6B6B] p-3 rounded-xl shadow"
+        >
+          <p className="text-sm text-[#FF6B6B] font-semibold">{key}</p>
+          <p className="text-gray-700 text-sm mt-1">{val}</p>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <motion.div
@@ -111,6 +128,15 @@ const ProfileQuestionsCenter = () => {
         </div>
 
         {status && <p className="mt-4 text-center text-sm text-[#FF6B6B]">{status}</p>}
+
+        {/* History */}
+        <div className="mt-10">
+          <h2 className="text-2xl text-[#FF6B6B] font-bold mb-2 text-center">
+            📜 Your Answer History
+          </h2>
+          {renderHistory('🧠 Onboarding', history.quizAnswers)}
+          {renderHistory('🗓️ Monthly', history.monthlyQuiz)}
+        </div>
       </div>
     </motion.div>
   );
