@@ -1,3 +1,4 @@
+// ✅ ProfileCard - Rounded Layout Version
 import React, { useEffect, useState } from 'react';
 import { auth, db } from '../../../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
@@ -59,23 +60,30 @@ const ProfileCard = () => {
   );
 };
 
-// ⬇️ This locks the card just under nav, top-left area visually balanced
+// ⬇️ Rounded layout lock on profile page
 const outerWrapper = {
   position: 'fixed',
   top: '125px',
   left: '50px',
-  zIndex: 999,
+  zIndex: 0,
+  borderRadius: '50%',
+  overflow: 'hidden'
 };
 
 const cardStyle = {
   backgroundColor: '#fff',
-  borderRadius: '1.25rem',
-  padding: '1.25rem',
+  borderRadius: '50%',
+  padding: '2rem',
   width: '260px',
+  height: '260px',
   textAlign: 'center',
   boxShadow: '0 8px 30px rgba(0,0,0,0.1)',
   fontFamily: 'Comfortaa, sans-serif',
   border: '2px solid #ffe0e0',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center'
 };
 
 const imgStyle = {
@@ -84,14 +92,14 @@ const imgStyle = {
   borderRadius: '50%',
   objectFit: 'cover',
   border: '3px solid #FF6B6B',
-  marginBottom: '0.75rem',
+  marginBottom: '0.75rem'
 };
 
 const nameStyle = {
   fontSize: '1.1rem',
   fontWeight: 'bold',
   color: '#FF6B6B',
-  marginBottom: '0.5rem',
+  marginBottom: '0.5rem'
 };
 
 const buttonStyle = {

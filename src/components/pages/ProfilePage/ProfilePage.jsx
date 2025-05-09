@@ -1,4 +1,4 @@
-// src/components/pages/ProfilePage.jsx
+// ✅ Clean ProfilePage - All zIndex Set to 0
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../firebase';
@@ -13,16 +13,14 @@ import {
 } from 'firebase/firestore';
 import FallingAEffect from '../../common/FallingAEffect';
 import ProfilePhotos from './ProfilePhotos';
-import ProfileGrupos from './ProfileGrupos';
-import ProfileAmigos from './ProfileAmigos';
 import ProfileQuestionsCenter from './ProfileQuestionsCenter';
-import ProfileCard from './ProfileCard'; // ✅ added
+import ProfileCard from './ProfileCard';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [currentCard, setCurrentCard] = useState(0);
-  const feedCards = ['Your Posts', 'Photos', 'Grupos Unidos', 'Amigos', 'Preferences'];
+  const feedCards = ['Your Posts', 'Photos', 'Preferences'];
 
   useEffect(() => {
     const unsubscribeAuth = auth.onAuthStateChanged((user) => {
@@ -81,12 +79,6 @@ const ProfilePage = () => {
       case 'Photos':
         return <ProfilePhotos posts={posts} />;
 
-      case 'Grupos Unidos':
-        return <ProfileGrupos />;
-
-      case 'Amigos':
-        return <ProfileAmigos />;
-
       case 'Preferences':
         return <ProfileQuestionsCenter />;
 
@@ -103,7 +95,7 @@ const ProfilePage = () => {
         <h1 style={titleStyle}>amigos</h1>
       </header>
 
-      <ProfileCard /> {/* ✅ new component for profile photo + info */}
+      <ProfileCard />
 
       <nav style={navWrapper}>
         <div style={navStyle}>
@@ -132,7 +124,8 @@ const pageStyle = {
   backgroundColor: '#FF6B6B',
   minHeight: '100vh',
   overflow: 'visible',
-  position: 'relative'
+  position: 'relative',
+  zIndex: 0
 };
 
 const bgEffect = {
@@ -147,19 +140,22 @@ const bgEffect = {
 
 const headerStyle = {
   textAlign: 'center',
-  paddingTop: '2rem'
+  paddingTop: '2rem',
+  zIndex: 0
 };
 
 const titleStyle = {
   fontSize: '3.5rem',
-  color: 'white'
+  color: 'white',
+  zIndex: 0
 };
 
 const navWrapper = {
   display: 'flex',
   justifyContent: 'center',
   marginTop: '2rem',
-  marginBottom: '2rem'
+  marginBottom: '2rem',
+  zIndex: 0
 };
 
 const navStyle = {
@@ -168,7 +164,8 @@ const navStyle = {
   borderRadius: '30px',
   boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
   display: 'flex',
-  gap: '1rem'
+  gap: '1rem',
+  zIndex: 0
 };
 
 const tabStyle = {
@@ -181,13 +178,15 @@ const tabStyle = {
   fontWeight: 'bold',
   fontFamily: 'Comfortaa, sans-serif',
   cursor: 'pointer',
-  boxShadow: '0 3px 8px rgba(0,0,0,0.2)'
+  boxShadow: '0 3px 8px rgba(0,0,0,0.2)',
+  zIndex: 0
 };
 
 const mainCardWrapper = {
   display: 'flex',
   justifyContent: 'center',
-  marginBottom: '2rem'
+  marginBottom: '2rem',
+  zIndex: 0
 };
 
 const mainCardStyle = {
@@ -200,20 +199,22 @@ const mainCardStyle = {
   minHeight: '60vh',
   textAlign: 'center',
   position: 'relative',
-  zIndex: 10
+  zIndex: 0
 };
 
 const sectionTitle = {
   fontSize: '2rem',
   color: '#FF6B6B',
-  marginBottom: '1rem'
+  marginBottom: '1rem',
+  zIndex: 0
 };
 
 const itemStyle = {
-  backgroundColor: '#ffecec',
+  backgroundColor: '#ffffff',
   padding: '1rem',
   borderRadius: '1rem',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+  zIndex: 0
 };
 
 const userName = {
@@ -246,7 +247,7 @@ const arrowRight = {
   right: '1rem',
   top: '50%',
   transform: 'translateY(-50%)',
-  zIndex: 20
+  zIndex: 0
 };
 
 const arrowLeft = {
@@ -254,7 +255,7 @@ const arrowLeft = {
   left: '1rem',
   top: '50%',
   transform: 'translateY(-50%)',
-  zIndex: 20
+  zIndex: 0
 };
 
 const arrowStyle = {
@@ -264,7 +265,8 @@ const arrowStyle = {
   border: 'none',
   borderRadius: '50%',
   padding: '0.5rem 1rem',
-  cursor: 'pointer'
+  cursor: 'pointer',
+  zIndex: 0
 };
 
 export default ProfilePage;

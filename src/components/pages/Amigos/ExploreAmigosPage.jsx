@@ -1,4 +1,4 @@
-// src/components/pages/Amigos/ExploreAmigosPage.jsx
+// ✅ ExploreAmigosPage - White Card Style, Consistent Layout
 import React, { useEffect, useState } from 'react';
 import { db, auth } from '../../../firebase';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
@@ -34,23 +34,75 @@ const ExploreAmigosPage = () => {
   }, []);
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'Comfortaa, sans-serif' }}>
-      <h2 style={{ fontSize: '2rem', color: '#FF6B6B', marginBottom: '1rem' }}>🧭 Discover Unexpected Amigos</h2>
+    <div style={containerStyle}>
+      <h2 style={titleStyle}>🧭 Discover Unexpected Amigos</h2>
       {amigos.length > 0 ? (
-        <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <ul style={listStyle}>
           {amigos.map((user) => (
-            <li key={user.id} style={{ backgroundColor: '#ffecec', padding: '1rem', borderRadius: '1rem', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }}>
-              <p style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{user.displayName || 'Unnamed Amigo'}</p>
-              <p style={{ fontSize: '0.9rem', color: '#555' }}>{user.email}</p>
-              {user.language && <p style={{ fontSize: '0.85rem', color: '#888' }}>Speaks: {user.language}</p>}
+            <li key={user.id} style={cardStyle}>
+              <p style={userName}>{user.displayName || 'Unnamed Amigo'}</p>
+              <p style={userDetail}>{user.email}</p>
+              {user.language && <p style={userLang}>Speaks: {user.language}</p>}
             </li>
           ))}
         </ul>
       ) : (
-        <p style={{ color: '#888', fontSize: '0.95rem' }}>We’ll show you some interesting amigos soon!</p>
+        <p style={noDataStyle}>We’ll show you some interesting amigos soon!</p>
       )}
     </div>
   );
+};
+
+const containerStyle = {
+  padding: '2rem',
+  fontFamily: 'Comfortaa, sans-serif',
+  backgroundColor: '#ffffff',
+  borderRadius: '1.5rem',
+  boxShadow: '0 5px 20px rgba(0,0,0,0.1)',
+  zIndex: 0
+};
+
+const titleStyle = {
+  fontSize: '2rem',
+  color: '#FF6B6B',
+  marginBottom: '1rem',
+  textAlign: 'center'
+};
+
+const listStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1rem'
+};
+
+const cardStyle = {
+  backgroundColor: '#ffffff',
+  padding: '1rem',
+  borderRadius: '1rem',
+  boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+  zIndex: 0
+};
+
+const userName = {
+  fontWeight: 'bold',
+  fontSize: '1.1rem',
+  color: '#FF6B6B'
+};
+
+const userDetail = {
+  fontSize: '0.9rem',
+  color: '#555'
+};
+
+const userLang = {
+  fontSize: '0.85rem',
+  color: '#888'
+};
+
+const noDataStyle = {
+  color: '#888',
+  fontSize: '0.95rem',
+  textAlign: 'center'
 };
 
 export default ExploreAmigosPage;

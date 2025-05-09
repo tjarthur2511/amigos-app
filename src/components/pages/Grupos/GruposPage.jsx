@@ -1,3 +1,4 @@
+// ✅ GruposPage - White Cards Only, No Coral Background, zIndex: 0
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../firebase';
@@ -6,7 +7,7 @@ import FallingAEffect from '../../common/FallingAEffect';
 import SuggestedGrupos from './SuggestedGrupos';
 import GruposUnidos from './GruposUnidos';
 import GruposPosts from './GruposPosts';
-import ExploreGruposPage from './ExploreGruposPage'; // ✅ new component
+import ExploreGruposPage from './ExploreGruposPage';
 
 const GruposPage = () => {
   const navigate = useNavigate();
@@ -39,19 +40,7 @@ const GruposPage = () => {
         return (
           <>
             <div style={{ textAlign: 'right', marginBottom: '0.5rem' }}>
-              <button
-                onClick={() => navigate('/explore-grupos')}
-                style={{
-                  backgroundColor: 'white',
-                  color: '#FF6B6B',
-                  border: '1px solid #FF6B6B',
-                  borderRadius: '30px',
-                  padding: '4px 12px',
-                  fontSize: '0.9rem',
-                  cursor: 'pointer',
-                  fontFamily: 'Comfortaa, sans-serif',
-                }}
-              >
+              <button onClick={() => navigate('/explore-grupos')} style={exploreBtnStyle}>
                 Explore ➜
               </button>
             </div>
@@ -99,12 +88,13 @@ const GruposPage = () => {
 
 const pageStyle = {
   fontFamily: 'Comfortaa, sans-serif',
-  backgroundColor: '#FF6B6B',
+  backgroundColor: 'transparent',
   minHeight: '100vh',
   overflow: 'hidden',
   position: 'relative',
   margin: 0,
-  padding: 0
+  padding: 0,
+  zIndex: 0
 };
 
 const bgEffect = {
@@ -119,26 +109,28 @@ const bgEffect = {
 
 const headerStyle = {
   textAlign: 'center',
-  paddingTop: '2rem'
+  paddingTop: '2rem',
+  zIndex: 0
 };
 
 const titleStyle = {
   fontSize: '3.5rem',
-  color: 'white'
+  color: '#FF6B6B'
 };
 
 const navWrapper = {
   display: 'flex',
   justifyContent: 'center',
   marginTop: '2rem',
-  marginBottom: '2rem'
+  marginBottom: '2rem',
+  zIndex: 0
 };
 
 const navStyle = {
   backgroundColor: 'white',
   padding: '0.8rem 1rem',
   borderRadius: '30px',
-  boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
+  boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
   display: 'flex',
   gap: '1rem'
 };
@@ -156,10 +148,22 @@ const tabStyle = {
   boxShadow: '0 3px 8px rgba(0,0,0,0.2)'
 };
 
+const exploreBtnStyle = {
+  backgroundColor: 'white',
+  color: '#FF6B6B',
+  border: '1px solid #FF6B6B',
+  borderRadius: '30px',
+  padding: '4px 12px',
+  fontSize: '0.9rem',
+  cursor: 'pointer',
+  fontFamily: 'Comfortaa, sans-serif'
+};
+
 const mainCardWrapper = {
   display: 'flex',
   justifyContent: 'center',
-  marginBottom: '2rem'
+  marginBottom: '2rem',
+  zIndex: 0
 };
 
 const mainCardStyle = {
@@ -171,7 +175,8 @@ const mainCardStyle = {
   maxWidth: '800px',
   minHeight: '60vh',
   textAlign: 'center',
-  position: 'relative'
+  position: 'relative',
+  zIndex: 0
 };
 
 const sectionTitle = {
@@ -185,7 +190,7 @@ const arrowRight = {
   right: '1rem',
   top: '50%',
   transform: 'translateY(-50%)',
-  zIndex: 10
+  zIndex: 0
 };
 
 const arrowLeft = {
@@ -193,7 +198,7 @@ const arrowLeft = {
   left: '1rem',
   top: '50%',
   transform: 'translateY(-50%)',
-  zIndex: 10
+  zIndex: 0
 };
 
 const arrowStyle = {

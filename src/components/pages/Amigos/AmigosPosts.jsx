@@ -1,3 +1,4 @@
+// ✅ AmigosPosts - Clean Layout, White Cards, No Background
 import React, { useEffect, useState } from 'react';
 import { db, auth } from '../../../firebase';
 import {
@@ -67,10 +68,11 @@ const AmigosPosts = () => {
 
 const containerStyle = {
   fontFamily: 'Comfortaa, sans-serif',
-  backgroundColor: '#fff0f0',
+  backgroundColor: '#ffffff',
   padding: '2rem',
   borderRadius: '1.5rem',
-  boxShadow: '0 5px 20px rgba(0,0,0,0.1)'
+  boxShadow: '0 5px 20px rgba(0,0,0,0.1)',
+  zIndex: 0
 };
 
 const titleStyle = {
@@ -88,10 +90,11 @@ const listStyle = {
 };
 
 const itemStyle = {
-  backgroundColor: '#ffecec',
+  backgroundColor: '#ffffff',
   padding: '1rem',
   borderRadius: '1rem',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+  zIndex: 0
 };
 
 const noPostText = {

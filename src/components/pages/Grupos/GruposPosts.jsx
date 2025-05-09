@@ -1,3 +1,4 @@
+// ✅ GruposPosts - Clean White Card Layout, zIndex 0
 import React, { useEffect, useState } from 'react';
 import { db, auth } from '../../../firebase';
 import {
@@ -59,11 +60,12 @@ const GruposPosts = () => {
 };
 
 const containerStyle = {
-  backgroundColor: '#fff0f0',
+  backgroundColor: '#ffffff',
   padding: '1rem',
   borderRadius: '1rem',
   fontFamily: 'Comfortaa, sans-serif',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+  zIndex: 0
 };
 
 const titleStyle = {
@@ -80,10 +82,11 @@ const listStyle = {
 };
 
 const postItemStyle = {
-  backgroundColor: '#ffecec',
+  backgroundColor: '#ffffff',
   padding: '1rem',
   borderRadius: '1rem',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+  zIndex: 0
 };
 
 const noPostStyle = {

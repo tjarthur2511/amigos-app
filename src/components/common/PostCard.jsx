@@ -1,4 +1,4 @@
-// src/components/common/PostCard.jsx
+// ✅ Clean Card-Only PostCard Component
 import React, { useEffect, useState } from "react";
 import { db, auth } from "../../firebase";
 import { doc, getDoc, collection, query, where, getDocs, updateDoc } from "firebase/firestore";
@@ -63,6 +63,7 @@ const PostCard = ({ post }) => {
         boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
         fontFamily: "Comfortaa, sans-serif",
         position: "relative",
+        zIndex: 0
       }}
     >
       {currentUser?.uid === post.userId && (
@@ -76,7 +77,7 @@ const PostCard = ({ post }) => {
             border: "none",
             fontSize: "1.25rem",
             cursor: "pointer",
-            color: "#FF6B6B",
+            color: "#FF6B6B"
           }}
         >
           ✏️
@@ -93,7 +94,7 @@ const PostCard = ({ post }) => {
           color: "#FF6B6B",
           marginBottom: "1rem",
           wordWrap: "break-word",
-          whiteSpace: "pre-line",
+          whiteSpace: "pre-line"
         }}>
           {post.content}
         </p>
@@ -107,10 +108,11 @@ const PostCard = ({ post }) => {
             width: "100%",
             borderRadius: "1rem",
             marginBottom: "1rem",
-            objectFit: "cover",
+            objectFit: "cover"
           }}
         />
       )}
+
       {post.videoUrl && (
         <video
           src={post.videoUrl}
@@ -118,7 +120,7 @@ const PostCard = ({ post }) => {
           style={{
             width: "100%",
             borderRadius: "1rem",
-            marginBottom: "1rem",
+            marginBottom: "1rem"
           }}
         />
       )}
@@ -154,7 +156,7 @@ const PostCard = ({ post }) => {
                 color: "#FF6B6B",
                 fontWeight: "500",
                 position: "relative",
-                border: "1px solid #FF6B6B",
+                border: "1px solid #FF6B6B"
               }}
             >
               <strong style={{ marginRight: "0.3rem" }}>💬</strong>
@@ -177,16 +179,14 @@ const PostCard = ({ post }) => {
                     border: "none",
                     fontSize: "1.1rem",
                     cursor: "pointer",
-                    color: "#FF6B6B",
+                    color: "#FF6B6B"
                   }}
                 >
                   😀
                 </button>
               </div>
               {emojiPickerVisible === comment.id && (
-                <ReactionPicker
-                  onSelect={(emoji) => handleEmojiReact(comment.id, emoji, reactions)}
-                />
+                <ReactionPicker onSelect={(emoji) => handleEmojiReact(comment.id, emoji, reactions)} />
               )}
             </div>
           );
@@ -197,15 +197,15 @@ const PostCard = ({ post }) => {
         <button
           onClick={() => setShowModal(true)}
           style={{
-            backgroundColor: "#FF6B6B",
-            color: "#fff",
-            border: "none",
+            backgroundColor: "#FFFFFF",
+            color: "#FF6B6B",
+            border: "1px solid #FF6B6B",
             padding: "0.6rem 1.2rem",
             borderRadius: "1rem",
             fontWeight: "bold",
             fontSize: "0.9rem",
             marginTop: "1rem",
-            cursor: "pointer",
+            cursor: "pointer"
           }}
         >
           View All Comments
@@ -214,11 +214,7 @@ const PostCard = ({ post }) => {
 
       {showModal && <PostDetailModal post={post} onClose={() => setShowModal(false)} />}
       {showEditModal && (
-        <PostModal
-          post={post}
-          isEdit={true}
-          onClose={() => setShowEditModal(false)}
-        />
+        <PostModal post={post} isEdit={true} onClose={() => setShowEditModal(false)} />
       )}
     </div>
   );

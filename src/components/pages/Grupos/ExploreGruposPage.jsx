@@ -1,4 +1,4 @@
-// src/components/pages/Grupos/ExploreGruposPage.jsx
+// ✅ ExploreGruposPage - White Cards, Clean Theme, zIndex 0
 import React, { useEffect, useState } from 'react';
 import { db, auth } from '../../../firebase';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
@@ -33,22 +33,69 @@ const ExploreGruposPage = () => {
   }, []);
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'Comfortaa, sans-serif' }}>
-      <h2 style={{ fontSize: '2rem', color: '#FF6B6B', marginBottom: '1rem' }}>🌱 Explore Offbeat Grupos</h2>
+    <div style={containerStyle}>
+      <h2 style={titleStyle}>🌱 Explore Offbeat Grupos</h2>
       {grupos.length > 0 ? (
-        <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <ul style={listStyle}>
           {grupos.map((grupo) => (
-            <li key={grupo.id} style={{ backgroundColor: '#ffecec', padding: '1rem', borderRadius: '1rem', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }}>
-              <p style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{grupo.name}</p>
-              <p style={{ fontSize: '0.9rem', color: '#555' }}>{grupo.description || 'No description yet.'}</p>
+            <li key={grupo.id} style={cardStyle}>
+              <p style={groupName}>{grupo.name}</p>
+              <p style={groupDesc}>{grupo.description || 'No description yet.'}</p>
             </li>
           ))}
         </ul>
       ) : (
-        <p style={{ color: '#888', fontSize: '0.95rem' }}>No suggestions available right now.</p>
+        <p style={noDataStyle}>No suggestions available right now.</p>
       )}
     </div>
   );
+};
+
+const containerStyle = {
+  padding: '2rem',
+  fontFamily: 'Comfortaa, sans-serif',
+  backgroundColor: '#ffffff',
+  borderRadius: '1.5rem',
+  boxShadow: '0 5px 20px rgba(0,0,0,0.1)',
+  zIndex: 0
+};
+
+const titleStyle = {
+  fontSize: '2rem',
+  color: '#FF6B6B',
+  marginBottom: '1rem',
+  textAlign: 'center'
+};
+
+const listStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1rem'
+};
+
+const cardStyle = {
+  backgroundColor: '#ffffff',
+  padding: '1rem',
+  borderRadius: '1rem',
+  boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+  zIndex: 0
+};
+
+const groupName = {
+  fontWeight: 'bold',
+  fontSize: '1.1rem',
+  color: '#FF6B6B'
+};
+
+const groupDesc = {
+  fontSize: '0.9rem',
+  color: '#555'
+};
+
+const noDataStyle = {
+  color: '#888',
+  fontSize: '0.95rem',
+  textAlign: 'center'
 };
 
 export default ExploreGruposPage;

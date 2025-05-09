@@ -1,4 +1,4 @@
-// src/components/pages/Grupos/GruposUnidos.jsx
+// ✅ GruposUnidos.jsx - White Card Layout, zIndex 0, Clean Theme
 import React, { useEffect, useState } from 'react';
 import { db, auth } from '../../../firebase';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
@@ -47,11 +47,12 @@ const GruposUnidos = () => {
 };
 
 const containerStyle = {
-  backgroundColor: '#fff0f0',
+  backgroundColor: '#ffffff',
   padding: '1rem',
   borderRadius: '1rem',
   boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-  fontFamily: 'Comfortaa, sans-serif'
+  fontFamily: 'Comfortaa, sans-serif',
+  zIndex: 0
 };
 
 const titleStyle = {
@@ -68,15 +69,17 @@ const listStyle = {
 };
 
 const itemStyle = {
-  backgroundColor: '#ffecec',
+  backgroundColor: '#ffffff',
   padding: '1rem',
   borderRadius: '1rem',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.15)'
+  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+  zIndex: 0
 };
 
 const groupName = {
   fontSize: '1.2rem',
-  fontWeight: 'bold'
+  fontWeight: 'bold',
+  color: '#FF6B6B'
 };
 
 const groupDetail = {
