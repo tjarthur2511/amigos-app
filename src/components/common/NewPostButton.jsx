@@ -10,20 +10,20 @@ const NewPostButton = () => {
         onClick={() => setShowModal(true)}
         style={{
           position: "fixed",
-          top: "255px", // below the feed
-          left: "16px",
+          bottom: "11rem", // responsive bottom offset
+          left: "1rem", // consistent across screen sizes
           backgroundColor: "#FFFFFF",
           color: "#FF6B6B",
           border: "none",
-          padding: ".5rem 1rem",
+          padding: "0.5rem 1.25rem",
           borderRadius: "9999px",
           fontSize: "0.9rem",
           fontFamily: "Comfortaa, sans-serif",
           fontWeight: "bold",
           cursor: "pointer",
           boxShadow: "0 3px 8px rgba(0,0,0,0.2)",
-          zIndex: 999999,
-          transition: "background-color 0.3s ease, color 0.3s ease",
+          zIndex: 10000,
+          transition: "all 0.2s ease-in-out",
         }}
         onMouseOver={(e) => {
           e.target.style.backgroundColor = "#FF6B6B";
