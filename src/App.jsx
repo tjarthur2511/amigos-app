@@ -31,9 +31,10 @@ import MonthlyQuizPage from './components/pages/MonthlyQuizPage';
 import ProfilePage from './components/pages/ProfilePage/ProfilePage';
 import GruposPage from './components/pages/Grupos/GruposPage';
 import AmigosPage from './components/pages/Amigos/AmigosPage';
-import ExploreAmigosPage from './components/pages/Amigos/ExploreAmigosPage'; // ✅ NEW
+import ExploreAmigosPage from './components/pages/Amigos/ExploreAmigosPage';
 import LivePage from './components/pages/Live/LivePage';
 import TailwindTest from './components/pages/TailwindTest';
+import DevChecklist from './components/pages/DevChecklist';
 
 function AppContent({ user }) {
   const location = useLocation();
@@ -99,12 +100,13 @@ function AppContent({ user }) {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/grupos" element={<GruposPage />} />
               <Route path="/amigos" element={<AmigosPage />} />
-              <Route path="/explore-amigos" element={<ExploreAmigosPage />} /> {/* ✅ NEW */}
+              <Route path="/explore-amigos" element={<ExploreAmigosPage />} />
               <Route path="/live" element={<LivePage />} />
               <Route path="/setup" element={<SetupQuizPage />} />
               <Route path="/monthly-quiz" element={<MonthlyQuizPage />} />
               <Route path="/profile/admin" element={<AdminPanel />} />
               <Route path="/tailwind-test" element={<TailwindTest />} />
+              <Route path="/dev-checklist" element={<DevChecklist />} />
               <Route path="*" element={<Navigate to="/" />} />
             </>
           ) : (

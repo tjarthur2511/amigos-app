@@ -1,108 +1,48 @@
-// ✅ ExploreAmigosPage - White Card Style, Consistent Layout
+// src/components/pages/Amigos/ExploreAmigosPage.jsx
 import React, { useEffect, useState } from 'react';
-import { db, auth } from '../../../firebase';
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import { db } from '../../../firebase';
+import { collection, getDocs } from 'firebase/firestore';
 
 const ExploreAmigosPage = () => {
-  const [amigos, setAmigos] = useState([]);
+  const [users, setUsers] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchAmigos = async () => {
-      const user = auth.currentUser;
-      if (!user) return;
-
-      const userRef = doc(db, 'users', user.uid);
-      const userSnap = await getDoc(userRef);
-      if (!userSnap.exists()) return;
-
-      const { following = [], interestTags = [], language } = userSnap.data();
-      const allSnap = await getDocs(collection(db, 'users'));
-
-      const allUsers = allSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      const filtered = allUsers.filter(u =>
-        u.id !== user.uid &&
-        !following.includes(u.id) &&
-        (!u.interestTags?.some(tag => interestTags.includes(tag)) ||
-         (u.language && u.language !== language))
-      );
-
-      const random = filtered.sort(() => 0.5 - Math.random()).slice(0, 10);
-      setAmigos(random);
+    const fetchUsers = async () => {
+      const snapshot = await getDocs(collection(db, 'users'));
+      const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setUsers(list);
     };
-
-    fetchAmigos();
+    fetchUsers();
   }, []);
 
   return (
-    <div style={containerStyle}>
-      <h2 style={titleStyle}>🧭 Discover Unexpected Amigos</h2>
-      {amigos.length > 0 ? (
-        <ul style={listStyle}>
-          {amigos.map((user) => (
-            <li key={user.id} style={cardStyle}>
-              <p style={userName}>{user.displayName || 'Unnamed Amigo'}</p>
-              <p style={userDetail}>{user.email}</p>
-              {user.language && <p style={userLang}>Speaks: {user.language}</p>}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p style={noDataStyle}>We’ll show you some interesting amigos soon!</p>
-      )}
+    <div className="max-w-4xl mx-auto px-4 py-8 font-[Comfortaa]">
+      <h2 className="text-3xl font-bold text-[#FF6B6B] mb-6 text-center">Explore Amigos</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {users.map((user) => (
+          <div
+            key={user.id}
+            className="bg-white rounded-xl shadow p-4 border border-[#ffe5e5] hover:shadow-md cursor-pointer"
+            onClick={() => navigate(`/profile/${user.id}`)}
+          >
+            <img
+              src={user.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png'}
+              alt="avatar"
+              className="w-16 h-16 rounded-full object-cover border-2 border-[#FF6B6B] mb-3"
+            />
+            <h3 className="text-lg font-semibold text-[#FF6B6B]">
+              {user.displayName || 'Unnamed Amigo'}
+            </h3>
+            <p className="text-sm text-gray-600 line-clamp-2">
+              {user.bio || 'No bio yet'}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
-};
-
-const containerStyle = {
-  padding: '2rem',
-  fontFamily: 'Comfortaa, sans-serif',
-  backgroundColor: '#ffffff',
-  borderRadius: '1.5rem',
-  boxShadow: '0 5px 20px rgba(0,0,0,0.1)',
-  zIndex: 0
-};
-
-const titleStyle = {
-  fontSize: '2rem',
-  color: '#FF6B6B',
-  marginBottom: '1rem',
-  textAlign: 'center'
-};
-
-const listStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '1rem'
-};
-
-const cardStyle = {
-  backgroundColor: '#ffffff',
-  padding: '1rem',
-  borderRadius: '1rem',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-  zIndex: 0
-};
-
-const userName = {
-  fontWeight: 'bold',
-  fontSize: '1.1rem',
-  color: '#FF6B6B'
-};
-
-const userDetail = {
-  fontSize: '0.9rem',
-  color: '#555'
-};
-
-const userLang = {
-  fontSize: '0.85rem',
-  color: '#888'
-};
-
-const noDataStyle = {
-  color: '#888',
-  fontSize: '0.95rem',
-  textAlign: 'center'
 };
 
 export default ExploreAmigosPage;

@@ -1,3 +1,4 @@
+// src/components/common/NotificationsModal.jsx
 import React from "react";
 import { motion } from "framer-motion";
 
@@ -11,9 +12,9 @@ const NotificationsModal = ({ notifications, onClose }) => {
   };
 
   notifications.forEach((n) => {
-    if (grouped[n.category]) {
-      grouped[n.category].push(n);
-    }
+    const cat = n.category || "general";
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(n);
   });
 
   return (
@@ -136,12 +137,12 @@ const NotificationsModal = ({ notifications, onClose }) => {
                         marginRight: "1rem",
                       }}
                     >
-                      {n.senderId?.[0]?.toUpperCase() || "?"}
+                      {n.senderId?.[0]?.toUpperCase() || "!"}
                     </div>
                     <div style={{ flex: 1 }}>
-                      <p style={{ margin: 0, fontSize: "0.95rem" }}>{n.content}</p>
+                      <p style={{ margin: 0, fontSize: "0.95rem" }}>{n.content || n.message}</p>
                       <small style={{ color: "#999", fontSize: "0.75rem" }}>
-                        {n.type} – {n.category}
+                        {n.type || "info"} – {cat}
                       </small>
                     </div>
                   </li>

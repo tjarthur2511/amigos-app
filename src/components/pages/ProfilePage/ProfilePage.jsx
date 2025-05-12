@@ -1,4 +1,4 @@
-// ✅ Clean ProfilePage - All zIndex Set to 0
+// src/components/pages/ProfilePage/ProfilePage.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../firebase';
@@ -21,6 +21,11 @@ const ProfilePage = () => {
   const [posts, setPosts] = useState([]);
   const [currentCard, setCurrentCard] = useState(0);
   const feedCards = ['Your Posts', 'Photos', 'Preferences'];
+
+  useEffect(() => {
+    document.body.classList.add('profile-page');
+    return () => document.body.classList.remove('profile-page');
+  }, []);
 
   useEffect(() => {
     const unsubscribeAuth = auth.onAuthStateChanged((user) => {
@@ -60,21 +65,24 @@ const ProfilePage = () => {
     switch (feedCards[currentCard]) {
       case 'Your Posts':
         return posts.length > 0 ? (
-          <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <ul className="flex flex-col gap-4">
             {posts.map(post => (
-              <li key={post.id} style={itemStyle}>
-                <p style={userName}>{post.content || 'Untitled Post'}</p>
-                {post.imageUrl && <img src={post.imageUrl} alt="Post" style={imageStyle} />}
+              <li key={post.id} className="bg-white p-4 rounded-xl shadow border border-[#ffe0e0]">
+                <p className="text-lg font-semibold">{post.content || 'Untitled Post'}</p>
+                {post.imageUrl && <img src={post.imageUrl} alt="Post" className="rounded-lg mt-2" />}
                 {post.videoUrl && (
-                  <video controls style={imageStyle}>
+                  <video controls className="rounded-lg mt-2">
                     <source src={post.videoUrl} type="video/mp4" />
                   </video>
                 )}
-                <button onClick={() => handleDelete(post.id)} style={deleteButton}>🗑️ Delete</button>
+                <button
+                  onClick={() => handleDelete(post.id)}
+                  className="mt-3 text-sm text-[#FF6B6B] hover:underline"
+                >🗑️ Delete</button>
               </li>
             ))}
           </ul>
-        ) : <p style={noPostText}>You haven't posted anything yet.</p>;
+        ) : <p className="text-center text-[#FF6B6B]">You haven't posted anything yet.</p>;
 
       case 'Photos':
         return <ProfilePhotos posts={posts} />;
@@ -88,185 +96,42 @@ const ProfilePage = () => {
   };
 
   return (
-    <div style={pageStyle}>
-      <div style={bgEffect}><FallingAEffect /></div>
+    <div>
+      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
+        <FallingAEffect />
+      </div>
 
-      <header style={headerStyle}>
-        <h1 style={titleStyle}>amigos</h1>
+      <header className="text-center pt-10 z-10 relative">
+        <h1 className="text-4xl font-bold text-[#FF6B6B] drop-shadow">amigos</h1>
       </header>
 
       <ProfileCard />
 
-      <nav style={navWrapper}>
-        <div style={navStyle}>
-          <button onClick={() => navigate('/')} style={tabStyle}>Home</button>
-          <button onClick={() => navigate('/amigos')} style={tabStyle}>Amigos</button>
-          <button onClick={() => navigate('/grupos')} style={tabStyle}>Grupos</button>
-          <button onClick={() => navigate('/profile')} style={tabStyle}>Profile</button>
+      <nav className="flex justify-center my-6 z-10 relative">
+        <div className="bg-white px-4 py-2 rounded-full shadow flex gap-4">
+          <button onClick={() => navigate('/')} className="btn-tab">Home</button>
+          <button onClick={() => navigate('/amigos')} className="btn-tab">Amigos</button>
+          <button onClick={() => navigate('/grupos')} className="btn-tab">Grupos</button>
+          <button onClick={() => navigate('/profile')} className="btn-tab">Profile</button>
         </div>
       </nav>
 
-      <div style={mainCardWrapper}>
-        <div style={mainCardStyle}>
-          <h2 style={sectionTitle}>{feedCards[currentCard]}</h2>
+      <main className="relative z-10 flex justify-center">
+        <div className="bg-white rounded-3xl shadow-xl p-6 w-full max-w-3xl">
+          <h2 className="text-2xl font-bold text-[#FF6B6B] text-center mb-4">
+            {feedCards[currentCard]}
+          </h2>
           {renderCurrent()}
-
-          <div style={arrowRight}><button onClick={nextCard} style={arrowStyle}>→</button></div>
-          <div style={arrowLeft}><button onClick={prevCard} style={arrowStyle}>←</button></div>
+          <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+            <button onClick={nextCard} className="btn-arrow">→</button>
+          </div>
+          <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+            <button onClick={prevCard} className="btn-arrow">←</button>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
-};
-
-const pageStyle = {
-  fontFamily: 'Comfortaa, sans-serif',
-  backgroundColor: '#FF6B6B',
-  minHeight: '100vh',
-  overflow: 'visible',
-  position: 'relative',
-  zIndex: 0
-};
-
-const bgEffect = {
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '100%',
-  zIndex: 0,
-  pointerEvents: 'none'
-};
-
-const headerStyle = {
-  textAlign: 'center',
-  paddingTop: '2rem',
-  zIndex: 0
-};
-
-const titleStyle = {
-  fontSize: '3.5rem',
-  color: 'white',
-  zIndex: 0
-};
-
-const navWrapper = {
-  display: 'flex',
-  justifyContent: 'center',
-  marginTop: '2rem',
-  marginBottom: '2rem',
-  zIndex: 0
-};
-
-const navStyle = {
-  backgroundColor: 'white',
-  padding: '0.8rem 1rem',
-  borderRadius: '30px',
-  boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
-  display: 'flex',
-  gap: '1rem',
-  zIndex: 0
-};
-
-const tabStyle = {
-  backgroundColor: '#FF6B6B',
-  color: 'white',
-  border: 'none',
-  padding: '12px 20px',
-  borderRadius: '30px',
-  fontSize: '1rem',
-  fontWeight: 'bold',
-  fontFamily: 'Comfortaa, sans-serif',
-  cursor: 'pointer',
-  boxShadow: '0 3px 8px rgba(0,0,0,0.2)',
-  zIndex: 0
-};
-
-const mainCardWrapper = {
-  display: 'flex',
-  justifyContent: 'center',
-  marginBottom: '2rem',
-  zIndex: 0
-};
-
-const mainCardStyle = {
-  backgroundColor: 'white',
-  padding: '2rem',
-  borderRadius: '1.5rem',
-  boxShadow: '0 5px 25px rgba(0,0,0,0.2)',
-  width: '90%',
-  maxWidth: '800px',
-  minHeight: '60vh',
-  textAlign: 'center',
-  position: 'relative',
-  zIndex: 0
-};
-
-const sectionTitle = {
-  fontSize: '2rem',
-  color: '#FF6B6B',
-  marginBottom: '1rem',
-  zIndex: 0
-};
-
-const itemStyle = {
-  backgroundColor: '#ffffff',
-  padding: '1rem',
-  borderRadius: '1rem',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-  zIndex: 0
-};
-
-const userName = {
-  fontSize: '1.2rem',
-  fontWeight: 'bold'
-};
-
-const imageStyle = {
-  maxWidth: '100%',
-  borderRadius: '1rem',
-  marginTop: '0.5rem'
-};
-
-const deleteButton = {
-  marginTop: '0.75rem',
-  fontSize: '0.8rem',
-  color: '#FF6B6B',
-  border: 'none',
-  background: 'none',
-  cursor: 'pointer'
-};
-
-const noPostText = {
-  textAlign: 'center',
-  color: '#FF6B6B'
-};
-
-const arrowRight = {
-  position: 'absolute',
-  right: '1rem',
-  top: '50%',
-  transform: 'translateY(-50%)',
-  zIndex: 0
-};
-
-const arrowLeft = {
-  position: 'absolute',
-  left: '1rem',
-  top: '50%',
-  transform: 'translateY(-50%)',
-  zIndex: 0
-};
-
-const arrowStyle = {
-  fontSize: '1.5rem',
-  backgroundColor: '#FF6B6B',
-  color: 'white',
-  border: 'none',
-  borderRadius: '50%',
-  padding: '0.5rem 1rem',
-  cursor: 'pointer',
-  zIndex: 0
 };
 
 export default ProfilePage;

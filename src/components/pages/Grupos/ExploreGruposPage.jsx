@@ -1,101 +1,43 @@
-// ✅ ExploreGruposPage - White Cards, Clean Theme, zIndex 0
+// src/components/pages/Grupos/ExploreGruposPage.jsx
 import React, { useEffect, useState } from 'react';
-import { db, auth } from '../../../firebase';
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import { db } from '../../../firebase';
+import { collection, getDocs } from 'firebase/firestore';
 
 const ExploreGruposPage = () => {
-  const [grupos, setGrupos] = useState([]);
+  const [groups, setGroups] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchGrupos = async () => {
-      const user = auth.currentUser;
-      if (!user) return;
-
-      const userRef = doc(db, 'users', user.uid);
-      const userSnap = await getDoc(userRef);
-      if (!userSnap.exists()) return;
-
-      const { grupos: joined = [], interestTags = [], location = {} } = userSnap.data();
-      const allSnap = await getDocs(collection(db, 'grupos'));
-      const allGrupos = allSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-      const offInterestGrupos = allGrupos.filter(grupo =>
-        !joined.includes(grupo.id) &&
-        (!grupo.tags?.some(tag => interestTags.includes(tag)) ||
-         grupo.location?.state !== location.state)
-      );
-
-      const random = offInterestGrupos.sort(() => 0.5 - Math.random()).slice(0, 10);
-      setGrupos(random);
+    const fetchGroups = async () => {
+      const snapshot = await getDocs(collection(db, 'grupos'));
+      const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setGroups(list);
     };
-
-    fetchGrupos();
+    fetchGroups();
   }, []);
 
   return (
-    <div style={containerStyle}>
-      <h2 style={titleStyle}>🌱 Explore Offbeat Grupos</h2>
-      {grupos.length > 0 ? (
-        <ul style={listStyle}>
-          {grupos.map((grupo) => (
-            <li key={grupo.id} style={cardStyle}>
-              <p style={groupName}>{grupo.name}</p>
-              <p style={groupDesc}>{grupo.description || 'No description yet.'}</p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p style={noDataStyle}>No suggestions available right now.</p>
-      )}
+    <div className="max-w-4xl mx-auto px-4 py-8 font-[Comfortaa]">
+      <h2 className="text-3xl font-bold text-[#FF6B6B] mb-6 text-center">Explore Grupos</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {groups.map((group) => (
+          <div
+            key={group.id}
+            className="bg-white rounded-xl shadow p-4 border border-[#ffe5e5] hover:shadow-md cursor-pointer"
+            onClick={() => navigate(`/grupos/${group.id}`)}
+          >
+            <h3 className="text-lg font-semibold text-[#FF6B6B]">
+              {group.name || 'Unnamed Group'}
+            </h3>
+            <p className="text-sm text-gray-600 line-clamp-2">
+              {group.description || 'No description provided'}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
-};
-
-const containerStyle = {
-  padding: '2rem',
-  fontFamily: 'Comfortaa, sans-serif',
-  backgroundColor: '#ffffff',
-  borderRadius: '1.5rem',
-  boxShadow: '0 5px 20px rgba(0,0,0,0.1)',
-  zIndex: 0
-};
-
-const titleStyle = {
-  fontSize: '2rem',
-  color: '#FF6B6B',
-  marginBottom: '1rem',
-  textAlign: 'center'
-};
-
-const listStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '1rem'
-};
-
-const cardStyle = {
-  backgroundColor: '#ffffff',
-  padding: '1rem',
-  borderRadius: '1rem',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-  zIndex: 0
-};
-
-const groupName = {
-  fontWeight: 'bold',
-  fontSize: '1.1rem',
-  color: '#FF6B6B'
-};
-
-const groupDesc = {
-  fontSize: '0.9rem',
-  color: '#555'
-};
-
-const noDataStyle = {
-  color: '#888',
-  fontSize: '0.95rem',
-  textAlign: 'center'
 };
 
 export default ExploreGruposPage;

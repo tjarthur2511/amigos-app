@@ -9,27 +9,56 @@ html {
   font-size: calc(16px * var(--text-scale));
 }
 
-body {
+body.profile-page {
   font-family: 'Comfortaa', cursive;
-  background-color: white;
+  background-color: #ffffff;
+  background-image: none;
   color: var(--text-color);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* DARK THEME */
-body[data-theme='dark'] {
+body.profile-page[data-theme='dark'] {
   --theme-color: #ffffff;
   --text-color: #ffffff;
   --hover-color: #cccccc;
   background-color: #121212;
   color: var(--text-color);
+  background-image: none;
+  animation: none;
 }
 
-/* CORAL THEME */
-body[data-theme='coral'] {
+body.profile-page[data-theme='coral'] {
   --theme-color: #FF6B6B;
   --text-color: #FF6B6B;
   --hover-color: #E65050;
   background-color: #fff;
   color: var(--text-color);
+  background-image: none;
+  animation: none;
+}
+
+@keyframes starField {
+  0% { background-position: 0 0; }
+  100% { background-position: 1000px 1000px; }
+}
+
+/* Auto-toggle theme based on user preference */
+@media (prefers-color-scheme: dark) {
+  body.profile-page:not([data-theme]) {
+    --theme-color: #ffffff;
+    --text-color: #ffffff;
+    --hover-color: #cccccc;
+    background-color: #121212;
+    color: var(--text-color);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body.profile-page:not([data-theme]) {
+    --theme-color: #FF6B6B;
+    --text-color: #FF6B6B;
+    --hover-color: #E65050;
+    background-color: #ffffff;
+    color: var(--text-color);
+  }
 }

@@ -1,4 +1,4 @@
-// src/components/common/NotificationsBell.jsx
+// src/components/common/NotificationsBell.jsx — Firestore Quiz Notification Ready
 import React, { useEffect, useState } from "react";
 import {
   collection,
@@ -7,6 +7,9 @@ import {
   onSnapshot,
   updateDoc,
   doc,
+  getDoc,
+  setDoc,
+  serverTimestamp
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useAuth } from "../../context/AuthContext";
@@ -35,6 +38,32 @@ const NotificationsBell = () => {
       );
     });
 
+    const checkQuizQuestions = async () => {
+      const userRef = doc(db, "users", currentUser.uid);
+      const userSnap = await getDoc(userRef);
+      const data = userSnap.exists() ? userSnap.data() : {};
+      const { quizAnswers = {}, monthlyQuiz = {} } = data;
+      const totalAnswered = Object.keys(quizAnswers).length + Object.keys(monthlyQuiz).length;
+
+      if (totalAnswered < 5) {
+        const quizNotifId = `quiz-${currentUser.uid}`;
+        const notifRef = doc(db, "notifications", quizNotifId);
+        const notifSnap = await getDoc(notifRef);
+
+        if (!notifSnap.exists()) {
+          await setDoc(notifRef, {
+            targetUserId: currentUser.uid,
+            category: "general",
+            type: "quiz",
+            content: "You have unanswered profile questions waiting",
+            seen: false,
+            createdAt: serverTimestamp()
+          });
+        }
+      }
+    };
+
+    checkQuizQuestions();
     return () => unsubscribe();
   }, [currentUser]);
 
@@ -58,7 +87,7 @@ const NotificationsBell = () => {
           position: "absolute",
           top: "12rem",
           right: "21rem",
-          backgroundColor: "#FF6B6B", // Amigos coral
+          backgroundColor: "#FF6B6B",
           border: "none",
           padding: "0.5rem",
           borderRadius: "9999px",
