@@ -1,4 +1,3 @@
-// src/components/common/NotificationsBell.jsx — Firestore Quiz Notification Ready
 import React, { useEffect, useState } from "react";
 import {
   collection,
@@ -9,7 +8,8 @@ import {
   doc,
   getDoc,
   setDoc,
-  serverTimestamp
+  serverTimestamp,
+  getDocs,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useAuth } from "../../context/AuthContext";
@@ -43,9 +43,18 @@ const NotificationsBell = () => {
       const userSnap = await getDoc(userRef);
       const data = userSnap.exists() ? userSnap.data() : {};
       const { quizAnswers = {}, monthlyQuiz = {} } = data;
-      const totalAnswered = Object.keys(quizAnswers).length + Object.keys(monthlyQuiz).length;
 
-      if (totalAnswered < 5) {
+      const answeredCount =
+        Object.keys(quizAnswers).length + Object.keys(monthlyQuiz).length;
+
+      const qSnap = await getDocs(collection(db, "questionSets"));
+      let totalQuestionCount = 0;
+      qSnap.forEach((doc) => {
+        const qs = doc.data().questions || [];
+        totalQuestionCount += qs.length;
+      });
+
+      if (answeredCount < totalQuestionCount) {
         const quizNotifId = `quiz-${currentUser.uid}`;
         const notifRef = doc(db, "notifications", quizNotifId);
         const notifSnap = await getDoc(notifRef);
@@ -57,7 +66,7 @@ const NotificationsBell = () => {
             type: "quiz",
             content: "You have unanswered profile questions waiting",
             seen: false,
-            createdAt: serverTimestamp()
+            createdAt: serverTimestamp(),
           });
         }
       }

@@ -1,4 +1,3 @@
-// src/components/pages/ProfilePage/ProfilePage.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../firebase';
@@ -15,12 +14,13 @@ import FallingAEffect from '../../common/FallingAEffect';
 import ProfilePhotos from './ProfilePhotos';
 import ProfileQuestionsCenter from './ProfileQuestionsCenter';
 import ProfileCard from './ProfileCard';
+import NavBar from '../../NavBar';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [currentCard, setCurrentCard] = useState(0);
-  const feedCards = ['Your Posts', 'Photos', 'Preferences'];
+  const feedCards = ['YOUR POSTS', 'PHOTOS', 'PREFERENCES'];
 
   useEffect(() => {
     document.body.classList.add('profile-page');
@@ -63,7 +63,7 @@ const ProfilePage = () => {
 
   const renderCurrent = () => {
     switch (feedCards[currentCard]) {
-      case 'Your Posts':
+      case 'YOUR POSTS':
         return posts.length > 0 ? (
           <ul className="flex flex-col gap-4">
             {posts.map(post => (
@@ -84,10 +84,10 @@ const ProfilePage = () => {
           </ul>
         ) : <p className="text-center text-[#FF6B6B]">You haven't posted anything yet.</p>;
 
-      case 'Photos':
+      case 'PHOTOS':
         return <ProfilePhotos posts={posts} />;
 
-      case 'Preferences':
+      case 'PREFERENCES':
         return <ProfileQuestionsCenter />;
 
       default:
@@ -106,27 +106,25 @@ const ProfilePage = () => {
       </header>
 
       <ProfileCard />
-
-      <nav className="flex justify-center my-6 z-10 relative">
-        <div className="bg-white px-4 py-2 rounded-full shadow flex gap-4">
-          <button onClick={() => navigate('/')} className="btn-tab">Home</button>
-          <button onClick={() => navigate('/amigos')} className="btn-tab">Amigos</button>
-          <button onClick={() => navigate('/grupos')} className="btn-tab">Grupos</button>
-          <button onClick={() => navigate('/profile')} className="btn-tab">Profile</button>
-        </div>
-      </nav>
+      <NavBar />
 
       <main className="relative z-10 flex justify-center">
-        <div className="bg-white rounded-3xl shadow-xl p-6 w-full max-w-3xl">
+        <div className="bg-white rounded-3xl shadow-xl p-6 w-full max-w-3xl relative">
           <h2 className="text-2xl font-bold text-[#FF6B6B] text-center mb-4">
             {feedCards[currentCard]}
           </h2>
           {renderCurrent()}
           <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-            <button onClick={nextCard} className="btn-arrow">→</button>
+            <button
+              onClick={nextCard}
+              className="text-2xl text-[#FF6B6B] font-bold bg-white border border-[#FF6B6B] rounded-full px-3 py-1 shadow hover:bg-[#FF6B6B] hover:text-white transition"
+            >→</button>
           </div>
           <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-            <button onClick={prevCard} className="btn-arrow">←</button>
+            <button
+              onClick={prevCard}
+              className="text-2xl text-[#FF6B6B] font-bold bg-white border border-[#FF6B6B] rounded-full px-3 py-1 shadow hover:bg-[#FF6B6B] hover:text-white transition"
+            >←</button>
           </div>
         </div>
       </main>

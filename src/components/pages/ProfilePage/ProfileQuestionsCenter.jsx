@@ -1,4 +1,3 @@
-// 💬 ProfileQuestionsCenter - Backend Accurate (Light Theme + Full Display)
 import React, { useEffect, useState } from 'react';
 import { auth, db } from '../../../firebase';
 import {
@@ -135,7 +134,7 @@ const ProfileQuestionsCenter = () => {
 
         <div className="mt-10">
           <h2 className="text-2xl text-[#FF6B6B] font-bold mb-4 text-center">
-            🗂️ Your Answer Archives
+            📂 Your Answer Archives
           </h2>
           {renderHistory('🧠 Onboarding', history.quizAnswers)}
           {renderHistory('📆 Monthly', history.monthlyQuiz)}
