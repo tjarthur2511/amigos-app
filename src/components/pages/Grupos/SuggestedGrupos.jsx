@@ -1,10 +1,12 @@
 // ✅ SuggestedGrupos.jsx - White Cards, Clean Layout, zIndex 0
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../firebase';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 
 const SuggestedGrupos = ({ gruposToExclude = [] }) => {
   const [grupos, setGrupos] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSuggestedGrupos = async () => {
@@ -43,7 +45,12 @@ const SuggestedGrupos = ({ gruposToExclude = [] }) => {
         <div style={scrollBox}>
           <ul style={listStyle}>
             {grupos.map(grupo => (
-              <li key={grupo.id} style={itemStyle}>
+              <li
+                key={grupo.id}
+                style={itemStyle}
+                onClick={() => navigate(`/grupos/${grupo.id}`)}
+                className="hover:bg-[#fff7f7] transition cursor-pointer"
+              >
                 <p style={groupName}>{grupo.name}</p>
                 <p style={groupDetail}>{grupo.description}</p>
               </li>

@@ -5,7 +5,7 @@ import {
   getDoc,
   updateDoc,
   collection,
-  getDocs
+  getDocs,
 } from 'firebase/firestore';
 import { motion } from 'framer-motion';
 
@@ -14,6 +14,7 @@ const ProfileQuestionsCenter = () => {
   const [answers, setAnswers] = useState({});
   const [status, setStatus] = useState('');
   const [history, setHistory] = useState({ quizAnswers: {}, monthlyQuiz: {} });
+  const [edited, setEdited] = useState({});
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -55,11 +56,12 @@ const ProfileQuestionsCenter = () => {
 
   const handleChange = (id, value) => {
     setAnswers((prev) => ({ ...prev, [id]: value }));
+    setEdited((prev) => ({ ...prev, [id]: true }));
   };
 
   const handleSave = async (id) => {
     const user = auth.currentUser;
-    if (!user) return;
+    if (!user || !answers[id]?.trim()) return;
 
     const userRef = doc(db, 'users', user.uid);
     const updateField = id.startsWith('mq') ? 'monthlyQuiz' : 'quizAnswers';
@@ -72,6 +74,7 @@ const ProfileQuestionsCenter = () => {
         }
       });
       setStatus(`Saved: ${id}`);
+      setEdited((prev) => ({ ...prev, [id]: false }));
       setTimeout(() => setStatus(''), 2000);
     } catch (err) {
       console.error(err);
@@ -112,7 +115,10 @@ const ProfileQuestionsCenter = () => {
         <div className="space-y-6">
           {questions.map((q) => (
             <div key={q.id} className="bg-[#fff0f0] p-5 rounded-xl shadow-md border border-[#ff6b6b]">
-              <p className="text-[#FF6B6B] font-semibold mb-2">{q.text}</p>
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-[#FF6B6B] font-semibold">{q.text}</p>
+                {q.month && <span className="text-xs text-gray-500">📅 {q.month}</span>}
+              </div>
               <input
                 type="text"
                 value={answers[q.id] || ''}
@@ -122,7 +128,12 @@ const ProfileQuestionsCenter = () => {
               />
               <button
                 onClick={() => handleSave(q.id)}
-                className="mt-2 bg-[#FF6B6B] text-white px-4 py-1 rounded-full hover:bg-[#e15555] transition duration-150"
+                disabled={!edited[q.id] || !answers[q.id]?.trim()}
+                className={`mt-2 px-4 py-1 rounded-full transition duration-150 ${
+                  !edited[q.id] || !answers[q.id]?.trim()
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-[#FF6B6B] text-white hover:bg-[#e15555]'
+                }`}
               >
                 Save
               </button>

@@ -73,8 +73,8 @@ const ProfileCard = () => {
 
 const outerWrapper = {
   position: 'absolute',
-  top: '120px',
-  left: '130px',
+  top: '20px',
+  left: '20px',
   cursor: 'grab',
   zIndex: 100,
 };

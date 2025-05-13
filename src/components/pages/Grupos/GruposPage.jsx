@@ -1,4 +1,4 @@
-// ✅ GruposPage - White Cards Only, No Coral Background, zIndex: 0
+// src/components/pages/Grupos/GruposPage.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../firebase';
@@ -7,12 +7,12 @@ import FallingAEffect from '../../common/FallingAEffect';
 import SuggestedGrupos from './SuggestedGrupos';
 import GruposUnidos from './GruposUnidos';
 import GruposPosts from './GruposPosts';
-import ExploreGruposPage from './ExploreGruposPage';
 
 const GruposPage = () => {
   const navigate = useNavigate();
   const [currentCard, setCurrentCard] = useState(1);
   const [userGrupos, setUserGrupos] = useState([]);
+  const [currentUserId, setCurrentUserId] = useState(null);
 
   const feedCards = ['Suggested Grupos', 'Your Grupos', 'Your Grupos Posts'];
 
@@ -21,6 +21,7 @@ const GruposPage = () => {
       const user = auth.currentUser;
       if (!user) return;
 
+      setCurrentUserId(user.uid);
       const userRef = doc(db, 'users', user.uid);
       const userSnap = await getDoc(userRef);
       if (userSnap.exists()) {
@@ -72,6 +73,17 @@ const GruposPage = () => {
           <button onClick={() => navigate('/profile')} style={tabStyle}>Profile</button>
         </div>
       </nav>
+
+      {currentUserId && (
+        <div className="flex justify-end mb-4 px-6">
+          <button
+            onClick={() => navigate(`/grupos/${userGrupos[0]}`)}
+            className="bg-white text-[#FF6B6B] border border-[#FF6B6B] px-4 py-2 rounded-full font-semibold hover:bg-[#FF6B6B] hover:text-white transition"
+          >
+            View First Grupo As Public
+          </button>
+        </div>
+      )}
 
       <div style={mainCardWrapper}>
         <div style={mainCardStyle}>

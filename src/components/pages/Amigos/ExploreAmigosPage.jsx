@@ -1,7 +1,7 @@
-// src/components/pages/Amigos/ExploreAmigosPage.jsx
+// ✅ ExploreAmigosPage – Clean Grid, Public Routing
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../../../firebase';
+import { db, auth } from '../../../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 
 const ExploreAmigosPage = () => {
@@ -11,21 +11,23 @@ const ExploreAmigosPage = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       const snapshot = await getDocs(collection(db, 'users'));
-      const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setUsers(list);
+      const all = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const currentUser = auth.currentUser;
+      const filtered = all.filter(user => user.id !== currentUser?.uid);
+      setUsers(filtered);
     };
     fetchUsers();
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 font-[Comfortaa]">
+    <div className="max-w-5xl mx-auto px-4 py-8 font-[Comfortaa]">
       <h2 className="text-3xl font-bold text-[#FF6B6B] mb-6 text-center">Explore Amigos</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {users.map((user) => (
+        {users.map(user => (
           <div
             key={user.id}
-            className="bg-white rounded-xl shadow p-4 border border-[#ffe5e5] hover:shadow-md cursor-pointer"
             onClick={() => navigate(`/profile/${user.id}`)}
+            className="bg-white rounded-xl shadow p-4 border border-[#ffe5e5] hover:shadow-lg cursor-pointer transition"
           >
             <img
               src={user.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png'}
@@ -36,7 +38,7 @@ const ExploreAmigosPage = () => {
               {user.displayName || 'Unnamed Amigo'}
             </h3>
             <p className="text-sm text-gray-600 line-clamp-2">
-              {user.bio || 'No bio yet'}
+              {user.bio || 'No bio provided.'}
             </p>
           </div>
         ))}

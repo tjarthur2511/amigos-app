@@ -1,10 +1,12 @@
 // ✅ GruposUnidos.jsx - White Card Layout, zIndex 0, Clean Theme
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../firebase';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 
 const GruposUnidos = () => {
   const [joinedGrupos, setJoinedGrupos] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchJoinedGrupos = async () => {
@@ -33,7 +35,12 @@ const GruposUnidos = () => {
       {joinedGrupos.length > 0 ? (
         <ul style={listStyle}>
           {joinedGrupos.map(grupo => (
-            <li key={grupo.id} style={itemStyle}>
+            <li
+              key={grupo.id}
+              style={itemStyle}
+              className="cursor-pointer hover:bg-[#fff7f7] transition"
+              onClick={() => navigate(`/grupos/${grupo.id}`)}
+            >
               <p style={groupName}>{grupo.name}</p>
               <p style={groupDetail}>{grupo.description}</p>
             </li>

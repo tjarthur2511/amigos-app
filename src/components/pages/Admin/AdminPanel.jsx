@@ -1,10 +1,28 @@
 // src/components/pages/Admin/AdminPanel.jsx
 import React, { useState } from "react";
 import { SeederScripts } from "../../../seeder/importMap";
-import { motion } from "framer-motion"; // ✅ Animations for admin panel loading
+import { motion } from "framer-motion";
+import { useAuth } from "../../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const AdminPanel = () => {
   const [output, setOutput] = useState("");
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
+
+  const allowedUids = ["user123", "tjarthur2511@gmail.com"];
+  const uid = currentUser?.uid;
+  const email = currentUser?.email;
+  const isAdmin = allowedUids.includes(uid) || allowedUids.includes(email);
+
+  if (!isAdmin) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-center text-red-600 font-[Comfortaa]">
+        <h1 className="text-3xl font-bold mb-4">Unauthorized</h1>
+        <p>You do not have access to this page.</p>
+      </div>
+    );
+  }
 
   const handleScriptRun = async (scriptName) => {
     const scriptFn = SeederScripts[scriptName];
@@ -53,6 +71,22 @@ const AdminPanel = () => {
 
         <div className="w-full bg-gray-800 text-green-400 p-4 rounded-xl min-h-[120px] overflow-x-auto">
           <pre className="whitespace-pre-wrap">{output}</pre>
+        </div>
+
+        <div className="mt-6 text-center space-y-4">
+          <button
+            onClick={() => navigate("/test-firestore-write")}
+            className="bg-black text-white px-6 py-2 rounded-full shadow hover:shadow-lg"
+          >
+            🔥 Run Firestore Test Tool
+          </button>
+
+          <button
+            onClick={() => navigate("/test-storage-upload")}
+            className="bg-blue-600 text-white px-6 py-2 rounded-full shadow hover:shadow-lg"
+          >
+            📦 Run Storage Upload Test
+          </button>
         </div>
       </div>
     </motion.div>

@@ -1,3 +1,4 @@
+// src/App.jsx
 import React, { useEffect, useState } from 'react';
 import {
   BrowserRouter as Router,
@@ -26,10 +27,14 @@ import HomePage from './components/pages/HomePage';
 import LoginPage from './components/pages/LoginPage';
 import SignUpPage from './components/pages/SignUpPage';
 import AdminPanel from './components/pages/Admin/AdminPanel';
+import TestFirestoreWrite from './components/pages/Admin/TestFirestoreWrite';
+import TestStorageUpload from './components/pages/Admin/TestStorageUpload';
 import SetupQuizPage from './components/pages/SetupQuizPage';
 import MonthlyQuizPage from './components/pages/MonthlyQuizPage';
 import ProfilePage from './components/pages/ProfilePage/ProfilePage';
+import PublicProfilePage from './components/pages/ProfilePage/PublicProfilePage';
 import GruposPage from './components/pages/Grupos/GruposPage';
+import PublicGrupoPage from './components/pages/Grupos/PublicGrupoPage';
 import AmigosPage from './components/pages/Amigos/AmigosPage';
 import ExploreAmigosPage from './components/pages/Amigos/ExploreAmigosPage';
 import LivePage from './components/pages/Live/LivePage';
@@ -42,14 +47,7 @@ function AppContent({ user }) {
   const showNav = user && !hideNavOnPaths.includes(location.pathname);
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        position: 'relative',
-        overflowX: 'hidden',
-        fontFamily: 'Comfortaa, sans-serif',
-      }}
-    >
+    <div className="bg-main text-white font-[Comfortaa] min-h-screen">
       {/* 🔴 Background */}
       <div
         style={{
@@ -98,13 +96,17 @@ function AppContent({ user }) {
             <>
               <Route path="/" element={<HomePage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/profile/:userId" element={<PublicProfilePage />} />
               <Route path="/grupos" element={<GruposPage />} />
+              <Route path="/grupos/:grupoId" element={<PublicGrupoPage />} />
               <Route path="/amigos" element={<AmigosPage />} />
               <Route path="/explore-amigos" element={<ExploreAmigosPage />} />
               <Route path="/live" element={<LivePage />} />
               <Route path="/setup" element={<SetupQuizPage />} />
               <Route path="/monthly-quiz" element={<MonthlyQuizPage />} />
               <Route path="/profile/admin" element={<AdminPanel />} />
+              <Route path="/test-firestore-write" element={<TestFirestoreWrite />} />
+              <Route path="/test-storage-upload" element={<TestStorageUpload />} />
               <Route path="/tailwind-test" element={<TailwindTest />} />
               <Route path="/dev-checklist" element={<DevChecklist />} />
               <Route path="*" element={<Navigate to="/" />} />

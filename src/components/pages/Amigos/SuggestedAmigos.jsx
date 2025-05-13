@@ -1,10 +1,12 @@
 // ✅ SuggestedAmigos.jsx - White Card Cleanup, zIndex 0
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 
 const SuggestedAmigos = ({ amigosToExclude = [] }) => {
   const [suggested, setSuggested] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadSuggestions = async () => {
@@ -27,7 +29,12 @@ const SuggestedAmigos = ({ amigosToExclude = [] }) => {
       {suggested.length > 0 ? (
         <ul style={listStyle}>
           {suggested.map((user) => (
-            <li key={user.id} style={itemStyle}>
+            <li
+              key={user.id}
+              style={itemStyle}
+              onClick={() => navigate(`/profile/${user.id}`)}
+              className="hover:bg-[#fff7f7] transition cursor-pointer"
+            >
               <p style={userName}>{user.displayName}</p>
               <p style={userDetail}>{user.email}</p>
             </li>

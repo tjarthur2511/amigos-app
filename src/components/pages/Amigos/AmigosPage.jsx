@@ -12,6 +12,7 @@ const AmigosPage = () => {
   const navigate = useNavigate();
   const [currentCard, setCurrentCard] = useState(1);
   const [userFollowing, setUserFollowing] = useState([]);
+  const [currentUserId, setCurrentUserId] = useState(null);
   const feedCards = ['Suggested Amigos', 'Followed Amigos', 'Your Amigos Posts'];
 
   useEffect(() => {
@@ -19,6 +20,7 @@ const AmigosPage = () => {
       const user = auth.currentUser;
       if (!user) return;
 
+      setCurrentUserId(user.uid);
       const userRef = doc(db, 'users', user.uid);
       const userSnap = await getDoc(userRef);
       if (userSnap.exists()) {
@@ -73,6 +75,17 @@ const AmigosPage = () => {
           <button onClick={() => navigate('/profile')} style={tabStyle}>Profile</button>
         </div>
       </nav>
+
+      {currentUserId && (
+        <div className="flex justify-end mb-4 px-6">
+          <button
+            onClick={() => navigate(`/profile/${currentUserId}`)}
+            className="bg-white text-[#FF6B6B] border border-[#FF6B6B] px-4 py-2 rounded-full font-semibold hover:bg-[#FF6B6B] hover:text-white transition"
+          >
+            View Your Public Profile
+          </button>
+        </div>
+      )}
 
       <div style={mainCardWrapper}>
         <div style={mainCardStyle}>

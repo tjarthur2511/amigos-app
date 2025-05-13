@@ -1,10 +1,12 @@
 // ✅ AmigosUnidos - White Layout with Zero zIndex
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../firebase';
 import { doc, getDoc, getDocs, collection } from 'firebase/firestore';
 
 const AmigosUnidos = () => {
   const [followedAmigos, setFollowedAmigos] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadFollowedAmigos = async () => {
@@ -34,7 +36,12 @@ const AmigosUnidos = () => {
       {followedAmigos.length > 0 ? (
         <ul style={listStyle}>
           {followedAmigos.map(amigo => (
-            <li key={amigo.id} style={itemStyle}>
+            <li
+              key={amigo.id}
+              style={itemStyle}
+              onClick={() => navigate(`/profile/${amigo.id}`)}
+              className="hover:bg-[#fff7f7] transition cursor-pointer"
+            >
               <p style={userName}>{amigo.displayName}</p>
               <p style={userDetail}>{amigo.email}</p>
             </li>

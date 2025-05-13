@@ -18,7 +18,7 @@ const center = {
 
 const MapHangoutsPage = () => {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: 'YOUR_GOOGLE_MAPS_API_KEY',
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
   });
 
   const [events, setEvents] = useState([]);
@@ -35,8 +35,8 @@ const MapHangoutsPage = () => {
   const getPinIcon = (type) => {
     switch (type) {
       case 'amigo': return '/assets/amigosaonly.png';
-      case 'grupo': return '/assets/g-logo.png'; // Add g Comfortaa image
-      case 'event': return '/assets/e-logo.png'; // Add e Comfortaa image
+      case 'grupo': return '/assets/g-logo.png';
+      case 'event': return '/assets/e-logo.png';
       default: return '/assets/amigosaonly.png';
     }
   };
