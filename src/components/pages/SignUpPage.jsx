@@ -69,30 +69,27 @@ const SignUpPage = () => {
 
   return (
     <div style={{
-      backgroundColor: "#FF6B6B",
       minHeight: "100vh",
       position: "relative",
       overflow: "hidden",
       width: "100%",
       fontFamily: "Comfortaa, sans-serif"
     }}>
-      
-      {/* ✅ Falling background fixed, works behind content */}
+      {/* ✅ Falling A Effect - stays behind content */}
       <div style={{
-        position: "absolute",
+        position: "fixed",
         top: 0,
         left: 0,
-        width: "100%",
-        height: "100%",
-        zIndex: 0,
+        width: "100vw",
+        height: "100vh",
+        zIndex: -500,
         pointerEvents: "none"
       }}>
         <FallingAEffect />
       </div>
 
-      <div style={{
-        zIndex: 5
-      }}>
+      {/* ✅ Signup Card Only - no background */}
+      <div style={{ zIndex: 5, position: 'relative' }}>
         <div style={{
           display: "flex",
           flexDirection: "column",
