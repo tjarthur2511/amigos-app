@@ -9,6 +9,7 @@ html {
   font-size: calc(16px * var(--text-scale));
 }
 
+/* GLOBAL FONT + DEFAULT THEME */
 body.profile-page {
   font-family: 'Comfortaa', cursive;
   background-color: #ffffff;
@@ -17,6 +18,7 @@ body.profile-page {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* DARK THEME VARS */
 body.profile-page[data-theme='dark'] {
   --theme-color: #ffffff;
   --text-color: #ffffff;
@@ -27,6 +29,7 @@ body.profile-page[data-theme='dark'] {
   animation: none;
 }
 
+/* CORAL THEME VARS */
 body.profile-page[data-theme='coral'] {
   --theme-color: #FF6B6B;
   --text-color: #FF6B6B;
@@ -37,12 +40,7 @@ body.profile-page[data-theme='coral'] {
   animation: none;
 }
 
-@keyframes starField {
-  0% { background-position: 0 0; }
-  100% { background-position: 1000px 1000px; }
-}
-
-/* Auto-toggle theme based on user preference */
+/* AUTO PREFERENCE DETECTION */
 @media (prefers-color-scheme: dark) {
   body.profile-page:not([data-theme]) {
     --theme-color: #ffffff;
@@ -60,5 +58,21 @@ body.profile-page[data-theme='coral'] {
     --hover-color: #E65050;
     background-color: #ffffff;
     color: var(--text-color);
+  }
+}
+
+/* STARFIELD ANIM (if used elsewhere) */
+@keyframes starField {
+  0% { background-position: 0 0; }
+  100% { background-position: 1000px 1000px; }
+}
+
+/* ✅ FALLING A EFFECT KEYFRAMES */
+@keyframes fall {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(120vh);
   }
 }

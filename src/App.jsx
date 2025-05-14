@@ -47,7 +47,15 @@ function AppContent({ user }) {
   const showNav = user && !hideNavOnPaths.includes(location.pathname);
 
   return (
-    <div className="bg-main text-white font-[Comfortaa] min-h-screen">
+    <div
+      style={{
+        minHeight: '100vh',
+        position: 'relative',
+        overflowX: 'hidden',
+        fontFamily: 'Comfortaa, sans-serif',
+        zIndex: 0,
+      }}
+    >
       {/* 🔴 Background */}
       <div
         style={{
@@ -57,11 +65,11 @@ function AppContent({ user }) {
           width: '100vw',
           height: '100vh',
           backgroundColor: 'var(--theme-color)',
-          zIndex: -5000,
+          zIndex: -1000,
         }}
       />
 
-      {/* 🔴 Falling Amigos */}
+      {/* 🅰️ Falling A's */}
       <div
         style={{
           position: 'fixed',
@@ -69,7 +77,7 @@ function AppContent({ user }) {
           left: 0,
           width: '100vw',
           height: '100vh',
-          zIndex: -1000,
+          zIndex: -500,
           pointerEvents: 'none',
         }}
       >

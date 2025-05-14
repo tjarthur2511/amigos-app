@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import FallingAEffect from "../common/FallingAEffect"; // ✅ shared version
+import FallingAEffect from "../common/FallingAEffect";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase";
@@ -32,7 +32,6 @@ const LandingPage = () => {
         return;
       }
 
-      // ✅ Always navigate to Home
       navigate("/");
     } catch (error) {
       alert("Login failed: " + error.message);
@@ -78,10 +77,10 @@ const LandingPage = () => {
           }}>
             <div style={{ marginBottom: "1rem" }}>
               <img
-                src="/assets/amigos-a-logo.png"
+                src="/assets/amigoshangouts1.png"
                 alt="amigos logo"
                 style={{
-                  height: "10em",
+                  height: "15em",
                   width: "auto",
                   marginBottom: "-4rem",
                   animation: "pulse-a 1.75s infinite"
