@@ -77,21 +77,12 @@ const LandingPage = () => {
           }}>
             <div style={{ marginBottom: "1rem" }}>
               <img
-                src="/assets/amigos1.png"
-                alt="amigos"
+                src="/assets/amigoshangouts1.png"
+                alt="Amigos Logo"
                 style={{
                   height: "20em",
                   width: "auto",
-                  marginBottom: "-14rem",
-                  animation: "pulse-a 1.75s infinite"
-                }}
-              />
-              <img
-                src="/assets/hangouts1.png"
-                alt="hangouts"
-                style={{
-                  height: "8rem",
-                  width: "auto",
+                  marginBottom: "-7rem",
                   animation: "pulse-a 1.75s infinite"
                 }}
               />

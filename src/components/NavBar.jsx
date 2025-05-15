@@ -1,3 +1,4 @@
+// ✅ Final NavBar.jsx with Tailwind, Theme Support, and Logo Integration
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -17,18 +18,25 @@ const NavBar = () => {
   ];
 
   return (
-    <div style={navWrapper}>
-      <div style={navStyle}>
+    <div className="flex flex-col items-center justify-center mt-8 mb-8 z-10 relative">
+      <div className="mb-4">
+        <img
+          src="/assets/amigoshangouts1.png"
+          alt="amigos logo"
+          className="h-32 w-auto animate-[pulse-a_1.75s_infinite]"
+        />
+      </div>
+      <div className="bg-white px-4 py-2 rounded-full shadow-md flex gap-4">
         {links.map(({ to, label }) => (
           <NavLink
             key={to}
             to={to}
-            style={{
-              ...tabStyle,
-              backgroundColor: hovered === to ? '#FF6B6B' : '#FFFFFF',
-              color: hovered === to ? '#FFFFFF' : '#FF6B6B',
-              borderColor: '#FF6B6B',
-            }}
+            className={({ isActive }) =>
+              `border border-coral px-5 py-2 rounded-full text-base font-bold font-comfortaa transition duration-200 no-underline shadow-md ` +
+              (isActive
+                ? 'bg-coral text-white'
+                : 'bg-white text-coral hover:bg-coral hover:text-white')
+            }
             onMouseEnter={() => handleHover(to)}
             onMouseLeave={handleLeave}
           >
@@ -38,37 +46,6 @@ const NavBar = () => {
       </div>
     </div>
   );
-};
-
-const navWrapper = {
-  display: 'flex',
-  justifyContent: 'center',
-  marginTop: '2rem',
-  marginBottom: '2rem',
-  zIndex: 5,
-  position: 'relative',
-};
-
-const navStyle = {
-  backgroundColor: '#FFFFFF',
-  padding: '0.8rem 1rem',
-  borderRadius: '30px',
-  boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
-  display: 'flex',
-  gap: '1rem',
-};
-
-const tabStyle = {
-  border: '1px solid #FF6B6B',
-  padding: '12px 20px',
-  borderRadius: '30px',
-  fontSize: '1rem',
-  fontWeight: 'bold',
-  fontFamily: 'Comfortaa, sans-serif',
-  cursor: 'pointer',
-  textDecoration: 'none',
-  boxShadow: '0 3px 8px rgba(0,0,0,0.1)',
-  transition: 'all 0.2s ease-in-out',
 };
 
 export default NavBar;

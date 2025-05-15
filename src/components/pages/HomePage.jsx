@@ -147,7 +147,7 @@ const HomePage = () => {
       <div style={{ position: 'relative', zIndex: 0 }}>
         <header style={{ display: 'flex', justifyContent: 'center', paddingTop: '1rem', marginBottom: '-1rem' }}>
           <img
-            src="/assets/amigoshangouts4.png"
+            src="/assets/amigoshangouts1.png"
             alt="Amigos Hangouts"
             style={{ height: '20em', width: 'auto', animation: 'pulse-a 1.75s infinite', marginBottom: '-5rem' }}
           />

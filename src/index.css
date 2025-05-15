@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --theme-color: #FF6B6B;
   --text-color: #FF6B6B;
@@ -9,38 +13,32 @@ html {
   font-size: calc(16px * var(--text-scale));
 }
 
-/* GLOBAL FONT + DEFAULT THEME */
 body.profile-page {
   font-family: 'Comfortaa', cursive;
   background-color: #ffffff;
-  background-image: none;
   color: var(--text-color);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* DARK THEME VARS */
+/* DARK THEME */
 body.profile-page[data-theme='dark'] {
   --theme-color: #ffffff;
   --text-color: #ffffff;
   --hover-color: #cccccc;
   background-color: #121212;
   color: var(--text-color);
-  background-image: none;
-  animation: none;
 }
 
-/* CORAL THEME VARS */
+/* CORAL THEME */
 body.profile-page[data-theme='coral'] {
   --theme-color: #FF6B6B;
   --text-color: #FF6B6B;
   --hover-color: #E65050;
-  background-color: #fff;
+  background-color: #ffffff;
   color: var(--text-color);
-  background-image: none;
-  animation: none;
 }
 
-/* AUTO PREFERENCE DETECTION */
+/* FALLBACK DARK PREFERENCE */
 @media (prefers-color-scheme: dark) {
   body.profile-page:not([data-theme]) {
     --theme-color: #ffffff;
@@ -61,13 +59,12 @@ body.profile-page[data-theme='coral'] {
   }
 }
 
-/* STARFIELD ANIM (if used elsewhere) */
+/* Optional keyframe animations */
 @keyframes starField {
   0% { background-position: 0 0; }
   100% { background-position: 1000px 1000px; }
 }
 
-/* ✅ FALLING A EFFECT KEYFRAMES */
 @keyframes fall {
   0% {
     transform: translateY(0);
