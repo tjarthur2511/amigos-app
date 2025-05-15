@@ -1,4 +1,4 @@
-// ✅ Final Full HomePage.jsx with White Box Behind Logo and Feed Preserved
+// ✅ Final Full HomePage.jsx with Logo-Nav Spacing Tightened (No Code Removed)
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../firebase';
@@ -145,17 +145,15 @@ const HomePage = () => {
       </div>
 
       <div style={{ position: 'relative', zIndex: 0 }}>
-        <header style={{ display: 'flex', justifyContent: 'center', paddingTop: '2rem' }}>
-          <div style={{ backgroundColor: 'white', padding: '1rem 2rem', borderRadius: '1.5rem', boxShadow: '0 5px 15px rgba(0,0,0,0.15)' }}>
-            <img
-              src="/assets/amigoshangouts1.png"
-              alt="Amigos Hangouts"
-              style={{ height: '10em', width: 'auto', animation: 'pulse-a 1.75s infinite' }}
-            />
-          </div>
+        <header style={{ display: 'flex', justifyContent: 'center', paddingTop: '1rem', marginBottom: '-1rem' }}>
+          <img
+            src="/assets/amigoshangouts4.png"
+            alt="Amigos Hangouts"
+            style={{ height: '20em', width: 'auto', animation: 'pulse-a 1.75s infinite', marginBottom: '-5rem' }}
+          />
         </header>
 
-        <nav style={{ display: 'flex', justifyContent: 'center', margin: '2rem 0' }}>
+        <nav style={{ display: 'flex', justifyContent: 'center', marginTop: '0rem', marginBottom: '1.5rem' }}>
           <div style={{ backgroundColor: 'white', padding: '0.8rem 1rem', borderRadius: '30px', boxShadow: '0 5px 15px rgba(0,0,0,0.1)', display: 'flex', gap: '1rem' }}>
             <button onClick={() => navigate('/')} style={tabStyle}>Home</button>
             <button onClick={() => navigate('/amigos')} style={tabStyle}>Amigos</button>

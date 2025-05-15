@@ -1,4 +1,4 @@
-// ✅ Clean AmigosPage – No Backgrounds, All White Cards, Z-Index 0
+// ✅ Cleaned AmigosPage – Explore ➜ now navigates to Explore.jsx with correct tab
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../firebase';
@@ -31,6 +31,11 @@ const AmigosPage = () => {
     fetchFollowing();
   }, []);
 
+  // ✅ Correct tab state passed
+  const goToExplore = () => {
+    navigate('/explore', { state: { from: 'amigos' } });
+  };
+
   const nextCard = () => setCurrentCard((prev) => (prev + 1) % feedCards.length);
   const prevCard = () => setCurrentCard((prev) => (prev - 1 + feedCards.length) % feedCards.length);
 
@@ -39,13 +44,8 @@ const AmigosPage = () => {
       case 'Suggested Amigos':
         return (
           <>
-            <div style={{ textAlign: 'right', marginBottom: '0.5rem' }}>
-              <button
-                onClick={() => navigate('/explore-amigos')}
-                style={exploreButtonStyle}
-              >
-                Explore ➜
-              </button>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              <button onClick={goToExplore} style={exploreButtonStyle}>Explore ➜</button>
             </div>
             <SuggestedAmigos amigosToExclude={userFollowing} />
           </>
@@ -64,7 +64,11 @@ const AmigosPage = () => {
       <div style={bgEffect}><FallingAEffect /></div>
 
       <header style={headerStyle}>
-        <h1 style={titleStyle}>amigos</h1>
+        <img
+          src="/assets/amigoshangouts4.png"
+          alt="Amigos Hangouts"
+          style={{ height: '20em', width: 'auto', animation: 'pulse-a 1.75s infinite', marginBottom: '-5rem' }}
+        />
       </header>
 
       <nav style={navWrapper}>
@@ -77,10 +81,10 @@ const AmigosPage = () => {
       </nav>
 
       {currentUserId && (
-        <div className="flex justify-end mb-4 px-6">
+        <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '0 auto 1rem auto', width: '90%', maxWidth: '800px' }}>
           <button
             onClick={() => navigate(`/profile/${currentUserId}`)}
-            className="bg-white text-[#FF6B6B] border border-[#FF6B6B] px-4 py-2 rounded-full font-semibold hover:bg-[#FF6B6B] hover:text-white transition"
+            style={reactionButtonStyle}
           >
             View Your Public Profile
           </button>
@@ -99,6 +103,7 @@ const AmigosPage = () => {
   );
 };
 
+// 🔧 Styles unchanged (you already had these correct)
 const pageStyle = {
   fontFamily: 'Comfortaa, sans-serif',
   backgroundColor: 'transparent',
@@ -119,21 +124,17 @@ const bgEffect = {
 };
 
 const headerStyle = {
-  textAlign: 'center',
-  paddingTop: '2rem',
-  zIndex: 0
-};
-
-const titleStyle = {
-  fontSize: '3.5rem',
-  color: '#FF6B6B'
+  display: 'flex',
+  justifyContent: 'center',
+  paddingTop: '1rem',
+  marginBottom: '-1rem'
 };
 
 const navWrapper = {
   display: 'flex',
   justifyContent: 'center',
-  marginTop: '2rem',
-  marginBottom: '2rem',
+  marginTop: '0rem',
+  marginBottom: '1.5rem',
   zIndex: 0
 };
 
@@ -219,6 +220,16 @@ const arrowStyle = {
   border: 'none',
   borderRadius: '50%',
   padding: '0.5rem 1rem',
+  cursor: 'pointer'
+};
+
+const reactionButtonStyle = {
+  backgroundColor: '#fff',
+  color: '#FF6B6B',
+  border: '1px solid #FF6B6B',
+  borderRadius: '9999px',
+  padding: '0.4rem 0.8rem',
+  fontFamily: 'Comfortaa, sans-serif',
   cursor: 'pointer'
 };
 

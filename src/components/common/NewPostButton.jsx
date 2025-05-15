@@ -10,7 +10,7 @@ const NewPostButton = () => {
         onClick={() => setShowModal(true)}
         style={{
           position: "fixed",
-          bottom: "11rem", // responsive bottom offset
+          bottom: "23rem", // responsive bottom offset
           left: "1rem", // consistent across screen sizes
           backgroundColor: "#FFFFFF",
           color: "#FF6B6B",

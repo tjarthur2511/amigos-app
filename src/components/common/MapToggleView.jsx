@@ -1,32 +1,38 @@
 // src/components/common/MapToggleView.jsx
 import React from "react";
-import GoogleMapReact from "google-map-react";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
-const Marker = ({ text }) => (
-  <div className="text-xs bg-white text-black px-2 py-1 rounded-full shadow">{text}</div>
-);
+const containerStyle = {
+  width: '100%',
+  height: '300px',
+  borderRadius: '1rem',
+  overflow: 'hidden',
+  marginBottom: '1.5rem',
+  boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
+};
+
+const defaultCenter = { lat: 42.25, lng: -83.4 };
+const defaultZoom = 10;
 
 const MapToggleView = ({ type }) => {
-  const defaultCenter = { lat: 42.25, lng: -83.4 };
-  const defaultZoom = 10;
-
-  // This mock should be replaced with real filtered Firestore data later
   const dummyLocations = [
     { lat: 42.28, lng: -83.3, label: `${type} 1` },
     { lat: 42.23, lng: -83.5, label: `${type} 2` },
   ];
 
   return (
-    <div className="h-[300px] w-full mb-4 max-w-5xl mx-auto rounded-xl overflow-hidden shadow-lg">
-      <GoogleMapReact
-        bootstrapURLKeys={{ key: "YOUR_GOOGLE_MAPS_API_KEY" }}
-        defaultCenter={defaultCenter}
-        defaultZoom={defaultZoom}
-      >
-        {dummyLocations.map((loc, idx) => (
-          <Marker key={idx} lat={loc.lat} lng={loc.lng} text={loc.label} />
-        ))}
-      </GoogleMapReact>
+    <div className="max-w-5xl mx-auto">
+      <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
+        <GoogleMap
+          mapContainerStyle={containerStyle}
+          center={defaultCenter}
+          zoom={defaultZoom}
+        >
+          {dummyLocations.map((loc, i) => (
+            <Marker key={i} position={{ lat: loc.lat, lng: loc.lng }} label={loc.label} />
+          ))}
+        </GoogleMap>
+      </LoadScript>
     </div>
   );
 };

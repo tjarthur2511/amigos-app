@@ -37,6 +37,7 @@ import GruposPage from './components/pages/Grupos/GruposPage';
 import PublicGrupoPage from './components/pages/Grupos/PublicGrupoPage';
 import AmigosPage from './components/pages/Amigos/AmigosPage';
 import ExploreAmigosPage from './components/pages/Amigos/ExploreAmigosPage';
+import Explore from './components/pages/Explore';
 import LivePage from './components/pages/Live/LivePage';
 import TailwindTest from './components/pages/TailwindTest';
 import DevChecklist from './components/pages/DevChecklist';
@@ -108,6 +109,7 @@ function AppContent({ user }) {
               <Route path="/grupos" element={<GruposPage />} />
               <Route path="/grupos/:grupoId" element={<PublicGrupoPage />} />
               <Route path="/amigos" element={<AmigosPage />} />
+              <Route path="/explore" element={<Explore />} />
               <Route path="/explore-amigos" element={<ExploreAmigosPage />} />
               <Route path="/live" element={<LivePage />} />
               <Route path="/setup" element={<SetupQuizPage />} />
