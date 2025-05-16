@@ -31,7 +31,6 @@ const AmigosPage = () => {
     fetchFollowing();
   }, []);
 
-  // ✅ Correct tab state passed
   const goToExplore = () => {
     navigate('/explore', { state: { from: 'amigos' } });
   };
@@ -83,17 +82,6 @@ const AmigosPage = () => {
         </div>
       </nav>
 
-      {currentUserId && (
-        <div style={{ position: 'absolute', top: '285px', right: '285px', zIndex: 10 }}>
-          <button
-            onClick={() => navigate(`/profile/${currentUserId}`)}
-            style={reactionButtonStyle}
-          >
-            View Your Public Profile
-          </button>
-        </div>
-      )}
-
       <div style={mainCardWrapper} className="z-[10]">
         <div style={mainCardStyle}>
           <h2 style={sectionTitle}>{feedCards[currentCard]}</h2>
@@ -106,7 +94,7 @@ const AmigosPage = () => {
   );
 };
 
-// 🔧 Styles unchanged (you already had these correct)
+// 🔧 Styles unchanged
 const pageStyle = {
   fontFamily: 'Comfortaa, sans-serif',
   backgroundColor: 'transparent',
@@ -223,16 +211,6 @@ const arrowStyle = {
   border: 'none',
   borderRadius: '50%',
   padding: '0.5rem 1rem',
-  cursor: 'pointer'
-};
-
-const reactionButtonStyle = {
-  backgroundColor: '#fff',
-  color: '#FF6B6B',
-  border: '1px solid #FF6B6B',
-  borderRadius: '9999px',
-  padding: '0.4rem 0.8rem',
-  fontFamily: 'Comfortaa, sans-serif',
   cursor: 'pointer'
 };
 

@@ -13,7 +13,6 @@ const GruposPage = () => {
   const [currentCard, setCurrentCard] = useState(1);
   const [userGrupos, setUserGrupos] = useState([]);
   const [currentUserId, setCurrentUserId] = useState(null);
-
   const feedCards = ['Suggested Grupos', 'Your Grupos', 'Your Grupos Posts'];
 
   useEffect(() => {
@@ -32,6 +31,10 @@ const GruposPage = () => {
     fetchGrupos();
   }, []);
 
+  const goToExplore = () => {
+    navigate('/explore', { state: { from: 'grupos' } });
+  };
+
   const nextCard = () => setCurrentCard((prev) => (prev + 1) % feedCards.length);
   const prevCard = () => setCurrentCard((prev) => (prev - 1 + feedCards.length) % feedCards.length);
 
@@ -40,13 +43,8 @@ const GruposPage = () => {
       case 'Suggested Grupos':
         return (
           <>
-            <div style={{ textAlign: 'right', marginBottom: '0.5rem' }}>
-              <button
-                onClick={() => navigate('/explore', { state: { from: 'grupos' } })}
-                style={exploreBtnStyle}
-              >
-                Explore ➜
-              </button>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              <button onClick={goToExplore} style={exploreButtonStyle}>Explore ➜</button>
             </div>
             <SuggestedGrupos gruposToExclude={userGrupos} />
           </>
@@ -61,7 +59,7 @@ const GruposPage = () => {
   };
 
   return (
-    <div style={pageStyle} className="relative z-0">
+    <div style={pageStyle} className="font-[Comfortaa] bg-transparent min-h-screen overflow-hidden relative z-0">
       <div className="absolute top-0 left-0 w-full h-full -z-[1000] bg-[#FF6B6B]" />
       <div style={bgEffect} className="absolute top-0 left-0 w-full h-full -z-[500] pointer-events-none">
         <FallingAEffect />
@@ -84,29 +82,10 @@ const GruposPage = () => {
         </div>
       </nav>
 
-      {currentUserId && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '355px',
-            right: '320px',
-            zIndex: 10
-          }}
-        >
-          <button
-            onClick={() => navigate(`/grupos/${userGrupos[0]}`)}
-            className="bg-white text-[#FF6B6B] border border-[#FF6B6B] px-4 py-2 rounded-full font-semibold hover:bg-[#FF6B6B] hover:text-white transition"
-          >
-            View Public Grupos
-          </button>
-        </div>
-      )}
-
       <div style={mainCardWrapper} className="z-[10]">
         <div style={mainCardStyle}>
           <h2 style={sectionTitle}>{feedCards[currentCard]}</h2>
           {renderCurrentFeed()}
-
           <div style={arrowRight}><button onClick={nextCard} style={arrowStyle}>→</button></div>
           <div style={arrowLeft}><button onClick={prevCard} style={arrowStyle}>←</button></div>
         </div>
@@ -115,14 +94,13 @@ const GruposPage = () => {
   );
 };
 
+// 🔧 Shared styles from AmigosPage.jsx
 const pageStyle = {
   fontFamily: 'Comfortaa, sans-serif',
   backgroundColor: 'transparent',
   minHeight: '100vh',
   overflow: 'hidden',
   position: 'relative',
-  margin: 0,
-  padding: 0,
   zIndex: 0
 };
 
@@ -137,21 +115,17 @@ const bgEffect = {
 };
 
 const headerStyle = {
-  textAlign: 'center',
-  paddingTop: '2rem',
-  zIndex: 0
-};
-
-const titleStyle = {
-  fontSize: '3.5rem',
-  color: '#FF6B6B'
+  display: 'flex',
+  justifyContent: 'center',
+  paddingTop: '1rem',
+  marginBottom: '-1rem'
 };
 
 const navWrapper = {
   display: 'flex',
   justifyContent: 'center',
-  marginTop: '2rem',
-  marginBottom: '2rem',
+  marginTop: '0rem',
+  marginBottom: '1.5rem',
   zIndex: 0
 };
 
@@ -177,7 +151,7 @@ const tabStyle = {
   boxShadow: '0 3px 8px rgba(0,0,0,0.2)'
 };
 
-const exploreBtnStyle = {
+const exploreButtonStyle = {
   backgroundColor: 'white',
   color: '#FF6B6B',
   border: '1px solid #FF6B6B',

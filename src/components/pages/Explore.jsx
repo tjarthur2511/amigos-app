@@ -1,20 +1,13 @@
-// ✅ Final Explore.jsx with NavBar and MapHangoutsPage Layout
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { db } from '../../firebase';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
-import SuggestedAmigosCard from "../common/SuggestedAmigosCard";
-import SuggestedGruposCard from "../common/SuggestedGruposCard";
-import EventCard from "../common/EventCard";
-import RSVPCard from "../common/RSVPCard";
-import NavBar from "../NavBar";
-import { db } from "../../firebase";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import FallingAEffect from "../common/FallingAEffect";
+import FallingAEffect from '../common/FallingAEffect';
 
 const containerStyle = {
   width: '100%',
-  height: '300px',
+  height: '400px',
   borderRadius: '1rem',
 };
 
@@ -24,10 +17,8 @@ const center = {
 };
 
 const Explore = () => {
-  const { t } = useTranslation();
-  const location = useLocation();
-  const [activeTab, setActiveTab] = useState("amigos");
-  const [items, setItems] = useState([]);
+  const navigate = useNavigate();
+  const [selectedType, setSelectedType] = useState('amigos');
   const [mapMarkers, setMapMarkers] = useState([]);
 
   const { isLoaded } = useJsApiLoader({
@@ -35,101 +26,82 @@ const Explore = () => {
   });
 
   useEffect(() => {
-    if (location?.state?.from === "grupos") setActiveTab("grupos");
-    else if (location?.state?.from === "events") setActiveTab("events");
-    else if (location?.state?.from === "rsvps") setActiveTab("rsvps");
-    else if (location?.state?.from === "suggested") {
-      const tabs = ["grupos", "events"];
-      setActiveTab(tabs[Math.floor(Math.random() * tabs.length)]);
-    } else setActiveTab("amigos");
-  }, [location]);
-
-  useEffect(() => {
-    const fetchItems = async () => {
-      let col = "users";
-      if (activeTab === "grupos") col = "grupos";
-      if (activeTab === "events") col = "events";
-      if (activeTab === "rsvps") col = "rsvps";
+    const fetchMarkers = async () => {
+      let col = selectedType === 'amigos' ? 'users' : selectedType === 'grupos' ? 'grupos' : 'events';
 
       const ref = collection(db, col);
-      const q = query(ref, orderBy("createdAt", "desc"));
+      const q = query(ref, orderBy('createdAt', 'desc'));
       const snapshot = await getDocs(q);
-      const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setItems(list);
 
-      if (col === "events") {
-        setMapMarkers(list.filter(e => e.lat && e.lng));
-      } else {
-        setMapMarkers([]);
-      }
+      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      const filtered = data.filter((item) => item.lat && item.lng);
+      setMapMarkers(filtered);
     };
-    fetchItems();
-  }, [activeTab]);
 
-  const renderCards = () => {
-    return items.map((item) => {
-      if (activeTab === "amigos") return <SuggestedAmigosCard key={item.id} amigo={item} />;
-      if (activeTab === "grupos") return <SuggestedGruposCard key={item.id} grupo={item} />;
-      if (activeTab === "events") return <EventCard key={item.id} event={item} />;
-      if (activeTab === "rsvps") return <RSVPCard key={item.id} rsvp={item} />;
-      return null;
-    });
-  };
+    fetchMarkers();
+  }, [selectedType]);
 
   return (
-    <div style={pageStyle}>
-      <div style={bgEffect}><FallingAEffect /></div>
+    <div style={pageStyle} className="font-[Comfortaa] bg-transparent min-h-screen overflow-hidden relative z-0">
+      <div className="absolute top-0 left-0 w-full h-full -z-[1000] bg-[#FF6B6B]" />
+      <div style={bgEffect} className="absolute top-0 left-0 w-full h-full -z-[500] pointer-events-none">
+        <FallingAEffect />
+      </div>
 
-      {/* ✅ Persistent NavBar at top */}
-      <NavBar />
+      <header style={headerStyle} className="z-[10]">
+        <img
+          src="/assets/amigoshangouts1.png"
+          alt="Amigos Hangouts"
+          style={{ height: '20em', width: 'auto', animation: 'pulse-a 1.75s infinite', marginBottom: '-5rem' }}
+        />
+      </header>
 
-      <header style={headerStyle}><h1 style={titleStyle}>explore</h1></header>
+      <nav style={navWrapper} className="z-[10]">
+        <div style={navStyle}>
+          <button onClick={() => navigate('/')} style={tabStyle}>Home</button>
+          <button onClick={() => navigate('/amigos')} style={tabStyle}>Amigos</button>
+          <button onClick={() => navigate('/grupos')} style={tabStyle}>Grupos</button>
+          <button onClick={() => navigate('/profile')} style={tabStyle}>Profile</button>
+        </div>
+      </nav>
 
-      <div style={mainCardWrapper}>
+      <div style={mainCardWrapper} className="z-[10]">
         <div style={mainCardStyle}>
-          <div className="flex justify-center gap-4 mb-4">
-            {["amigos", "grupos", "events", "rsvps"].map((key) => (
-              <button
-                key={key}
-                onClick={() => setActiveTab(key)}
-                style={key === activeTab ? activeTabStyle : tabStyle}
-              >
-                {key.charAt(0).toUpperCase() + key.slice(1)}
-              </button>
-            ))}
-          </div>
+          <h2 style={sectionTitle}>Explore {selectedType.charAt(0).toUpperCase() + selectedType.slice(1)}</h2>
 
-          {isLoaded && mapMarkers.length > 0 && (
-            <GoogleMap
-              mapContainerStyle={containerStyle}
-              center={center}
-              zoom={10}
-            >
-              {mapMarkers.map((marker) => (
-                <Marker key={marker.id} position={{ lat: marker.lat, lng: marker.lng }} />
-              ))}
-            </GoogleMap>
+          <select
+            value={selectedType}
+            onChange={(e) => setSelectedType(e.target.value)}
+            style={dropdownStyle}
+          >
+            <option value="amigos">Explore Amigos</option>
+            <option value="grupos">Explore Grupos</option>
+            <option value="events">Explore Events</option>
+          </select>
+
+          {isLoaded && (
+            <div className="mt-6">
+              <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10}>
+                {mapMarkers.map((m) => (
+                  <Marker key={m.id} position={{ lat: m.lat, lng: m.lng }} />
+                ))}
+              </GoogleMap>
+            </div>
           )}
-
-          <div style={{ marginTop: '1.5rem' }}>
-            {items.length === 0 ? (
-              <p style={comingSoonText}>{t("noResults")}</p>
-            ) : (
-              renderCards()
-            )}
-          </div>
         </div>
       </div>
     </div>
   );
 };
 
+// Layout styles
 const pageStyle = {
   fontFamily: 'Comfortaa, sans-serif',
-  backgroundColor: '#FF6B6B',
+  backgroundColor: 'transparent',
   minHeight: '100vh',
   overflow: 'hidden',
-  position: 'relative'
+  position: 'relative',
+  zIndex: 0,
 };
 
 const bgEffect = {
@@ -139,23 +111,51 @@ const bgEffect = {
   width: '100%',
   height: '100%',
   zIndex: 0,
-  pointerEvents: 'none'
+  pointerEvents: 'none',
 };
 
 const headerStyle = {
-  textAlign: 'center',
-  paddingTop: '2rem'
+  display: 'flex',
+  justifyContent: 'center',
+  paddingTop: '1rem',
+  marginBottom: '-1rem',
 };
 
-const titleStyle = {
-  fontSize: '3.5rem',
-  color: 'white'
+const navWrapper = {
+  display: 'flex',
+  justifyContent: 'center',
+  marginTop: '0rem',
+  marginBottom: '1.5rem',
+  zIndex: 0,
+};
+
+const navStyle = {
+  backgroundColor: 'white',
+  padding: '0.8rem 1rem',
+  borderRadius: '30px',
+  boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
+  display: 'flex',
+  gap: '1rem',
+};
+
+const tabStyle = {
+  backgroundColor: '#FF6B6B',
+  color: 'white',
+  border: 'none',
+  padding: '12px 20px',
+  borderRadius: '30px',
+  fontSize: '1rem',
+  fontWeight: 'bold',
+  fontFamily: 'Comfortaa, sans-serif',
+  cursor: 'pointer',
+  boxShadow: '0 3px 8px rgba(0,0,0,0.2)',
 };
 
 const mainCardWrapper = {
   display: 'flex',
   justifyContent: 'center',
-  marginBottom: '2rem'
+  marginBottom: '2rem',
+  zIndex: 0,
 };
 
 const mainCardStyle = {
@@ -168,30 +168,24 @@ const mainCardStyle = {
   minHeight: '60vh',
   textAlign: 'center',
   position: 'relative',
-  zIndex: 10
+  zIndex: 0,
 };
 
-const tabStyle = {
-  backgroundColor: '#ff9999',
-  color: 'white',
-  border: 'none',
-  padding: '10px 20px',
-  borderRadius: '30px',
-  fontSize: '1rem',
-  cursor: 'pointer',
-  fontFamily: 'Comfortaa, sans-serif'
-};
-
-const activeTabStyle = {
-  ...tabStyle,
-  backgroundColor: 'white',
+const sectionTitle = {
+  fontSize: '2rem',
   color: '#FF6B6B',
-  fontWeight: 'bold'
+  marginBottom: '1rem',
 };
 
-const comingSoonText = {
-  fontSize: '1.2rem',
-  color: '#FF6B6B'
+const dropdownStyle = {
+  padding: '10px 16px',
+  fontSize: '1rem',
+  borderRadius: '30px',
+  border: '1px solid #FF6B6B',
+  fontFamily: 'Comfortaa, sans-serif',
+  color: '#FF6B6B',
+  cursor: 'pointer',
+  marginBottom: '1rem',
 };
 
 export default Explore;
