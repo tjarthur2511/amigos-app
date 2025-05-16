@@ -41,7 +41,10 @@ const GruposPage = () => {
         return (
           <>
             <div style={{ textAlign: 'right', marginBottom: '0.5rem' }}>
-              <button onClick={() => navigate('/explore-grupos')} style={exploreBtnStyle}>
+              <button
+                onClick={() => navigate('/explore', { state: { from: 'grupos' } })}
+                style={exploreBtnStyle}
+              >
                 Explore ➜
               </button>
             </div>
@@ -58,14 +61,21 @@ const GruposPage = () => {
   };
 
   return (
-    <div style={pageStyle}>
-      <div style={bgEffect}><FallingAEffect /></div>
+    <div style={pageStyle} className="relative z-0">
+      <div className="absolute top-0 left-0 w-full h-full -z-[1000] bg-[#FF6B6B]" />
+      <div style={bgEffect} className="absolute top-0 left-0 w-full h-full -z-[500] pointer-events-none">
+        <FallingAEffect />
+      </div>
 
-      <header style={headerStyle}>
-        <h1 style={titleStyle}>grupos</h1>
+      <header style={headerStyle} className="z-[10]">
+        <img
+          src="/assets/amigoshangouts1.png"
+          alt="Amigos Hangouts"
+          style={{ height: '20em', width: 'auto', animation: 'pulse-a 1.75s infinite', marginBottom: '-5rem' }}
+        />
       </header>
 
-      <nav style={navWrapper}>
+      <nav style={navWrapper} className="z-[10]">
         <div style={navStyle}>
           <button onClick={() => navigate('/')} style={tabStyle}>Home</button>
           <button onClick={() => navigate('/amigos')} style={tabStyle}>Amigos</button>
@@ -75,17 +85,24 @@ const GruposPage = () => {
       </nav>
 
       {currentUserId && (
-        <div className="flex justify-end mb-4 px-6">
+        <div
+          style={{
+            position: 'absolute',
+            top: '355px',
+            right: '320px',
+            zIndex: 10
+          }}
+        >
           <button
             onClick={() => navigate(`/grupos/${userGrupos[0]}`)}
             className="bg-white text-[#FF6B6B] border border-[#FF6B6B] px-4 py-2 rounded-full font-semibold hover:bg-[#FF6B6B] hover:text-white transition"
           >
-            View First Grupo As Public
+            View Public Grupos
           </button>
         </div>
       )}
 
-      <div style={mainCardWrapper}>
+      <div style={mainCardWrapper} className="z-[10]">
         <div style={mainCardStyle}>
           <h2 style={sectionTitle}>{feedCards[currentCard]}</h2>
           {renderCurrentFeed()}

@@ -60,18 +60,21 @@ const AmigosPage = () => {
   };
 
   return (
-    <div style={pageStyle}>
-      <div style={bgEffect}><FallingAEffect /></div>
+    <div style={pageStyle} className="font-[Comfortaa] bg-transparent min-h-screen overflow-hidden relative z-0">
+      <div className="absolute top-0 left-0 w-full h-full -z-[1000] bg-[#FF6B6B]" />
+      <div style={bgEffect} className="absolute top-0 left-0 w-full h-full -z-[500] pointer-events-none">
+        <FallingAEffect />
+      </div>
 
-      <header style={headerStyle}>
+      <header style={headerStyle} className="z-[10]">
         <img
-          src="/assets/amigoshangouts4.png"
+          src="/assets/amigoshangouts1.png"
           alt="Amigos Hangouts"
           style={{ height: '20em', width: 'auto', animation: 'pulse-a 1.75s infinite', marginBottom: '-5rem' }}
         />
       </header>
 
-      <nav style={navWrapper}>
+      <nav style={navWrapper} className="z-[10]">
         <div style={navStyle}>
           <button onClick={() => navigate('/')} style={tabStyle}>Home</button>
           <button onClick={() => navigate('/amigos')} style={tabStyle}>Amigos</button>
@@ -81,7 +84,7 @@ const AmigosPage = () => {
       </nav>
 
       {currentUserId && (
-        <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '0 auto 1rem auto', width: '90%', maxWidth: '800px' }}>
+        <div style={{ position: 'absolute', top: '285px', right: '285px', zIndex: 10 }}>
           <button
             onClick={() => navigate(`/profile/${currentUserId}`)}
             style={reactionButtonStyle}
@@ -91,7 +94,7 @@ const AmigosPage = () => {
         </div>
       )}
 
-      <div style={mainCardWrapper}>
+      <div style={mainCardWrapper} className="z-[10]">
         <div style={mainCardStyle}>
           <h2 style={sectionTitle}>{feedCards[currentCard]}</h2>
           {renderCurrentFeed()}
