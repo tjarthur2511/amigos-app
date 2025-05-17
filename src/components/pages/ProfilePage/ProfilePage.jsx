@@ -1,25 +1,28 @@
+// src/components/pages/ProfilePage/ProfilePage.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { motion } from 'framer-motion';
 import ProfileCard from './ProfileCard';
 import ProfileQuestionsCenter from './ProfileQuestionsCenter';
+import ProfilePhotos from './ProfilePhotos';
 import FallingAEffect from '../../common/FallingAEffect';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const [currentCard, setCurrentCard] = useState(0);
   const [displayName, setDisplayName] = useState('');
-  const [photoURL, setPhotoURL] = useState('');
   const [userId, setUserId] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
   const [bio, setBio] = useState('');
   const [hobbies, setHobbies] = useState('');
   const [status, setStatus] = useState('');
+  const [pronouns, setPronouns] = useState('');
+  const [location, setLocation] = useState('');
+  const [background, setBackground] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const profileCards = ['Your Profile', 'Customize Public Profile', 'Quiz Questions'];
+  const profileCards = ['Your Profile', 'Quiz Questions', 'Your Photos'];
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -32,11 +35,13 @@ const ProfilePage = () => {
       if (snap.exists()) {
         const data = snap.data();
         setDisplayName(data.displayName || 'Unnamed Amigo');
-        setPhotoURL(data.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png');
         setIsAdmin(data.isAdmin || false);
         setBio(data.bio || '');
         setHobbies(data.hobbies || '');
         setStatus(data.status || '');
+        setPronouns(data.pronouns || '');
+        setLocation(data.location || '');
+        setBackground(data.background || '');
       }
     };
     fetchUser();
@@ -46,7 +51,15 @@ const ProfilePage = () => {
     if (!userId) return;
     setSaving(true);
     const userRef = doc(db, 'users', userId);
-    await updateDoc(userRef, { bio, hobbies, status });
+    await updateDoc(userRef, {
+      displayName,
+      bio,
+      hobbies,
+      status,
+      pronouns,
+      location,
+      background,
+    });
     setSaving(false);
   };
 
@@ -58,76 +71,207 @@ const ProfilePage = () => {
       case 'Your Profile':
         return (
           <>
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-            >
-              <img src={photoURL} alt="User Avatar" style={avatarStyle} />
-            </motion.div>
-            <h2 style={sectionTitle}>{displayName}</h2>
-            <ProfileCard />
-            {isAdmin && (
-              <div className="bg-white border border-[#FF6B6B] rounded-2xl p-6 mt-6 shadow text-center">
-                <h3 className="text-xl font-bold text-[#FF6B6B] mb-2">🛠️ Admin Control Panel</h3>
-                <p className="text-sm text-gray-600">Access moderation tools and backend dashboards here.</p>
-                <button
-                  onClick={() => navigate('/profile/admin')}
-                  className="mt-3 bg-[#FF6B6B] text-white px-4 py-2 rounded-full hover:bg-[#e15555] transition"
+            <h2 style={sectionTitle}>Customize Your Public Profile</h2>
+            <div style={{ maxWidth: '500px', margin: '0 auto' }} className="space-y-5 pt-4">
+              {[{ label: 'Display Name', value: displayName, setter: setDisplayName },
+                { label: 'Bio', value: bio, setter: setBio, type: 'textarea' },
+                { label: 'Hobbies', value: hobbies, setter: setHobbies },
+                { label: 'Status', value: status, setter: setStatus },
+                { label: 'Pronouns', value: pronouns, setter: setPronouns },
+                { label: 'Location', value: location, setter: setLocation }].map(
+                ({ label, value, setter, type = 'text' }) => (
+                  <div key={label} className="text-center">
+                    <label className="block text-sm text-gray-700 mb-1 text-center font-medium">{label}</label>
+                    {type === 'textarea' ? (
+                      <textarea
+                        value={value}
+                        onChange={(e) => setter(e.target.value)}
+                        className="w-full border border-gray-300 rounded-full px-4 py-2 text-sm text-center"
+                        rows={2}
+                      />
+                    ) : (
+                      <input
+                        type="text"
+                        value={value}
+                        onChange={(e) => setter(e.target.value)}
+                        className="w-full border border-gray-300 rounded-full px-4 py-2 text-sm text-center"
+                      />
+                    )}
+                  </div>
+                )
+              )}
+              <div className="text-center" style={{ marginBottom: '1rem' }}>
+                <label className="block text-sm text-gray-700 mb-1 text-center font-medium">Profile Background</label>
+                <select
+                  value={background || ''}
+                  onChange={(e) => setBackground(e.target.value)}
+                  className="w-full border border-gray-300 rounded-full px-4 py-2 text-sm text-center"
                 >
-                  Go to Admin Panel
+                  <option value="">Default Coral</option>
+                  <option value="beach">🏖️ Beach Vibes</option>
+                  <option value="city">🌆 Urban Skyline</option>
+                  <option value="forest">🌲 Nature Escape</option>
+                  <option value="galaxy">🌌 Galaxy Mode</option>
+                </select>
+              </div>
+              <div className="mt-4 flex gap-4 justify-center">
+                <button
+                  onClick={handleSavePublicProfile}
+                  className="bg-[#FF6B6B] text-white px-6 py-2 rounded-full font-semibold hover:bg-[#e15555] transition shadow"
+                  disabled={saving}
+                >
+                  {saving ? 'Saving...' : '💾 Save Profile'}
+                </button>
+                <button
+                  onClick={() => navigate(`/profile/${userId}`)}
+                  className="border border-[#FF6B6B] text-[#FF6B6B] px-6 py-2 rounded-full font-semibold hover:bg-[#fff1f1] transition"
+                >
+                  🔍 View Public Profile
                 </button>
               </div>
-            )}
-          </>
-        );
-      case 'Customize Public Profile':
-        return (
-          <>
-            <h2 style={sectionTitle}>Customize Public Profile</h2>
-            <div className="text-left">
-              <div className="mb-4">
-                <label className="block text-sm text-gray-700 mb-1">Bio</label>
-                <textarea
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                  className="w-full border border-gray-300 rounded p-2"
-                  rows={2}
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm text-gray-700 mb-1">Hobbies</label>
-                <input
-                  value={hobbies}
-                  onChange={(e) => setHobbies(e.target.value)}
-                  className="w-full border border-gray-300 rounded p-2"
-                  type="text"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm text-gray-700 mb-1">Status</label>
-                <input
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="w-full border border-gray-300 rounded p-2"
-                  type="text"
-                />
-              </div>
-              <button
-                onClick={handleSavePublicProfile}
-                className="bg-[#FF6B6B] text-white px-4 py-2 rounded-full hover:bg-[#e15555] transition"
-                disabled={saving}
-              >
-                {saving ? 'Saving...' : 'Save Public Profile'}
-              </button>
             </div>
           </>
         );
       case 'Quiz Questions':
         return <ProfileQuestionsCenter />;
+      case 'Your Photos':
+        return (
+          <>
+            <h2 style={sectionTitle}>📸 Your Photos</h2>
+            <ProfilePhotos />
+          </>
+        );
       default:
         return null;
     }
+  };
+
+  const pageStyle = {
+    fontFamily: 'Comfortaa, sans-serif',
+    backgroundColor: 'transparent',
+    minHeight: '100vh',
+    overflow: 'hidden',
+    position: 'relative',
+    zIndex: 0
+  };
+
+  const bgEffect = {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    zIndex: 0,
+    pointerEvents: 'none'
+  };
+
+  const headerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    paddingTop: '1rem',
+    marginBottom: '-1rem'
+  };
+
+  const navWrapper = {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '0rem',
+    marginBottom: '1.5rem',
+    zIndex: 0
+  };
+
+  const navStyle = {
+    backgroundColor: 'white',
+    padding: '0.8rem 1rem',
+    borderRadius: '30px',
+    boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
+    display: 'flex',
+    gap: '1rem'
+  };
+
+  const tabStyle = {
+    backgroundColor: '#FF6B6B',
+    color: 'white',
+    border: 'none',
+    padding: '12px 20px',
+    borderRadius: '30px',
+    fontSize: '1rem',
+    fontWeight: 'bold',
+    fontFamily: 'Comfortaa, sans-serif',
+    cursor: 'pointer',
+    boxShadow: '0 3px 8px rgba(0,0,0,0.2)'
+  };
+
+  const mainCardWrapper = {
+    display: 'flex',
+    justifyContent: 'center',
+    marginBottom: '2rem',
+    zIndex: 0
+  };
+
+  const mainCardStyle = {
+    backgroundColor: 'white',
+    padding: '2rem',
+    borderRadius: '1.5rem',
+    boxShadow: '0 5px 25px rgba(0,0,0,0.2)',
+    width: '90%',
+    maxWidth: '800px',
+    minHeight: '60vh',
+    textAlign: 'center',
+    position: 'relative',
+    zIndex: 0
+  };
+
+  const sectionTitle = {
+    fontSize: '2rem',
+    color: '#FF6B6B',
+    marginBottom: '1rem'
+  };
+
+  const arrowRight = {
+    position: 'absolute',
+    right: '1rem',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    zIndex: 0
+  };
+
+  const arrowLeft = {
+    position: 'absolute',
+    left: '1rem',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    zIndex: 0
+  };
+
+  const arrowStyle = {
+    fontSize: '1.5rem',
+    backgroundColor: '#FF6B6B',
+    color: 'white',
+    border: 'none',
+    borderRadius: '50%',
+    padding: '0.5rem 1rem',
+    cursor: 'pointer'
+  };
+
+  const adminButtonWrapper = {
+    position: 'absolute',
+    top: '105px',
+    right: '40px',
+    zIndex: 50
+  };
+
+  const adminButtonStyle = {
+    backgroundColor: '#FF6B6B',
+    color: 'white',
+    fontWeight: 'bold',
+    border: 'none',
+    borderRadius: '30px',
+    padding: '0.6rem 1.2rem',
+    fontSize: '0.9rem',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+    cursor: 'pointer',
+    transition: 'all 0.25s ease-in-out'
   };
 
   return (
@@ -154,6 +298,14 @@ const ProfilePage = () => {
         </div>
       </nav>
 
+      {isAdmin && (
+        <div style={adminButtonWrapper}>
+          <button onClick={() => navigate('/profile/admin')} style={adminButtonStyle}>
+            🛠️ Admin Panel
+          </button>
+        </div>
+      )}
+
       <div style={mainCardWrapper} className="z-[10]">
         <div style={mainCardStyle}>
           <h2 style={sectionTitle}>{profileCards[currentCard]}</h2>
@@ -164,124 +316,6 @@ const ProfilePage = () => {
       </div>
     </div>
   );
-};
-
-// 🔧 Shared Styles
-const pageStyle = {
-  fontFamily: 'Comfortaa, sans-serif',
-  backgroundColor: 'transparent',
-  minHeight: '100vh',
-  overflow: 'hidden',
-  position: 'relative',
-  zIndex: 0
-};
-
-const bgEffect = {
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '100%',
-  zIndex: 0,
-  pointerEvents: 'none'
-};
-
-const headerStyle = {
-  display: 'flex',
-  justifyContent: 'center',
-  paddingTop: '1rem',
-  marginBottom: '-1rem'
-};
-
-const navWrapper = {
-  display: 'flex',
-  justifyContent: 'center',
-  marginTop: '0rem',
-  marginBottom: '1.5rem',
-  zIndex: 0
-};
-
-const navStyle = {
-  backgroundColor: 'white',
-  padding: '0.8rem 1rem',
-  borderRadius: '30px',
-  boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
-  display: 'flex',
-  gap: '1rem'
-};
-
-const tabStyle = {
-  backgroundColor: '#FF6B6B',
-  color: 'white',
-  border: 'none',
-  padding: '12px 20px',
-  borderRadius: '30px',
-  fontSize: '1rem',
-  fontWeight: 'bold',
-  fontFamily: 'Comfortaa, sans-serif',
-  cursor: 'pointer',
-  boxShadow: '0 3px 8px rgba(0,0,0,0.2)'
-};
-
-const mainCardWrapper = {
-  display: 'flex',
-  justifyContent: 'center',
-  marginBottom: '2rem',
-  zIndex: 0
-};
-
-const mainCardStyle = {
-  backgroundColor: 'white',
-  padding: '2rem',
-  borderRadius: '1.5rem',
-  boxShadow: '0 5px 25px rgba(0,0,0,0.2)',
-  width: '90%',
-  maxWidth: '800px',
-  minHeight: '60vh',
-  textAlign: 'center',
-  position: 'relative',
-  zIndex: 0
-};
-
-const avatarStyle = {
-  width: '8rem',
-  height: '8rem',
-  borderRadius: '50%',
-  border: '4px solid #FF6B6B',
-  boxShadow: '0 6px 15px rgba(0,0,0,0.2)',
-  marginBottom: '1.5rem'
-};
-
-const sectionTitle = {
-  fontSize: '2rem',
-  color: '#FF6B6B',
-  marginBottom: '1rem'
-};
-
-const arrowRight = {
-  position: 'absolute',
-  right: '1rem',
-  top: '50%',
-  transform: 'translateY(-50%)',
-  zIndex: 0
-};
-
-const arrowLeft = {
-  position: 'absolute',
-  left: '1rem',
-  top: '50%',
-  transform: 'translateY(-50%)',
-  zIndex: 0
-};
-
-const arrowStyle = {
-  fontSize: '1.5rem',
-  backgroundColor: '#FF6B6B',
-  color: 'white',
-  border: 'none',
-  borderRadius: '50%',
-  padding: '0.5rem 1rem',
-  cursor: 'pointer'
 };
 
 export default ProfilePage;
