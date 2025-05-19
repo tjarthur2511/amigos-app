@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { db } from '../../firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
@@ -18,12 +18,19 @@ const center = {
 
 const Explore = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedType, setSelectedType] = useState('amigos');
   const [mapMarkers, setMapMarkers] = useState([]);
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
   });
+
+  useEffect(() => {
+    if (location.state?.defaultTab) {
+      setSelectedType(location.state.defaultTab);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const fetchMarkers = async () => {

@@ -95,14 +95,14 @@ const NotificationsBell = () => {
         style={{
           position: "absolute",
           top: "16rem",
-          right: "29rem",
+          right: "22rem",
           backgroundColor: "#FF6B6B",
           border: "none",
           padding: "0.5rem",
           borderRadius: "9999px",
           cursor: "pointer",
           boxShadow: "0 4px 12px rgba(0, 0, 0, 0.23)",
-          zIndex: 999999,
+          zIndex: 1000000,
           animation: unseenCount > 0 ? "pulse 1.5s infinite" : "none",
           transition: "all 0.3s ease",
         }}

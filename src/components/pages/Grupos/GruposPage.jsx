@@ -32,7 +32,7 @@ const GruposPage = () => {
   }, []);
 
   const goToExplore = () => {
-    navigate('/explore', { state: { from: 'grupos' } });
+    navigate('/explore', { state: { from: 'grupos', defaultTab: 'grupos' } });
   };
 
   const nextCard = () => setCurrentCard((prev) => (prev + 1) % feedCards.length);

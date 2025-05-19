@@ -73,7 +73,7 @@ const LandingPage = () => {
             boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
             width: "90%",
             maxWidth: "500px",
-            textAlign: "center",
+            textAlign: "center"
           }}>
             <div style={{ marginBottom: "1rem" }}>
               <img
@@ -106,7 +106,7 @@ const LandingPage = () => {
                 borderRadius: "30px",
                 fontSize: "1rem",
                 cursor: "pointer",
-                transition: "background-color 0.3s ease",
+                transition: "background-color 0.3s ease"
               }}
               onMouseOver={(e) => e.target.style.backgroundColor = "#e15555"}
               onMouseOut={(e) => e.target.style.backgroundColor = "#FF6B6B"}
@@ -127,7 +127,7 @@ const LandingPage = () => {
           top: isMobile ? "auto" : "30px",
           right: isMobile ? "auto" : "30px",
           textAlign: "center",
-          fontSize: "0.8em",
+          fontSize: "0.8em"
         }}>
           <h2 style={{
             fontSize: "1.4em",
@@ -155,7 +155,7 @@ const LandingPage = () => {
               style={inputStyle}
             />
 
-            <label>
+            <label style={{ fontSize: "0.75em" }}>
               <input
                 type="checkbox"
                 checked={showPassword}
@@ -165,7 +165,7 @@ const LandingPage = () => {
               Show Password
             </label>
 
-            <label>
+            <label style={{ fontSize: "0.75em" }}>
               <input
                 type="checkbox"
                 checked={rememberMe}
@@ -186,7 +186,7 @@ const LandingPage = () => {
                 fontSize: "1em",
                 cursor: "pointer",
                 transition: "background-color 0.3s ease",
-                width: "100%",
+                width: "100%"
               }}
               onMouseOver={(e) => e.target.style.backgroundColor = "#e15555"}
               onMouseOut={(e) => e.target.style.backgroundColor = "#FF6B6B"}
@@ -207,7 +207,7 @@ const inputStyle = {
   fontFamily: "Comfortaa, sans-serif",
   fontSize: "1em",
   width: "100%",
-  boxSizing: "border-box",
+  boxSizing: "border-box"
 };
 
 export default LandingPage;

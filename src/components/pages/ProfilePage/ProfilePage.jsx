@@ -1,4 +1,4 @@
-// src/components/pages/ProfilePage/ProfilePage.jsx
+// ✅ Full ProfilePage.jsx (with upgraded input boxes only)
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../../firebase';
@@ -86,7 +86,7 @@ const ProfilePage = () => {
                       <textarea
                         value={value}
                         onChange={(e) => setter(e.target.value)}
-                        className="w-full border border-gray-300 rounded-full px-4 py-2 text-sm text-center"
+                        className="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm text-center bg-white shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B] focus:border-transparent hover:shadow-lg"
                         rows={2}
                       />
                     ) : (
@@ -94,7 +94,7 @@ const ProfilePage = () => {
                         type="text"
                         value={value}
                         onChange={(e) => setter(e.target.value)}
-                        className="w-full border border-gray-300 rounded-full px-4 py-2 text-sm text-center"
+                        className="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm text-center bg-white shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B] focus:border-transparent hover:shadow-lg"
                       />
                     )}
                   </div>
@@ -105,7 +105,7 @@ const ProfilePage = () => {
                 <select
                   value={background || ''}
                   onChange={(e) => setBackground(e.target.value)}
-                  className="w-full border border-gray-300 rounded-full px-4 py-2 text-sm text-center"
+                  className="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm text-center bg-white shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B] focus:border-transparent hover:shadow-lg"
                 >
                   <option value="">Default Coral</option>
                   <option value="beach">🏖️ Beach Vibes</option>
