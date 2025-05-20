@@ -1,4 +1,4 @@
-// ✅ Full ProfilePage.jsx (with upgraded input boxes only)
+// ✅ Full ProfilePage.jsx – All Boxes Styled Like Bio (Pill-Shaped, Adjustable, Coral Shadow)
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../../firebase';
@@ -74,29 +74,20 @@ const ProfilePage = () => {
             <h2 style={sectionTitle}>Customize Your Public Profile</h2>
             <div style={{ maxWidth: '500px', margin: '0 auto' }} className="space-y-5 pt-4">
               {[{ label: 'Display Name', value: displayName, setter: setDisplayName },
-                { label: 'Bio', value: bio, setter: setBio, type: 'textarea' },
+                { label: 'Bio', value: bio, setter: setBio },
                 { label: 'Hobbies', value: hobbies, setter: setHobbies },
                 { label: 'Status', value: status, setter: setStatus },
                 { label: 'Pronouns', value: pronouns, setter: setPronouns },
                 { label: 'Location', value: location, setter: setLocation }].map(
-                ({ label, value, setter, type = 'text' }) => (
+                ({ label, value, setter }) => (
                   <div key={label} className="text-center">
                     <label className="block text-sm text-gray-700 mb-1 text-center font-medium">{label}</label>
-                    {type === 'textarea' ? (
-                      <textarea
-                        value={value}
-                        onChange={(e) => setter(e.target.value)}
-                        className="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm text-center bg-white shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B] focus:border-transparent hover:shadow-lg"
-                        rows={2}
-                      />
-                    ) : (
-                      <input
-                        type="text"
-                        value={value}
-                        onChange={(e) => setter(e.target.value)}
-                        className="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm text-center bg-white shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B] focus:border-transparent hover:shadow-lg"
-                      />
-                    )}
+                    <textarea
+                      value={value}
+                      onChange={(e) => setter(e.target.value)}
+                      className="w-full border border-coral rounded-full px-5 py-3 text-sm text-center bg-white shadow shadow-coral/50 focus:outline-none focus:ring-2 focus:ring-coral focus:border-transparent resize-y"
+                      rows={3}
+                    />
                   </div>
                 )
               )}
@@ -105,7 +96,7 @@ const ProfilePage = () => {
                 <select
                   value={background || ''}
                   onChange={(e) => setBackground(e.target.value)}
-                  className="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm text-center bg-white shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#FF6B6B] focus:border-transparent hover:shadow-lg"
+                  className="w-full border border-coral rounded-full px-5 py-3 text-sm text-center bg-white shadow shadow-coral/50 focus:outline-none focus:ring-2 focus:ring-coral focus:border-transparent"
                 >
                   <option value="">Default Coral</option>
                   <option value="beach">🏖️ Beach Vibes</option>
