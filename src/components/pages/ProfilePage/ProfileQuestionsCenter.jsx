@@ -7,6 +7,7 @@ import {
   collection,
   getDocs,
 } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 import { motion } from 'framer-motion';
 
 const ProfileQuestionsCenter = () => {
@@ -17,8 +18,7 @@ const ProfileQuestionsCenter = () => {
   const [edited, setEdited] = useState({});
 
   useEffect(() => {
-    const fetchAll = async () => {
-      const user = auth.currentUser;
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) return;
 
       const userRef = doc(db, 'users', user.uid);
@@ -49,9 +49,9 @@ const ProfileQuestionsCenter = () => {
 
       setQuestions(allQs);
       setAnswers({ ...onboardingAnswers, ...monthlyAnswers });
-    };
+    });
 
-    fetchAll();
+    return () => unsubscribe();
   }, []);
 
   const handleChange = (id, value) => {

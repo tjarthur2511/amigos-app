@@ -1,4 +1,4 @@
-// ✅ Full ProfilePage.jsx – All Boxes Styled Like Bio (Pill-Shaped, Adjustable, Coral Shadow)
+// ✅ Full ProfilePage.jsx – Coral Outline Buttons Fixed
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../../firebase';
@@ -74,11 +74,11 @@ const ProfilePage = () => {
             <h2 style={sectionTitle}>Customize Your Public Profile</h2>
             <div style={{ maxWidth: '500px', margin: '0 auto' }} className="space-y-5 pt-4">
               {[{ label: 'Display Name', value: displayName, setter: setDisplayName },
-                { label: 'Bio', value: bio, setter: setBio },
-                { label: 'Hobbies', value: hobbies, setter: setHobbies },
-                { label: 'Status', value: status, setter: setStatus },
-                { label: 'Pronouns', value: pronouns, setter: setPronouns },
-                { label: 'Location', value: location, setter: setLocation }].map(
+              { label: 'Bio', value: bio, setter: setBio },
+              { label: 'Hobbies', value: hobbies, setter: setHobbies },
+              { label: 'Status', value: status, setter: setStatus },
+              { label: 'Pronouns', value: pronouns, setter: setPronouns },
+              { label: 'Location', value: location, setter: setLocation }].map(
                 ({ label, value, setter }) => (
                   <div key={label} className="text-center">
                     <label className="block text-sm text-gray-700 mb-1 text-center font-medium">{label}</label>
@@ -105,17 +105,17 @@ const ProfilePage = () => {
                   <option value="galaxy">🌌 Galaxy Mode</option>
                 </select>
               </div>
-              <div className="mt-4 flex gap-4 justify-center">
+              <div className="mt-4 flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <button
                   onClick={handleSavePublicProfile}
-                  className="bg-[#FF6B6B] text-white px-6 py-2 rounded-full font-semibold hover:bg-[#e15555] transition shadow"
+                  className="text-[#FF6B6B] border-2 border-[#FF6B6B] px-8 py-3 rounded-full font-bold transition duration-300 hover:bg-[#FF6B6B] hover:text-white hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
                   disabled={saving}
                 >
                   {saving ? 'Saving...' : '💾 Save Profile'}
                 </button>
                 <button
                   onClick={() => navigate(`/profile/${userId}`)}
-                  className="border border-[#FF6B6B] text-[#FF6B6B] px-6 py-2 rounded-full font-semibold hover:bg-[#fff1f1] transition"
+                  className="text-[#FF6B6B] border-2 border-[#FF6B6B] px-8 py-3 rounded-full font-bold transition duration-300 hover:bg-[#FF6B6B] hover:text-white hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
                 >
                   🔍 View Public Profile
                 </button>
@@ -135,6 +135,12 @@ const ProfilePage = () => {
       default:
         return null;
     }
+  };
+
+  const sectionTitle = {
+    fontSize: '2rem',
+    color: '#FF6B6B',
+    marginBottom: '1rem'
   };
 
   const pageStyle = {
@@ -211,12 +217,6 @@ const ProfilePage = () => {
     textAlign: 'center',
     position: 'relative',
     zIndex: 0
-  };
-
-  const sectionTitle = {
-    fontSize: '2rem',
-    color: '#FF6B6B',
-    marginBottom: '1rem'
   };
 
   const arrowRight = {

@@ -9,6 +9,7 @@ import {
   serverTimestamp,
   getDocs,
 } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
 const PostForm = ({ onClose, post = null }) => {
   const isEdit = !!post;
@@ -38,9 +39,19 @@ const PostForm = ({ onClose, post = null }) => {
     const trimmed = content.trim();
     if (!trimmed && !file) return alert("Add text or media.");
 
-    const uid = auth.currentUser?.uid;
-    if (!uid) return alert("You must be logged in to post.");
+    const currentUser = auth.currentUser;
 
+    if (!currentUser) {
+      return onAuthStateChanged(auth, async (user) => {
+        if (!user) return alert("You must be logged in to post.");
+        await submitPost(user.uid);
+      });
+    }
+
+    await submitPost(currentUser.uid);
+  };
+
+  const submitPost = async (uid) => {
     setLoading(true);
     const mediaType = file ? (file.type.startsWith("video") ? "video" : "image") : "";
     const mediaUrl = "";
@@ -49,21 +60,21 @@ const PostForm = ({ onClose, post = null }) => {
       if (isEdit) {
         const postRef = doc(db, "posts", post.id);
         await updateDoc(postRef, {
-          content: trimmed,
-          hashtags: extractHashtags(trimmed),
+          content: content.trim(),
+          hashtags: extractHashtags(content),
           taggedAmigos,
           taggedGrupos,
           updatedAt: serverTimestamp(),
         });
       } else {
         await addDoc(collection(db, "posts"), {
-          content: trimmed,
+          content: content.trim(),
           userId: uid,
           createdAt: serverTimestamp(),
           emojis: {},
           likes: [],
           dislikes: [],
-          hashtags: extractHashtags(trimmed),
+          hashtags: extractHashtags(content),
           imageUrl: mediaType === "image" ? mediaUrl : "",
           videoUrl: mediaType === "video" ? mediaUrl : "",
           taggedAmigos,
