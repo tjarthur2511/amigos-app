@@ -1,4 +1,3 @@
-// src/components/pages/Grupos/PublicGrupoPage.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { auth, db } from '../../../firebase';
@@ -10,7 +9,9 @@ import {
   getDocs,
   query,
   where,
-  orderBy
+  orderBy,
+  arrayUnion,
+  arrayRemove
 } from 'firebase/firestore';
 import PostCard from '../../common/PostCard';
 
@@ -57,11 +58,10 @@ const PublicGrupoPage = () => {
   const toggleMembership = async () => {
     if (!currentUserId) return;
     const ref = doc(db, 'grupos', grupoId);
-    const updated = isMember
-      ? members.filter(id => id !== currentUserId)
-      : [...members, currentUserId];
-    await updateDoc(ref, { members: updated });
-    setMembers(updated);
+    await updateDoc(ref, {
+      members: isMember ? arrayRemove(currentUserId) : arrayUnion(currentUserId)
+    });
+    setMembers(prev => isMember ? prev.filter(id => id !== currentUserId) : [...prev, currentUserId]);
     setIsMember(!isMember);
   };
 
@@ -77,7 +77,9 @@ const PublicGrupoPage = () => {
         </div>
         <button
           onClick={toggleMembership}
-          className={`px-4 py-2 rounded-full font-semibold text-sm transition duration-150 ${isMember ? 'bg-gray-300 text-black' : 'bg-[#FF6B6B] text-white hover:bg-[#e15555]'}`}
+          className={`px-4 py-2 rounded-full font-semibold text-sm transition duration-150 ${
+            isMember ? 'bg-gray-300 text-black hover:bg-gray-400' : 'bg-[#FF6B6B] text-white hover:bg-[#e15555]'
+          }`}
         >
           {isMember ? 'Leave' : 'Join'} Grupo
         </button>

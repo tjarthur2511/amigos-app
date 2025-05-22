@@ -1,4 +1,3 @@
-// ✅ Full PublicProfilePage.jsx – now includes NavBar and respects user's custom layout settings
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { auth, db } from '../../../firebase';
@@ -13,6 +12,8 @@ import {
   where,
   orderBy,
   limit,
+  arrayUnion,
+  arrayRemove,
 } from 'firebase/firestore';
 
 const PublicProfilePage = () => {
@@ -22,7 +23,6 @@ const PublicProfilePage = () => {
   const [posts, setPosts] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [grupos, setGrupos] = useState([]);
-  const [following, setFollowing] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -38,7 +38,6 @@ const PublicProfilePage = () => {
       const userData = userSnap.exists() ? userSnap.data() : {};
       const userFollowing = userData.following || [];
 
-      setFollowing(userFollowing);
       setIsFollowing(userFollowing.includes(userId));
 
       const publicRef = doc(db, 'users', userId);
@@ -53,8 +52,7 @@ const PublicProfilePage = () => {
         orderBy('createdAt', 'desc')
       );
       const postSnap = await getDocs(postQuery);
-      const postList = postSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setPosts(postList);
+      setPosts(postSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
 
       const answerQuery = query(
         collection(db, 'quizAnswers'),
@@ -63,8 +61,7 @@ const PublicProfilePage = () => {
         limit(10)
       );
       const answerSnap = await getDocs(answerQuery);
-      const answerList = answerSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setAnswers(answerList);
+      setAnswers(answerSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
 
       const grupoQuery = query(
         collection(db, 'grupos'),
@@ -73,8 +70,7 @@ const PublicProfilePage = () => {
         limit(5)
       );
       const grupoSnap = await getDocs(grupoQuery);
-      const grupoList = grupoSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setGrupos(grupoList);
+      setGrupos(grupoSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
 
       setLoading(false);
     };
@@ -82,13 +78,11 @@ const PublicProfilePage = () => {
   }, [userId]);
 
   const toggleFollow = async () => {
-    if (!currentUserId) return;
-    const userRef = doc(db, 'users', currentUserId);
-    const updated = isFollowing
-      ? following.filter(id => id !== userId)
-      : [...following, userId];
-    await updateDoc(userRef, { following: updated });
-    setFollowing(updated);
+    if (!currentUserId || !userId) return;
+    const currentUserRef = doc(db, 'users', currentUserId);
+    await updateDoc(currentUserRef, {
+      following: isFollowing ? arrayRemove(userId) : arrayUnion(userId),
+    });
     setIsFollowing(!isFollowing);
   };
 
@@ -124,7 +118,11 @@ const PublicProfilePage = () => {
           {currentUserId !== userId && (
             <button
               onClick={toggleFollow}
-              className={`px-4 py-2 rounded-full font-semibold text-sm transition duration-150 ${isFollowing ? 'bg-gray-300 text-black' : 'bg-[#FF6B6B] text-white'}`}
+              className={`px-4 py-2 rounded-full font-semibold text-sm transition duration-150 ${
+                isFollowing
+                  ? 'bg-gray-300 text-black hover:bg-gray-400'
+                  : 'bg-[#FF6B6B] text-white hover:bg-[#ff4c4c]'
+              }`}
             >
               {isFollowing ? 'Unfollow' : 'Follow'}
             </button>

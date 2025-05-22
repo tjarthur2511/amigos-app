@@ -87,7 +87,8 @@ function AppContent({ user }) {
 
       <ScrollToTop />
 
-      {showNav && (
+      {/* ✅ Only mount these when user is confirmed */}
+      {showNav && user && (
         <>
           <SignOutButton />
           <NewPostButton />

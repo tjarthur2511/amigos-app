@@ -1,4 +1,3 @@
-// ✅ Full NotificationsBell.jsx with Firestore-compliant notification creation
 import React, { useEffect, useState } from "react";
 import {
   collection,
@@ -22,8 +21,9 @@ const NotificationsBell = () => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser?.uid) return;
 
+    // ✅ Subscribe to live notifications
     const q = query(
       collection(db, "notifications"),
       where("targetUserId", "==", currentUser.uid)
@@ -41,20 +41,29 @@ const NotificationsBell = () => {
 
     const checkQuizQuestions = async () => {
       try {
+        if (!currentUser?.uid) return;
+
         const userRef = doc(db, "users", currentUser.uid);
         const userSnap = await getDoc(userRef);
-        const data = userSnap.exists() ? userSnap.data() : {};
-        const { quizAnswers = {}, monthlyQuiz = {} } = data;
+        if (!userSnap.exists()) return;
 
+        const data = userSnap.data();
+        const { quizAnswers = {}, monthlyQuiz = {} } = data;
         const answeredCount =
           Object.keys(quizAnswers).length + Object.keys(monthlyQuiz).length;
 
-        const qSnap = await getDocs(collection(db, "questionSets"));
         let totalQuestionCount = 0;
-        qSnap.forEach((doc) => {
-          const qs = doc.data().questions || [];
-          totalQuestionCount += qs.length;
-        });
+
+        try {
+          const qSnap = await getDocs(collection(db, "questionSets"));
+          qSnap.forEach((doc) => {
+            const qs = doc.data().questions || [];
+            totalQuestionCount += qs.length;
+          });
+        } catch (e) {
+          console.warn("❗ questionSets permission denied or not accessible:", e.message);
+          return;
+        }
 
         if (answeredCount < totalQuestionCount) {
           const quizNotifId = `quiz-${currentUser.uid}`;
@@ -64,7 +73,7 @@ const NotificationsBell = () => {
           if (!notifSnap.exists()) {
             await setDoc(notifRef, {
               targetUserId: currentUser.uid,
-              senderId: currentUser.uid, // ✅ Required by Firestore rules
+              senderId: currentUser.uid,
               category: "general",
               type: "quiz",
               content: "You have unanswered profile questions waiting",
@@ -74,11 +83,12 @@ const NotificationsBell = () => {
           }
         }
       } catch (error) {
-        console.error("Error checking quiz questions:", error);
+        console.error("🔥 checkQuizQuestions failed:", error.message);
       }
     };
 
     checkQuizQuestions();
+
     return () => unsubscribe();
   }, [currentUser]);
 

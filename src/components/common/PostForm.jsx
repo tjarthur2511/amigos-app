@@ -1,6 +1,6 @@
 // ✅ Clean + Auth-Checked PostForm Component with Accessibility Fixes
 import React, { useState, useRef, useEffect } from "react";
-import { db, auth } from "../../firebase";
+import { db, auth, storage } from "../../firebase";
 import {
   collection,
   addDoc,
@@ -10,6 +10,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const PostForm = ({ onClose, post = null }) => {
   const isEdit = !!post;
@@ -34,6 +35,12 @@ const PostForm = ({ onClose, post = null }) => {
 
   const extractHashtags = (text) => text.match(/#[a-zA-Z0-9_]+/g) || [];
 
+  const uploadMediaToStorage = async (file) => {
+    const fileRef = ref(storage, `posts/${Date.now()}_${file.name}`);
+    await uploadBytes(fileRef, file);
+    return await getDownloadURL(fileRef);
+  };
+
   const handlePost = async (e) => {
     e.preventDefault();
     const trimmed = content.trim();
@@ -53,10 +60,18 @@ const PostForm = ({ onClose, post = null }) => {
 
   const submitPost = async (uid) => {
     setLoading(true);
-    const mediaType = file ? (file.type.startsWith("video") ? "video" : "image") : "";
-    const mediaUrl = "";
+    let imageUrl = "";
+    let videoUrl = "";
 
     try {
+      const mediaType = file ? (file.type.startsWith("video") ? "video" : "image") : "";
+
+      if (file) {
+        const url = await uploadMediaToStorage(file);
+        if (mediaType === "image") imageUrl = url;
+        if (mediaType === "video") videoUrl = url;
+      }
+
       if (isEdit) {
         const postRef = doc(db, "posts", post.id);
         await updateDoc(postRef, {
@@ -75,18 +90,20 @@ const PostForm = ({ onClose, post = null }) => {
           likes: [],
           dislikes: [],
           hashtags: extractHashtags(content),
-          imageUrl: mediaType === "image" ? mediaUrl : "",
-          videoUrl: mediaType === "video" ? mediaUrl : "",
+          imageUrl,
+          videoUrl,
           taggedAmigos,
           taggedGrupos,
           type: "amigo",
         });
       }
+
       if (typeof onClose === "function") onClose();
     } catch (err) {
       console.error("Post failed:", err);
       alert("Post failed.");
     }
+
     setLoading(false);
   };
 
