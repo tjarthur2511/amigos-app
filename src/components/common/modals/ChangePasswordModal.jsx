@@ -39,8 +39,10 @@ const ChangePasswordModal = ({ onClose }) => {
       </h2>
 
       <div style={{ marginBottom: "1rem" }}>
-        <label style={labelStyle}>Current Password</label>
+        <label htmlFor="current-password" style={labelStyle}>Current Password</label>
         <input
+          id="current-password"
+          name="currentPassword"
           type="password"
           value={currentPassword}
           onChange={(e) => setCurrentPassword(e.target.value)}
@@ -49,8 +51,10 @@ const ChangePasswordModal = ({ onClose }) => {
       </div>
 
       <div style={{ marginBottom: "1rem" }}>
-        <label style={labelStyle}>New Password</label>
+        <label htmlFor="new-password" style={labelStyle}>New Password</label>
         <input
+          id="new-password"
+          name="newPassword"
           type="password"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
@@ -59,8 +63,10 @@ const ChangePasswordModal = ({ onClose }) => {
       </div>
 
       <div style={{ marginBottom: "1rem" }}>
-        <label style={labelStyle}>Confirm New Password</label>
+        <label htmlFor="confirm-password" style={labelStyle}>Confirm New Password</label>
         <input
+          id="confirm-password"
+          name="confirmPassword"
           type="password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}

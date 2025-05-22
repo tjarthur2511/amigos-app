@@ -62,9 +62,11 @@ const HelpCard = ({ onClose }) => {
 
         {/* Language */}
         <div style={sectionStyle}>
-          <h3 style={labelStyle}>Language</h3>
+          <label htmlFor="language-select" style={labelStyle}>Language</label>
           <p>Change your preferred language.</p>
           <select
+            id="language-select"
+            name="language"
             defaultValue={i18n.language}
             onChange={handleLanguageChange}
             style={inputStyle}
@@ -103,8 +105,10 @@ const HelpCard = ({ onClose }) => {
 
           {accessibility && (
             <div style={{ marginTop: "1rem" }}>
-              <label style={{ display: "block", marginBottom: "0.5rem" }}>Font Size</label>
+              <label htmlFor="font-size-select" style={{ display: "block", marginBottom: "0.5rem" }}>Font Size</label>
               <select
+                id="font-size-select"
+                name="fontSize"
                 value={fontSize}
                 onChange={handleFontSizeChange}
                 style={inputStyle}
@@ -122,8 +126,10 @@ const HelpCard = ({ onClose }) => {
         {/* Notifications */}
         <div style={sectionStyle}>
           <h3 style={labelStyle}>Notifications</h3>
-          <label>
+          <label htmlFor="push-alerts">
             <input
+              id="push-alerts"
+              name="pushAlerts"
               type="checkbox"
               checked={pushAlerts}
               onChange={() => setPushAlerts(!pushAlerts)}
@@ -132,8 +138,10 @@ const HelpCard = ({ onClose }) => {
             Enable push alerts
           </label>
           <br />
-          <label>
+          <label htmlFor="weekly-suggestions">
             <input
+              id="weekly-suggestions"
+              name="weeklySuggestions"
               type="checkbox"
               checked={weeklySuggestions}
               onChange={() => setWeeklySuggestions(!weeklySuggestions)}
@@ -142,8 +150,10 @@ const HelpCard = ({ onClose }) => {
             Weekly suggestions
           </label>
           <br />
-          <label>
+          <label htmlFor="quiz-reminder">
             <input
+              id="quiz-reminder"
+              name="quizReminder"
               type="checkbox"
               checked={quizReminder}
               onChange={() => setQuizReminder(!quizReminder)}
@@ -156,8 +166,10 @@ const HelpCard = ({ onClose }) => {
         {/* Location Access */}
         <div style={sectionStyle}>
           <h3 style={labelStyle}>Location Access</h3>
-          <label>
+          <label htmlFor="location-access">
             <input
+              id="location-access"
+              name="locationAllowed"
               type="checkbox"
               checked={locationAllowed}
               onChange={() => setLocationAllowed(!locationAllowed)}

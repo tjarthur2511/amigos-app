@@ -75,7 +75,7 @@ const SignUpPage = () => {
       width: "100%",
       fontFamily: "Comfortaa, sans-serif"
     }}>
-      {/* ✅ Falling A Effect - stays behind content */}
+      {/* 🔴 Falling A Effect */}
       <div style={{
         position: "fixed",
         top: 0,
@@ -88,7 +88,7 @@ const SignUpPage = () => {
         <FallingAEffect />
       </div>
 
-      {/* ✅ Signup Card Only - no background */}
+      {/* 🔴 Sign Up Card */}
       <div style={{ zIndex: 5, position: 'relative' }}>
         <div style={{
           display: "flex",
@@ -133,6 +133,8 @@ const SignUpPage = () => {
 
             <form onSubmit={handleSignup} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               <input
+                id="displayName"
+                name="displayName"
                 type="text"
                 placeholder="Display Name"
                 value={displayName}
@@ -141,6 +143,8 @@ const SignUpPage = () => {
                 style={inputStyle}
               />
               <input
+                id="email"
+                name="email"
                 type="email"
                 placeholder="Email"
                 value={email}
@@ -149,6 +153,8 @@ const SignUpPage = () => {
                 style={inputStyle}
               />
               <input
+                id="password"
+                name="password"
                 type="password"
                 placeholder="Password (6+ characters)"
                 value={password}
@@ -157,6 +163,8 @@ const SignUpPage = () => {
                 style={inputStyle}
               />
               <input
+                id="confirmPassword"
+                name="confirmPassword"
                 type="password"
                 placeholder="Confirm Password"
                 value={confirmPassword}
@@ -165,6 +173,8 @@ const SignUpPage = () => {
                 style={inputStyle}
               />
               <input
+                id="dob"
+                name="dob"
                 type="date"
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}

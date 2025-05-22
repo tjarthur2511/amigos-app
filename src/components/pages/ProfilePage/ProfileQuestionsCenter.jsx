@@ -13,9 +13,10 @@ import { motion } from 'framer-motion';
 const ProfileQuestionsCenter = () => {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
-  const [status, setStatus] = useState('');
   const [history, setHistory] = useState({ quizAnswers: {}, monthlyQuiz: {} });
   const [edited, setEdited] = useState({});
+  const [status, setStatus] = useState('');
+  const [filter, setFilter] = useState('onboarding');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -41,7 +42,7 @@ const ProfileQuestionsCenter = () => {
               id: `${prefix}${index + 1}`,
               text: qText,
               type: data.type,
-              month: data.month || null
+              month: data.month || null,
             });
           });
         }
@@ -82,24 +83,21 @@ const ProfileQuestionsCenter = () => {
     }
   };
 
-  const renderHistory = (typeLabel, data) => (
-    <div className="space-y-4 mt-6">
-      <h3 className="text-xl font-bold text-[#FF6B6B] text-center">
-        {typeLabel}
-      </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {Object.entries(data).map(([key, val]) => (
-          <div
-            key={key}
-            className="bg-white border border-[#FF6B6B] p-4 rounded-xl shadow hover:shadow-lg transition duration-200"
-          >
-            <p className="text-sm text-[#FF6B6B] font-semibold">{key}</p>
-            <p className="text-gray-700 text-sm mt-1">{val}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  const getFilteredQuestions = () => {
+    if (filter === 'onboarding') {
+      return questions.filter((q) => q.type !== 'monthly');
+    }
+    if (filter === 'monthly') {
+      return questions.filter((q) => q.type === 'monthly');
+    }
+    if (filter === 'unanswered') {
+      return questions.filter((q) => !answers[q.id]?.trim());
+    }
+    return questions;
+  };
+
+  const filteredQuestions = getFilteredQuestions();
+  const progress = filteredQuestions.filter((q) => answers[q.id]?.trim()).length;
 
   return (
     <motion.div
@@ -107,49 +105,87 @@ const ProfileQuestionsCenter = () => {
       animate={{ opacity: 1 }}
       className="min-h-screen bg-[#fffafa] font-[Comfortaa] p-6"
     >
-      <div className="max-w-3xl mx-auto bg-white p-8 rounded-3xl shadow-xl border border-[#ffe0e0]">
-        <h2 className="text-2xl text-[#FF6B6B] font-bold mb-6 text-center">
-          🌈 Your Question Center
-        </h2>
+      <div className="max-w-2xl mx-auto bg-white p-6 sm:p-8 rounded-3xl shadow-xl border border-[#ffe0e0]">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl text-[#FF6B6B] font-bold">
+            🌈 Your Question Center
+          </h2>
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="bg-[#ffe0e0] text-[#FF6B6B] font-semibold border border-[#FF6B6B] rounded-xl p-2"
+          >
+            <option value="onboarding">Onboarding</option>
+            <option value="monthly">Monthly</option>
+            <option value="unanswered">Unanswered</option>
+          </select>
+        </div>
+
+        <p className="text-sm text-gray-600 mb-4">
+          Progress: {progress} of {filteredQuestions.length} answered
+        </p>
 
         <div className="space-y-6">
-          {questions.map((q) => (
-            <div key={q.id} className="bg-[#fff0f0] p-5 rounded-xl shadow-md border border-[#ff6b6b]">
-              <div className="flex justify-between items-center mb-2">
-                <p className="text-[#FF6B6B] font-semibold">{q.text}</p>
-                {q.month && <span className="text-xs text-gray-500">📅 {q.month}</span>}
+          {filteredQuestions.map((q) => {
+            const isAnswered = !!answers[q.id]?.trim();
+
+            return (
+              <div key={q.id} className="flex flex-col items-start space-y-3 mb-6">
+                {/* 💬 Android-style bubble */}
+                <div className="bg-[#ffe0e0] text-[#FF6B6B] px-4 py-3 rounded-2xl shadow-md max-w-[90%]">
+                  <p className="font-semibold">{q.text}</p>
+                  {q.month && (
+                    <span className="text-xs text-gray-500 block mt-1">
+                      📅 {q.month}
+                    </span>
+                  )}
+                  {isAnswered && (
+                    <span className="text-xs bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full inline-block mt-2">
+                      ✅ Completed
+                    </span>
+                  )}
+                </div>
+
+                {/* 📝 Answer input */}
+                <input
+                  type="text"
+                  value={answers[q.id] || ''}
+                  onChange={(e) => handleChange(q.id, e.target.value)}
+                  placeholder="Type your answer..."
+                  className="w-full sm:w-3/4 p-3 border border-[#FF6B6B] rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#ff6b6b]"
+                />
+
+                {/* 💾 Buttons */}
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={() => handleSave(q.id)}
+                    disabled={!edited[q.id] || !answers[q.id]?.trim()}
+                    className={`px-4 py-2 rounded-full transition duration-150 text-sm ${
+                      !edited[q.id] || !answers[q.id]?.trim()
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        : 'bg-[#FF6B6B] text-white hover:bg-[#e15555]'
+                    }`}
+                  >
+                    Save
+                  </button>
+
+                  <button
+                    onClick={() => handleChange(q.id, "")}
+                    className="px-4 py-2 rounded-full bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition text-sm"
+                  >
+                    Skip
+                  </button>
+                </div>
               </div>
-              <input
-                type="text"
-                value={answers[q.id] || ''}
-                onChange={(e) => handleChange(q.id, e.target.value)}
-                placeholder="Your answer..."
-                className="w-full p-2 border border-[#FF6B6B] rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#ff6b6b]"
-              />
-              <button
-                onClick={() => handleSave(q.id)}
-                disabled={!edited[q.id] || !answers[q.id]?.trim()}
-                className={`mt-2 px-4 py-1 rounded-full transition duration-150 ${
-                  !edited[q.id] || !answers[q.id]?.trim()
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-[#FF6B6B] text-white hover:bg-[#e15555]'
-                }`}
-              >
-                Save
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        {status && <p className="mt-4 text-center text-sm text-[#FF6B6B] animate-pulse">{status}</p>}
-
-        <div className="mt-10">
-          <h2 className="text-2xl text-[#FF6B6B] font-bold mb-4 text-center">
-            📂 Your Answer Archives
-          </h2>
-          {renderHistory('🧠 Onboarding', history.quizAnswers)}
-          {renderHistory('📆 Monthly', history.monthlyQuiz)}
-        </div>
+        {status && (
+          <p className="mt-6 text-center text-sm text-[#FF6B6B] animate-pulse">
+            {status}
+          </p>
+        )}
       </div>
     </motion.div>
   );

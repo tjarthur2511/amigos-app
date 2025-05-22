@@ -1,4 +1,4 @@
-// ✅ Clean + Auth-Checked PostForm Component
+// ✅ Clean + Auth-Checked PostForm Component with Accessibility Fixes
 import React, { useState, useRef, useEffect } from "react";
 import { db, auth } from "../../firebase";
 import {
@@ -93,6 +93,8 @@ const PostForm = ({ onClose, post = null }) => {
   return (
     <form onSubmit={handlePost} style={{ display: "flex", flexDirection: "column", gap: "1rem", backgroundColor: "white", padding: "1.5rem", borderRadius: "1.5rem", boxShadow: "0 5px 25px rgba(0,0,0,0.1)", zIndex: 0 }}>
       <textarea
+        id="post-content"
+        name="content"
         placeholder="what's on your mind amigo?"
         value={content}
         onChange={(e) => setContent(e.target.value)}
@@ -102,6 +104,8 @@ const PostForm = ({ onClose, post = null }) => {
 
       <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
         <select
+          id="tagged-amigos"
+          name="taggedAmigos"
           multiple
           value={taggedAmigos}
           onChange={(e) => setTaggedAmigos(Array.from(e.target.selectedOptions, option => option.value))}
@@ -112,6 +116,8 @@ const PostForm = ({ onClose, post = null }) => {
         </select>
 
         <select
+          id="tagged-grupos"
+          name="taggedGrupos"
           multiple
           value={taggedGrupos}
           onChange={(e) => setTaggedGrupos(Array.from(e.target.selectedOptions, option => option.value))}
@@ -133,6 +139,8 @@ const PostForm = ({ onClose, post = null }) => {
           </div>
 
           <input
+            id="post-media"
+            name="media"
             type="file"
             ref={fileInputRef}
             accept="image/*,video/*"

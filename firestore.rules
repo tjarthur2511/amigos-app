@@ -22,21 +22,11 @@ service cloud.firestore {
       allow read, write: if request.auth != null;
     }
 
-    // ✅ QUESTION SETS
-    match /questionSets/{docId} {
-      allow read, write: if request.auth != null;
-    }
-
-    // ✅ WEEKLY QUESTIONS
-    match /weeklyQuestions/{docId} {
-      allow read, write: if request.auth != null;
-    }
-
     // ✅ POSTS: Allow create if signed in — validated client-side
     match /posts/{postId} {
       allow create: if request.auth != null;
       allow read: if request.auth != null;
-      allow update, delete: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow update, delete: if request.auth.uid == resource.data.userId;
     }
 
     // ✅ COMMENTS: Creator-only write/update/delete
@@ -49,7 +39,42 @@ service cloud.firestore {
 
       allow read: if request.auth != null;
 
-      allow update, delete: if request.auth != null &&
+      allow update, delete: if request.auth.uid == resource.data.userId;
+    }
+
+    // ✅ QUESTION SETS
+    match /questionSets/{docId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // ✅ WEEKLY QUESTIONS
+    match /weeklyQuestions/{docId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // ✅ NOTIFICATIONS: Only target user can read
+    match /notifications/{docId} {
+      allow read: if request.auth != null &&
+        request.auth.uid == resource.data.targetUserId;
+
+      allow create: if request.auth != null &&
+        request.resource.data.senderId == request.auth.uid &&
+        request.resource.data.targetUserId is string &&
+        request.resource.data.category is string &&
+        request.resource.data.type is string &&
+        request.resource.data.createdAt is timestamp;
+
+      allow delete: if request.auth.uid == resource.data.targetUserId;
+    }
+
+    // ✅ QUIZ QUESTIONS: All logged-in users can read
+    match /quizQuestions/{docId} {
+      allow read: if request.auth != null;
+    }
+
+    // ✅ QUIZ ANSWERS: Only the owner can read/write their own answers
+    match /quizAnswers/{docId} {
+      allow read, write: if request.auth != null &&
         request.auth.uid == resource.data.userId;
     }
 

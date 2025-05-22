@@ -1,4 +1,3 @@
-// 💖 ProfilePhotos - Optimized Layout for Visual Appeal & User Retention
 import React, { useEffect, useState } from 'react';
 import { db, auth } from '../../../firebase';
 import {
@@ -33,79 +32,38 @@ const ProfilePhotos = () => {
   }, []);
 
   return (
-    <div style={wrapperStyle}>
-      <h2 style={headlineStyle}>📸 Your Photo Gallery</h2>
+    <div className="font-[Comfortaa] bg-[#fffafa] p-6 rounded-3xl shadow-xl max-w-2xl mx-auto animate-fade-in">
+      <h2 className="text-xl sm:text-2xl text-[#FF6B6B] text-center font-bold mb-6">
+        📸 Your Photo Gallery
+      </h2>
+
       {photoPosts.length > 0 ? (
-        <div style={gridStyle}>
-          {photoPosts.map(post => (
-            <div key={post.id} style={photoCard}>
+        <div className="flex flex-col gap-5 max-h-[420px] overflow-y-auto pr-1">
+          {photoPosts.map((post) => (
+            <div
+              key={post.id}
+              className="bg-[#ffe0e0] p-2 rounded-2xl rounded-bl-md max-w-xs shadow-md transition-transform hover:scale-[1.015] hover:shadow-lg"
+            >
               <img
                 src={post.imageUrl}
                 alt="Post"
-                style={imageStyle}
+                className="w-full h-auto object-cover rounded-xl"
               />
+              {post.createdAt?.toDate && (
+                <p className="text-xs text-right text-gray-500 mt-1">
+                  {post.createdAt.toDate().toLocaleDateString()}
+                </p>
+              )}
             </div>
           ))}
         </div>
       ) : (
-        <p style={emptyMessage}>You haven't posted any photos yet.</p>
+        <p className="text-[#FF6B6B] text-center text-sm mt-4">
+          You haven't posted any photos yet.
+        </p>
       )}
     </div>
   );
 };
 
-const wrapperStyle = {
-  fontFamily: 'Comfortaa, sans-serif',
-  padding: '2rem',
-  background: 'linear-gradient(to bottom right, #ffffff, #fff0f0)',
-  borderRadius: '2rem',
-  boxShadow: '0 15px 30px rgba(255,107,107,0.15)',
-  animation: 'fadeIn 0.6s ease-out',
-};
-
-const headlineStyle = {
-  fontSize: '1.6rem',
-  color: '#FF6B6B',
-  textAlign: 'center',
-  marginBottom: '1.5rem',
-  textShadow: '0 0 4px rgba(255,107,107,0.3)'
-};
-
-const gridStyle = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))',
-  gap: '1.75rem',
-};
-
-const photoCard = {
-  borderRadius: '1.25rem',
-  overflow: 'hidden',
-  boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
-  border: '2px solid #ffe0e0',
-  transition: 'transform 0.3s ease',
-};
-
-const imageStyle = {
-  width: '100%',
-  height: '170px',
-  objectFit: 'cover',
-  display: 'block',
-  borderRadius: '0.75rem',
-};
-
-const emptyMessage = {
-  color: '#FF6B6B',
-  textAlign: 'center',
-  fontSize: '1rem',
-  marginTop: '1rem',
-};
-
 export default ProfilePhotos;
-
-// 🌟 Add this to global CSS
-/*
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-*/

@@ -1,10 +1,9 @@
-// src/components/pages/LoginPage.jsx
 import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase.js';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import FallingAEffect from '../common/FallingAEffect'; // ✅ imported falling background
+import FallingAEffect from '../common/FallingAEffect';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -19,7 +18,7 @@ const LoginPage = () => {
     setError('');
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/'); // ✅ send to home page on success
+      navigate('/');
     } catch (err) {
       setError(err.message);
       setLoading(false);
@@ -33,17 +32,19 @@ const LoginPage = () => {
       transition={{ duration: 0.8 }}
       className="flex flex-col items-center justify-center min-h-screen p-6 bg-[#FF6B6B] relative overflow-hidden font-[Comfortaa]"
     >
-      {/* ✅ background layer */}
+      {/* 🔴 Background animation */}
       <div className="absolute top-0 left-0 w-full h-full z-0 pointer-events-none">
         <FallingAEffect />
       </div>
 
-      {/* ✅ login card foreground */}
+      {/* 🔴 Login card */}
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg z-10">
         <h1 className="text-3xl font-bold text-[#FF6B6B] mb-6 text-center">Login to Amigos</h1>
 
         <form onSubmit={handleLogin} className="flex flex-col space-y-4">
           <input
+            id="email"
+            name="email"
             type="email"
             placeholder="Email"
             value={email}
@@ -52,6 +53,8 @@ const LoginPage = () => {
             className="w-full p-3 border border-gray-300 rounded-xl focus:border-[#FF6B6B] outline-none transition"
           />
           <input
+            id="password"
+            name="password"
             type="password"
             placeholder="Password"
             value={password}

@@ -33,9 +33,11 @@ const EditProfileModal = ({ onClose }) => {
       </h2>
 
       <div style={{ marginBottom: "1rem" }}>
-        <label style={labelStyle}>Display Name</label>
+        <label htmlFor="displayName" style={labelStyle}>Display Name</label>
         <input
           type="text"
+          id="displayName"
+          name="displayName"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
           placeholder="Enter your name"
@@ -44,8 +46,10 @@ const EditProfileModal = ({ onClose }) => {
       </div>
 
       <div style={{ marginBottom: "1rem" }}>
-        <label style={labelStyle}>Bio</label>
+        <label htmlFor="bio" style={labelStyle}>Bio</label>
         <textarea
+          id="bio"
+          name="bio"
           value={bio}
           onChange={(e) => setBio(e.target.value)}
           placeholder="Tell us about yourself"

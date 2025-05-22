@@ -1,4 +1,3 @@
-// src/components/pages/Admin/AdminPanel.jsx
 import React, { useState } from "react";
 import { SeederScripts } from "../../../seeder/importMap";
 import { motion } from "framer-motion";
@@ -32,8 +31,8 @@ const AdminPanel = () => {
     }
 
     try {
-      await scriptFn();
-      setOutput(`✅ Successfully ran: ${scriptName}`);
+      const result = await scriptFn(); // ✅ captures return string
+      setOutput(result || `✅ Successfully ran: ${scriptName}`);
     } catch (err) {
       setOutput(`❌ Error running "${scriptName}": ${err.message}`);
     }

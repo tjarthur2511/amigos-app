@@ -111,6 +111,8 @@ const SetupQuizPage = () => {
         <input
           ref={inputRef}
           type="text"
+          id={`quiz-question-${currentQuestion + 1}`}
+          name={`quiz-question-${currentQuestion + 1}`}
           value={answers[currentQuestion] || ''}
           onChange={handleAnswer}
           placeholder="Type your answer here"
