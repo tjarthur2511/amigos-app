@@ -1,23 +1,33 @@
-// src/components/common/modals/SupportModal.jsx
 import React, { useState } from "react";
+import { db, auth } from "../../../firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 const SupportModal = ({ onClose }) => {
   const [selectedOption, setSelectedOption] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedOption || !message.trim()) {
       alert("Please select an issue type and write a message.");
       return;
     }
 
-    // Placeholder for backend logic
-    console.log("Submitting support request:", { selectedOption, message });
-
-    // Reset and close
-    setSelectedOption("");
-    setMessage("");
-    onClose();
+    try {
+      const user = auth.currentUser;
+      await addDoc(collection(db, "feedback"), {
+        userId: user?.uid || "anonymous",
+        type: selectedOption,
+        message: message.trim(),
+        createdAt: serverTimestamp(),
+      });
+      alert("Support request submitted. Thank you!");
+      setSelectedOption("");
+      setMessage("");
+      onClose();
+    } catch (err) {
+      console.error("Error submitting support request:", err);
+      alert("Failed to submit support request.");
+    }
   };
 
   return (
@@ -42,8 +52,10 @@ const SupportModal = ({ onClose }) => {
         Contact Support
       </h2>
 
-      <label style={labelStyle}>Type of Issue</label>
+      <label htmlFor="issue-type" style={labelStyle}>Type of Issue</label>
       <select
+        id="issue-type"
+        name="issueType"
         value={selectedOption}
         onChange={(e) => setSelectedOption(e.target.value)}
         style={selectStyle}
@@ -55,8 +67,10 @@ const SupportModal = ({ onClose }) => {
         <option value="other">Other</option>
       </select>
 
-      <label style={{ ...labelStyle, marginTop: "1rem" }}>Your Message</label>
+      <label htmlFor="message-input" style={{ ...labelStyle, marginTop: "1rem" }}>Your Message</label>
       <textarea
+        id="message-input"
+        name="message"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         rows={4}

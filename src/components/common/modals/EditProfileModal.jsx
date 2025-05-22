@@ -1,13 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { auth, db } from "../../../firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 const EditProfileModal = ({ onClose }) => {
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        const data = userSnap.data();
+        setDisplayName(data.displayName || "");
+        setBio(data.bio || "");
+      }
+    };
+    fetchProfile();
+  }, []);
+
   const handleSave = async () => {
-    // 🔧 Plug into Firestore update later
-    console.log("Saving profile:", { displayName, bio });
-    onClose();
+    const user = auth.currentUser;
+    if (!user) return;
+
+    try {
+      await updateDoc(doc(db, "users", user.uid), {
+        displayName,
+        bio,
+      });
+      alert("Profile updated successfully.");
+      onClose();
+    } catch (err) {
+      console.error("Error updating profile:", err);
+      alert("Failed to update profile.");
+    }
   };
 
   return (

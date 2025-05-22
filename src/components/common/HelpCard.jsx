@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { auth, db } from "../../firebase";
 import ThemePanel from "./ThemePanel";
 import ChangePasswordModal from "./modals/ChangePasswordModal";
 import EditProfileModal from "./modals/EditProfileModal";
@@ -18,16 +20,44 @@ const HelpCard = ({ onClose }) => {
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
 
+  const user = auth.currentUser;
+
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      if (!user) return;
+      const userRef = doc(db, "users", user.uid);
+      const snap = await getDoc(userRef);
+      const prefs = snap.data()?.preferences || {};
+      setFontSize(prefs.fontSize || "1");
+      setAccessibility(prefs.accessibility || false);
+      setPushAlerts(prefs.pushAlerts || false);
+      setWeeklySuggestions(prefs.weeklySuggestions || false);
+      setQuizReminder(prefs.quizReminder || false);
+      setLocationAllowed(prefs.locationAllowed || false);
+    };
+    fetchPreferences();
+  }, [user]);
+
+  const savePreferences = async (field, value) => {
+    if (!user) return;
+    const userRef = doc(db, "users", user.uid);
+    await updateDoc(userRef, {
+      [`preferences.${field}`]: value,
+    });
+  };
+
   const handleLanguageChange = (e) => {
     const lng = e.target.value;
     i18n.changeLanguage(lng);
     document.documentElement.lang = lng;
+    savePreferences("language", lng);
   };
 
   const handleFontSizeChange = (e) => {
     const scale = e.target.value;
     setFontSize(scale);
     document.documentElement.style.setProperty("--text-scale", scale);
+    savePreferences("fontSize", scale);
   };
 
   const fontSizes = [
@@ -99,7 +129,13 @@ const HelpCard = ({ onClose }) => {
         <div style={sectionStyle}>
           <h3 style={labelStyle}>Accessibility</h3>
           <p>Enable font scaling and high contrast options.</p>
-          <button style={buttonStyle} onClick={() => setAccessibility(!accessibility)}>
+          <button
+            style={buttonStyle}
+            onClick={() => {
+              setAccessibility(!accessibility);
+              savePreferences("accessibility", !accessibility);
+            }}
+          >
             {accessibility ? "Disable" : "Enable"} Accessibility Mode
           </button>
 
@@ -132,7 +168,10 @@ const HelpCard = ({ onClose }) => {
               name="pushAlerts"
               type="checkbox"
               checked={pushAlerts}
-              onChange={() => setPushAlerts(!pushAlerts)}
+              onChange={() => {
+                setPushAlerts(!pushAlerts);
+                savePreferences("pushAlerts", !pushAlerts);
+              }}
               style={{ marginRight: "0.5rem" }}
             />
             Enable push alerts
@@ -144,7 +183,10 @@ const HelpCard = ({ onClose }) => {
               name="weeklySuggestions"
               type="checkbox"
               checked={weeklySuggestions}
-              onChange={() => setWeeklySuggestions(!weeklySuggestions)}
+              onChange={() => {
+                setWeeklySuggestions(!weeklySuggestions);
+                savePreferences("weeklySuggestions", !weeklySuggestions);
+              }}
               style={{ marginRight: "0.5rem" }}
             />
             Weekly suggestions
@@ -156,7 +198,10 @@ const HelpCard = ({ onClose }) => {
               name="quizReminder"
               type="checkbox"
               checked={quizReminder}
-              onChange={() => setQuizReminder(!quizReminder)}
+              onChange={() => {
+                setQuizReminder(!quizReminder);
+                savePreferences("quizReminder", !quizReminder);
+              }}
               style={{ marginRight: "0.5rem" }}
             />
             Monthly quiz reminder
@@ -172,7 +217,10 @@ const HelpCard = ({ onClose }) => {
               name="locationAllowed"
               type="checkbox"
               checked={locationAllowed}
-              onChange={() => setLocationAllowed(!locationAllowed)}
+              onChange={() => {
+                setLocationAllowed(!locationAllowed);
+                savePreferences("locationAllowed", !locationAllowed);
+              }}
               style={{ marginRight: "0.5rem" }}
             />
             Allow location access for local events and suggestions
