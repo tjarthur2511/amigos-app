@@ -34,10 +34,10 @@ const MapHangoutsPage = () => {
 
   const getPinIcon = (type) => {
     switch (type) {
-      case 'amigo': return '/assets/amigosaonly.png';
+      case 'amigo': return '/assets/amigosaonly_128.png';
       case 'grupo': return '/assets/g-logo.png';
       case 'event': return '/assets/e-logo.png';
-      default: return '/assets/amigosaonly.png';
+      default: return '/assets/amigosaonly_128.png';
     }
   };
 

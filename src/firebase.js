@@ -18,12 +18,12 @@ import { getStorage } from "firebase/storage";
 
 // ✅ Firebase config for amigos-f0b75
 const firebaseConfig = {
-  apiKey: "AIzaSyBsAP4a2a6BI7FReA2NoF3lbiTzzjEyG6U",
-  authDomain: "amigos-f0b75.firebaseapp.com",
-  projectId: "amigos-f0b75",
-  storageBucket: "amigos-f0b75.appspot.com",
-  messagingSenderId: "188885971311",
-  appId: "1:188885971311:web:73f51e65d7affb92c4f89a"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 const app = initializeApp(firebaseConfig);

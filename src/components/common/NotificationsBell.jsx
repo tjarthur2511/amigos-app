@@ -130,8 +130,9 @@ const NotificationsBell = () => {
         }}
       >
         <img
-          src="/assets/amigosaonly.png"
+          src="/assets/amigosaonly_128.png"
           alt="notification a"
+          loading="lazy"
           style={{
             height: "1.6rem",
             width: "auto",

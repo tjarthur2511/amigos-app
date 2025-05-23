@@ -24,6 +24,7 @@ const NavBar = () => {
           src="/assets/amigoshangouts1.png"
           alt="amigos logo"
           className="h-32 w-auto animate-[pulse-a_1.75s_infinite]"
+          loading="lazy"
         />
       </div>
       <div className="bg-white px-4 py-2 rounded-full shadow-md flex gap-4">

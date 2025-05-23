@@ -22,9 +22,10 @@ const FallingAEffect = () => {
   const aElements = Array.from({ length: numberOfAs }).map((_, index) => (
     <img
       key={index}
-      src="/assets/amigosaonly.png"
+      src="/assets/amigosaonly_128.png"
       alt="a"
       style={generateStyle()}
+      loading="lazy"
     />
   ));
 

@@ -85,6 +85,7 @@ const LandingPage = () => {
                   marginBottom: "-7rem",
                   animation: "pulse-a 1.75s infinite"
                 }}
+                loading="lazy"
               />
             </div>
 

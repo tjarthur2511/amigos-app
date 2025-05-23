@@ -36,10 +36,15 @@ const CommentSection = ({ postId }) => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
+    if (!auth.currentUser) {
+      alert("Please log in to post a comment.");
+      return;
+    }
+
     try {
       await addDoc(collection(db, "comments"), {
         content: newComment,
-        userId: auth.currentUser?.uid || "anon",
+        userId: auth.currentUser.uid, // auth.currentUser is now guaranteed to exist
         postId,
         createdAt: serverTimestamp(),
       });

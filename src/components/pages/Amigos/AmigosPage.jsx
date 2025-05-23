@@ -70,6 +70,7 @@ const AmigosPage = () => {
           src="/assets/amigoshangouts1.png"
           alt="Amigos Hangouts"
           style={{ height: '20em', width: 'auto', animation: 'pulse-a 1.75s infinite', marginBottom: '-5rem' }}
+          loading="lazy"
         />
       </header>
 

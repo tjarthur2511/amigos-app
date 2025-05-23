@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, lazy, Suspense } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -22,25 +22,26 @@ import MapHangoutButton from './components/common/MapHangoutButton';
 import GlobalSearch from './components/common/GlobalSearch';
 import HelpButton from './components/common/HelpButton';
 
-import LandingPage from './components/pages/LandingPage';
-import HomePage from './components/pages/HomePage';
-import LoginPage from './components/pages/LoginPage';
-import SignUpPage from './components/pages/SignUpPage';
-import AdminPanel from './components/pages/Admin/AdminPanel';
-import TestFirestoreWrite from './components/pages/Admin/TestFirestoreWrite';
-import TestStorageUpload from './components/pages/Admin/TestStorageUpload';
-import SetupQuizPage from './components/pages/SetupQuizPage';
-import MonthlyQuizPage from './components/pages/MonthlyQuizPage';
-import ProfilePage from './components/pages/ProfilePage/ProfilePage';
-import PublicProfilePage from './components/pages/ProfilePage/PublicProfilePage';
-import GruposPage from './components/pages/Grupos/GruposPage';
-import PublicGrupoPage from './components/pages/Grupos/PublicGrupoPage';
-import AmigosPage from './components/pages/Amigos/AmigosPage';
-import ExploreAmigosPage from './components/pages/Amigos/ExploreAmigosPage';
-import Explore from './components/pages/Explore';
-import LivePage from './components/pages/Live/LivePage';
-import TailwindTest from './components/pages/TailwindTest';
-import DevChecklist from './components/pages/DevChecklist';
+// Lazy load page components
+const LandingPage = lazy(() => import('./components/pages/LandingPage'));
+const HomePage = lazy(() => import('./components/pages/HomePage'));
+const LoginPage = lazy(() => import('./components/pages/LoginPage'));
+const SignUpPage = lazy(() => import('./components/pages/SignUpPage'));
+const AdminPanel = lazy(() => import('./components/pages/Admin/AdminPanel'));
+const TestFirestoreWrite = lazy(() => import('./components/pages/Admin/TestFirestoreWrite'));
+const TestStorageUpload = lazy(() => import('./components/pages/Admin/TestStorageUpload'));
+const SetupQuizPage = lazy(() => import('./components/pages/SetupQuizPage'));
+const MonthlyQuizPage = lazy(() => import('./components/pages/MonthlyQuizPage'));
+const ProfilePage = lazy(() => import('./components/pages/ProfilePage/ProfilePage'));
+const PublicProfilePage = lazy(() => import('./components/pages/ProfilePage/PublicProfilePage'));
+const GruposPage = lazy(() => import('./components/pages/Grupos/GruposPage'));
+const PublicGrupoPage = lazy(() => import('./components/pages/Grupos/PublicGrupoPage'));
+const AmigosPage = lazy(() => import('./components/pages/Amigos/AmigosPage'));
+const ExploreAmigosPage = lazy(() => import('./components/pages/Amigos/ExploreAmigosPage'));
+const Explore = lazy(() => import('./components/pages/Explore'));
+const LivePage = lazy(() => import('./components/pages/Live/LivePage'));
+const TailwindTest = lazy(() => import('./components/pages/TailwindTest'));
+const DevChecklist = lazy(() => import('./components/pages/DevChecklist'));
 
 function AppContent({ user }) {
   const location = useLocation();
@@ -101,36 +102,38 @@ function AppContent({ user }) {
       )}
 
       <div className="relative z-10">
-        <Routes>
-          {user ? (
-            <>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/profile/:userId" element={<PublicProfilePage />} />
-              <Route path="/grupos" element={<GruposPage />} />
-              <Route path="/grupos/:grupoId" element={<PublicGrupoPage />} />
-              <Route path="/amigos" element={<AmigosPage />} />
-              <Route path="/explore" element={<Explore />} />
-              <Route path="/explore-amigos" element={<ExploreAmigosPage />} />
-              <Route path="/live" element={<LivePage />} />
-              <Route path="/setup" element={<SetupQuizPage />} />
-              <Route path="/monthly-quiz" element={<MonthlyQuizPage />} />
-              <Route path="/profile/admin" element={<AdminPanel />} />
-              <Route path="/test-firestore-write" element={<TestFirestoreWrite />} />
-              <Route path="/test-storage-upload" element={<TestStorageUpload />} />
-              <Route path="/tailwind-test" element={<TailwindTest />} />
-              <Route path="/dev-checklist" element={<DevChecklist />} />
-              <Route path="*" element={<Navigate to="/" />} />
-            </>
-          ) : (
-            <>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignUpPage />} />
-              <Route path="*" element={<Navigate to="/" />} />
-            </>
-          )}
-        </Routes>
+        <Suspense fallback={<LoadingScreen />}>
+          <Routes>
+            {user ? (
+              <>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/profile/:userId" element={<PublicProfilePage />} />
+                <Route path="/grupos" element={<GruposPage />} />
+                <Route path="/grupos/:grupoId" element={<PublicGrupoPage />} />
+                <Route path="/amigos" element={<AmigosPage />} />
+                <Route path="/explore" element={<Explore />} />
+                <Route path="/explore-amigos" element={<ExploreAmigosPage />} />
+                <Route path="/live" element={<LivePage />} />
+                <Route path="/setup" element={<SetupQuizPage />} />
+                <Route path="/monthly-quiz" element={<MonthlyQuizPage />} />
+                <Route path="/profile/admin" element={<AdminPanel />} />
+                <Route path="/test-firestore-write" element={<TestFirestoreWrite />} />
+                <Route path="/test-storage-upload" element={<TestStorageUpload />} />
+                <Route path="/tailwind-test" element={<TailwindTest />} />
+                <Route path="/dev-checklist" element={<DevChecklist />} />
+                <Route path="*" element={<Navigate to="/" />} />
+              </>
+            ) : (
+              <>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignUpPage />} />
+                <Route path="*" element={<Navigate to="/" />} />
+              </>
+            )}
+          </Routes>
+        </Suspense>
       </div>
     </div>
   );
