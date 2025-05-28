@@ -1,12 +1,13 @@
-// ✅ Full ProfilePage.jsx – Coral Outline Buttons Fixed
+// ✅ Full ProfilePage.jsx – Follower Count + FollowersList Preserved
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../../../firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, getDocs, collection } from 'firebase/firestore';
 import ProfileCard from './ProfileCard';
 import ProfileQuestionsCenter from './ProfileQuestionsCenter';
 import ProfilePhotos from './ProfilePhotos';
 import FallingAEffect from '../../common/FallingAEffect';
+import FollowersList from './FollowersList';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ const ProfilePage = () => {
   const [location, setLocation] = useState('');
   const [background, setBackground] = useState('');
   const [saving, setSaving] = useState(false);
+  const [followerCount, setFollowerCount] = useState(0);
 
   const profileCards = ['Your Profile', 'Quiz Questions', 'Your Photos'];
 
@@ -43,6 +45,10 @@ const ProfilePage = () => {
         setLocation(data.location || '');
         setBackground(data.background || '');
       }
+
+      const allUsersSnap = await getDocs(collection(db, 'users'));
+      const followers = allUsersSnap.docs.filter(doc => (doc.data().following || []).includes(user.uid));
+      setFollowerCount(followers.length);
     };
     fetchUser();
   }, []);
@@ -72,6 +78,7 @@ const ProfilePage = () => {
         return (
           <>
             <h2 style={sectionTitle}>Customize Your Public Profile</h2>
+            <p className="text-center text-sm text-[#FF6B6B] font-semibold">Followers: {followerCount}</p>
             <div style={{ maxWidth: '500px', margin: '0 auto' }} className="space-y-5 pt-4">
               {[{ label: 'Display Name', value: displayName, setter: setDisplayName },
               { label: 'Bio', value: bio, setter: setBio },
@@ -120,6 +127,7 @@ const ProfilePage = () => {
                   🔍 View Public Profile
                 </button>
               </div>
+              <FollowersList userId={userId} />
             </div>
           </>
         );

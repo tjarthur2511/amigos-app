@@ -1,6 +1,7 @@
+// src/components/pages/ProfilePage/PublicProfilePage.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { auth, db } from '../../../firebase';
+import { auth, db } from '../../../firebase.js';
 import NavBar from '../../NavBar';
 import {
   collection,
@@ -129,62 +130,53 @@ const PublicProfilePage = () => {
           )}
         </div>
 
-        <div className="mb-8">
-          <h3 className="text-xl font-semibold text-[#FF6B6B] mb-4 text-center">Recent Posts</h3>
-          {posts.length === 0 ? (
-            <p className="text-sm text-gray-500 text-center">No posts yet.</p>
-          ) : (
-            <div className="space-y-4">
-              {posts.map(post => (
-                <div
-                  key={post.id}
-                  className="bg-white p-5 rounded-xl border border-[#FF6B6B]/30 shadow-[0_0_0_3px_rgba(255,107,107,0.2)] text-center"
-                >
-                  <p className="text-[#333] mb-2">{post.content || 'Untitled Post'}</p>
-                  {post.imageUrl && <img src={post.imageUrl} alt="Post" className="w-full rounded-lg mx-auto" />}
-                  {post.videoUrl && (
-                    <video controls className="w-full rounded-lg mx-auto">
-                      <source src={post.videoUrl} type="video/mp4" />
-                    </video>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-lg font-semibold text-[#FF6B6B] mb-2">Recent Posts</h3>
+            {posts.length > 0 ? (
+              <ul className="space-y-2">
+                {posts.map(post => (
+                  <li key={post.id} className="p-4 bg-white rounded shadow">
+                    <p>{post.content}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-500">No posts yet.</p>
+            )}
+          </div>
 
-        <div className="mb-8">
-          <h3 className="text-xl font-semibold text-[#FF6B6B] mb-4 text-center">Recent Answers</h3>
-          {answers.length === 0 ? (
-            <p className="text-sm text-gray-500 text-center">No answers submitted yet.</p>
-          ) : (
-            <ul className="space-y-3">
-              {answers.map(answer => (
-                <li key={answer.id} className="bg-white p-4 rounded-xl border border-[#FF6B6B]/30 shadow-[0_0_0_3px_rgba(255,107,107,0.2)] text-center">
-                  <p className="text-[#444]"><span className="font-semibold">Q:</span> {answer.question}</p>
-                  <p className="text-[#333] mt-1"><span className="font-semibold">A:</span> {answer.answer}</p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+          <div>
+            <h3 className="text-lg font-semibold text-[#FF6B6B] mb-2">Recent Quiz Answers</h3>
+            {answers.length > 0 ? (
+              <ul className="space-y-2">
+                {answers.map(answer => (
+                  <li key={answer.id} className="p-4 bg-white rounded shadow">
+                    <p><strong>Q:</strong> {answer.question}</p>
+                    <p><strong>A:</strong> {answer.answer}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-500">No recent answers.</p>
+            )}
+          </div>
 
-        <div className="mb-8">
-          <h3 className="text-xl font-semibold text-[#FF6B6B] mb-4 text-center">Recent Grupos</h3>
-          {grupos.length === 0 ? (
-            <p className="text-sm text-gray-500 text-center">Not part of any grupos yet.</p>
-          ) : (
-            <ul className="space-y-3">
-              {grupos.map(grupo => (
-                <li key={grupo.id} className="bg-white p-4 rounded-xl border border-[#FF6B6B]/30 shadow-[0_0_0_3px_rgba(255,107,107,0.2)] text-center">
-                  <p className="text-[#444] font-semibold">{grupo.name || 'Unnamed Grupo'}</p>
-                  <Link to={`/grupos/${grupo.id}`} className="text-sm text-[#FF6B6B]">
-                    View Grupo
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+          <div>
+            <h3 className="text-lg font-semibold text-[#FF6B6B] mb-2">Grupos</h3>
+            {grupos.length > 0 ? (
+              <ul className="space-y-2">
+                {grupos.map(grupo => (
+                  <li key={grupo.id} className="p-4 bg-white rounded shadow">
+                    <p className="font-bold">{grupo.name}</p>
+                    <p>{grupo.description}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-500">Not part of any grupos yet.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>
