@@ -118,8 +118,8 @@ const PostCard = ({ post }) => {
               key={comment.id}
               className="bg-white py-2 px-4 rounded-lg mb-2 text-base text-coral font-medium relative border border-coral" 
             >
-              <strong className="mr-1 text-charcoal">💬</strong> {/* Changed icon color for distinctness */}
-              {comment.content} {/* Comment content remains text-coral */}
+              <strong className="mr-1 text-charcoal">💬</strong> {/* Icon color */}
+              <span className="text-charcoal">{comment.content}</span> {/* Comment content changed to text-charcoal */}
               <div className="mt-1.5 flex flex-wrap gap-1.5">
                 {Object.entries(reactions).map(([emoji, users]) => (
                   <span

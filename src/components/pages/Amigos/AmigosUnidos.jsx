@@ -31,10 +31,10 @@ const AmigosUnidos = () => {
   }, []);
 
   // Define reused class strings
-  const titleClasses = "text-xl text-coral font-bold text-center mb-4"; // text-xl for 1.5rem approx
-  const userNameClasses = "text-lg font-bold"; // text-lg for 1.2rem approx
-  const userDetailClasses = "text-sm text-gray-600"; // text-sm for 0.9rem, gray-600 for #555
-  const itemClasses = "bg-white p-4 rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.15)] z-0"; // rounded-xl for 1rem
+  const titleClasses = "text-xl text-coral font-bold text-center mb-4";
+  const userNameClasses = "text-lg font-bold text-coral"; // Explicitly text-coral for accent
+  const userDetailClasses = "text-sm text-gray-600";
+  const itemClasses = "bg-white p-4 rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.15)] z-0";
 
   return (
     <div className="font-comfortaa bg-white p-8 rounded-[1.5rem] shadow-[0_5px_20px_rgba(0,0,0,0.1)] z-0">
@@ -44,7 +44,7 @@ const AmigosUnidos = () => {
           {followedAmigos.map(amigo => (
             <li
               key={amigo.id}
-              className={`${itemClasses} hover:bg-blush transition cursor-pointer`} // Used blush from theme
+              className={`${itemClasses} hover:bg-blush transition cursor-pointer`}
               onClick={() => navigate(`/profile/${amigo.id}`)}
             >
               <p className={userNameClasses}>{amigo.displayName}</p>
@@ -53,7 +53,7 @@ const AmigosUnidos = () => {
           ))}
         </ul>
       ) : (
-        <p className="text-coral text-center mt-4">You aren’t following any amigos yet.</p>
+        <p className="text-gray-600 text-center mt-4">You aren’t following any amigos yet.</p> {/* Changed to text-gray-600 */}
       )}
     </div>
   );

@@ -38,7 +38,7 @@ const FollowersList = ({ userId }) => {
           ))}
         </ul>
       ) : (
-        <p className="text-center text-coral mt-4">No followers yet.</p>
+        <p className="text-center text-gray-600 mt-4">No followers yet.</p> {/* Changed to text-gray-600 */}
       )}
     </div>
   );
