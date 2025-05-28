@@ -32,8 +32,8 @@ const ProfilePhotos = () => {
   }, []);
 
   return (
-    <div className="font-[Comfortaa] bg-[#fffafa] p-6 rounded-3xl shadow-xl max-w-2xl mx-auto animate-fade-in">
-      <h2 className="text-xl sm:text-2xl text-[#FF6B6B] text-center font-bold mb-6">
+    <div className="font-comfortaa bg-blush p-6 rounded-3xl shadow-xl max-w-2xl mx-auto animate-fade-in"> {/* Used font-comfortaa and bg-blush */}
+      <h2 className="text-xl sm:text-2xl text-coral text-center font-bold mb-6"> {/* Used text-coral */}
         📸 Your Photo Gallery
       </h2>
 
@@ -42,7 +42,7 @@ const ProfilePhotos = () => {
           {photoPosts.map((post) => (
             <div
               key={post.id}
-              className="bg-[#ffe0e0] p-2 rounded-2xl rounded-bl-md max-w-xs shadow-md transition-transform hover:scale-[1.015] hover:shadow-lg"
+              className="bg-blush p-2 rounded-2xl rounded-bl-md max-w-xs shadow-md transition-transform hover:scale-[1.015] hover:shadow-lg" // Used bg-blush
             >
               <img
                 src={post.imageUrl}
@@ -58,7 +58,7 @@ const ProfilePhotos = () => {
           ))}
         </div>
       ) : (
-        <p className="text-[#FF6B6B] text-center text-sm mt-4">
+        <p className="text-coral text-center text-sm mt-4"> {/* Used text-coral */}
           You haven't posted any photos yet.
         </p>
       )}

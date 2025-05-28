@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useAuth } from "../../context/AuthContext";
+import InlineNotification from "./InlineNotification"; // Import InlineNotification
 
 const GoLiveModal = ({ onClose }) => {
   const { currentUser } = useAuth();
@@ -22,12 +23,17 @@ const GoLiveModal = ({ onClose }) => {
   const [newComment, setNewComment] = useState("");
   const [visibility, setVisibility] = useState("public");
   const [cameraError, setCameraError] = useState(false);
+  const [notification, setNotification] = useState({ message: '', type: '' }); // Notification state
 
   const videoRef = useRef(null);
   const mediaStream = useRef(null);
 
   const handleStartLive = async () => {
-    if (!currentUser) return alert("Sign in to go live.");
+    setNotification({ message: '', type: '' }); // Clear notification
+    if (!currentUser) {
+      setNotification({ message: "Sign in to go live.", type: "warning" });
+      return;
+    }
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -111,72 +117,57 @@ const GoLiveModal = ({ onClose }) => {
     return () => unsub();
   }, [streamId]);
 
+  // Define Tailwind classes
+  const modalOverlayClasses = "fixed inset-0 bg-black/60 z-[10000000] flex items-center justify-center font-comfortaa";
+  const modalContainerBaseClasses = "rounded-[1.5rem] p-8 w-[95%] max-w-2xl max-h-[90vh] overflow-y-auto relative shadow-2xl z-[10000001] flex flex-col gap-4"; // max-w-2xl for 680px approx
+  const modalContainerLiveClasses = "bg-coral text-white";
+  const modalContainerNotLiveClasses = "bg-white text-charcoal";
+  const closeModalButtonClasses = "absolute top-4 right-4 text-2xl bg-transparent border-none cursor-pointer";
+  const titleClasses = "text-center text-2xl font-bold"; // text-2xl for 1.75rem approx
+  const visibilitySelectClasses = "py-1.5 px-4 rounded-full font-comfortaa border border-gray-300 focus:ring-2 focus:ring-coral";
+  const videoContainerClasses = "bg-black rounded-xl h-60 mb-4 flex items-center justify-center text-center";
+  const videoElementClasses = "w-full h-full object-cover rounded-xl";
+  const controlButtonClasses = "py-2.5 px-6 rounded-full border-none font-bold transition-colors duration-150";
+  const startButtonClasses = `${controlButtonClasses} bg-coral text-white hover:bg-coral-dark`;
+  const stopButtonClasses = `${controlButtonClasses} bg-white text-coral hover:bg-blush`;
+  const commentsContainerClasses = "max-h-36 overflow-y-auto mb-4 border border-gray-200 rounded-lg bg-white text-charcoal p-2 space-y-1";
+  const commentItemClasses = "py-1 px-2 flex justify-between items-center text-sm";
+  const deleteCommentButtonClasses = "text-coral hover:text-coral-dark bg-transparent border-none text-lg";
+  const commentInputClasses = "flex-1 py-2 px-4 rounded-full border border-gray-300 focus:ring-1 focus:ring-coral outline-none";
+  const submitCommentButtonClasses = "bg-coral text-white border-none py-2 px-4 rounded-full font-bold hover:bg-coral-dark transition-colors";
+
+
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        backgroundColor: "rgba(0,0,0,0.6)",
-        zIndex: 10000000,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontFamily: "Comfortaa, sans-serif",
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: isLive ? "#FF6B6B" : "#fff",
-          color: isLive ? "#fff" : "#333",
-          borderRadius: "1.5rem",
-          padding: "2rem",
-          width: "95%",
-          maxWidth: "680px",
-          maxHeight: "90vh",
-          overflowY: "auto",
-          position: "relative",
-          boxShadow: "0 10px 40px rgba(0,0,0,0.2)",
-          zIndex: 10000001,
-        }}
-      >
+    <div className={modalOverlayClasses}>
+      <div className={`${modalContainerBaseClasses} ${isLive ? modalContainerLiveClasses : modalContainerNotLiveClasses}`}>
         <button
           onClick={onClose}
-          style={{
-            position: "absolute",
-            top: "1rem",
-            right: "1rem",
-            fontSize: "1.5rem",
-            color: "#FF6B6B",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-          }}
+          className={`${closeModalButtonClasses} ${isLive ? 'text-white hover:text-gray-200' : 'text-coral hover:text-coral-dark'}`}
         >
           ✕
         </button>
 
-        <h2
-          style={{
-            textAlign: "center",
-            fontSize: "1.75rem",
-            marginBottom: "1.5rem",
-            color: isLive ? "#fff" : "#FF6B6B",
-          }}
-        >
+        <h2 className={`${titleClasses} ${isLive ? 'text-white' : 'text-coral'}`}>
           go live
         </h2>
 
+        {notification.message && (
+          <div className={isLive ? 'bg-white/20 p-2 rounded-lg' : ''}> {/* Adjust notification style if live */}
+            <InlineNotification
+              message={notification.message}
+              type={notification.type}
+              onClose={() => setNotification({ message: '', type: '' })}
+            />
+          </div>
+        )}
+
         {!isLive && (
-          <div style={{ textAlign: "center", marginBottom: "1rem" }}>
-            <label style={{ marginRight: "0.5rem" }}>Visibility:</label>
+          <div className="text-center mb-4">
+            <label className={`mr-2 ${isLive ? 'text-white' : 'text-charcoal'}`}>Visibility:</label>
             <select
               value={visibility}
               onChange={(e) => setVisibility(e.target.value)}
-              style={{
-                padding: "0.4rem 1rem",
-                borderRadius: "9999px",
-                fontFamily: "Comfortaa, sans-serif",
-              }}
+              className={visibilitySelectClasses}
             >
               <option value="public">Public</option>
               <option value="followers" disabled>
@@ -186,91 +177,49 @@ const GoLiveModal = ({ onClose }) => {
           </div>
         )}
 
-        <div
-          style={{
-            backgroundColor: "#000",
-            borderRadius: "1rem",
-            height: "240px",
-            marginBottom: "1rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+        <div className={videoContainerClasses}>
           {!cameraError && isLive ? (
-            <video ref={videoRef} muted playsInline style={{ width: "100%", height: "100%" }} />
+            <video ref={videoRef} muted playsInline className={videoElementClasses} />
           ) : cameraError ? (
-            <span style={{ color: "#fff", fontWeight: "bold" }}>
+            <span className="text-white font-bold p-4">
               🎥 Camera not available. Please check permissions.
             </span>
           ) : (
-            <span style={{ color: "#FF6B6B", fontWeight: "bold" }}>Waiting to go live...</span>
+            <span className="text-coral font-bold">Waiting to go live...</span>
           )}
         </div>
 
-        <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+        <div className="text-center mb-4">
           {!isLive ? (
             <button
               onClick={handleStartLive}
-              style={{
-                backgroundColor: "#FF6B6B",
-                color: "white",
-                padding: "0.6rem 1.5rem",
-                borderRadius: "9999px",
-                border: "none",
-                fontWeight: "bold",
-              }}
+              className={startButtonClasses}
             >
               Start Live
             </button>
           ) : (
             <button
               onClick={handleStopLive}
-              style={{
-                backgroundColor: "#fff",
-                color: "#FF6B6B",
-                padding: "0.6rem 1.5rem",
-                borderRadius: "9999px",
-                border: "none",
-                fontWeight: "bold",
-              }}
+              className={stopButtonClasses}
             >
               Stop Live
             </button>
           )}
         </div>
 
-        <div
-          style={{
-            maxHeight: "150px",
-            overflowY: "auto",
-            marginBottom: "1rem",
-            border: "1px solid #eee",
-            borderRadius: "0.75rem",
-            backgroundColor: "#fff",
-            color: "#333",
-          }}
-        >
+        <div className={commentsContainerClasses}>
           {comments.map((c) => (
             <div
               key={c.id}
-              style={{
-                padding: "0.5rem 1rem",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
+              className={commentItemClasses}
             >
               <span>
-                <strong>{c.username}:</strong> {c.content}
+                <strong className={isLive ? 'text-white/80' : 'text-coral'}>{c.username}:</strong> {c.content}
               </span>
               {(currentUser?.uid === c.userId || currentUser?.uid === hostId) && (
                 <button
                   onClick={() => handleDeleteComment(c.id, c.userId)}
-                  style={{
-                    color: "#FF6B6B",
-                    background: "none",
-                    border: "none",
-                  }}
+                  className={deleteCommentButtonClasses}
                 >
                   ✕
                 </button>
@@ -279,29 +228,19 @@ const GoLiveModal = ({ onClose }) => {
           ))}
         </div>
 
-        <div style={{ display: "flex", gap: "0.5rem" }}>
+        <div className="flex gap-2">
           <input
             type="text"
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Leave a comment..."
-            style={{
-              flex: 1,
-              padding: "0.5rem 1rem",
-              borderRadius: "9999px",
-              border: "1px solid #ccc",
-            }}
+            className={commentInputClasses}
+            disabled={!isLive && !streamId} // Disable if not live or no stream
           />
           <button
             onClick={handleCommentSubmit}
-            style={{
-              backgroundColor: "#FF6B6B",
-              color: "white",
-              border: "none",
-              padding: "0.5rem 1rem",
-              borderRadius: "9999px",
-              fontWeight: "bold",
-            }}
+            className={submitCommentButtonClasses}
+            disabled={!isLive && !streamId} // Disable if not live or no stream
           >
             ➤
           </button>

@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import InlineNotification from "./InlineNotification"; // Import InlineNotification
 
 const PostForm = ({ onClose, post = null }) => {
   const isEdit = !!post;
@@ -22,6 +23,7 @@ const PostForm = ({ onClose, post = null }) => {
   const [taggedAmigos, setTaggedAmigos] = useState(post?.taggedAmigos || []);
   const [taggedGrupos, setTaggedGrupos] = useState(post?.taggedGrupos || []);
   const fileInputRef = useRef(null);
+  const [notification, setNotification] = useState({ message: '', type: '' }); // State for notification
 
   useEffect(() => {
     const loadData = async () => {
@@ -44,13 +46,20 @@ const PostForm = ({ onClose, post = null }) => {
   const handlePost = async (e) => {
     e.preventDefault();
     const trimmed = content.trim();
-    if (!trimmed && !file) return alert("Add text or media.");
+    if (!trimmed && !file) {
+      setNotification({ message: "Add text or media to your post.", type: "warning" });
+      return;
+    }
+    setNotification({ message: '', type: '' }); // Clear notification
 
     const currentUser = auth.currentUser;
 
     if (!currentUser) {
       return onAuthStateChanged(auth, async (user) => {
-        if (!user) return alert("You must be logged in to post.");
+        if (!user) {
+          setNotification({ message: "You must be logged in to post.", type: "error" });
+          return;
+        }
         await submitPost(user.uid);
       });
     }
@@ -81,6 +90,7 @@ const PostForm = ({ onClose, post = null }) => {
           taggedGrupos,
           updatedAt: serverTimestamp(),
         });
+        setNotification({ message: "Post updated successfully!", type: "success"});
       } else {
         await addDoc(collection(db, "posts"), {
           content: content.trim(),
@@ -94,21 +104,42 @@ const PostForm = ({ onClose, post = null }) => {
           videoUrl,
           taggedAmigos,
           taggedGrupos,
-          type: "amigo",
+          type: "amigo", // Assuming default type, can be dynamic if needed
         });
+        setNotification({ message: "Post created successfully!", type: "success"});
       }
 
-      if (typeof onClose === "function") onClose();
+      if (typeof onClose === "function") {
+        setTimeout(() => onClose(), 1500); // Close modal after showing success message
+      }
     } catch (err) {
       console.error("Post failed:", err);
-      alert("Post failed.");
+      setNotification({ message: `Post failed: ${err.message}`, type: "error"});
     }
 
     setLoading(false);
   };
+  
+  // Define Tailwind classes
+  const formClasses = "flex flex-col gap-4 bg-white p-6 rounded-[1.5rem] shadow-[0_5px_25px_rgba(0,0,0,0.1)] z-0 font-comfortaa";
+  const textareaClasses = "w-full p-4 rounded-xl border border-gray-300 bg-white text-coral placeholder-coral/70 text-base resize-none focus:ring-2 focus:ring-coral focus:border-transparent";
+  const selectClasses = "flex-1 p-2.5 rounded-xl font-comfortaa text-sm border border-gray-300 bg-white text-gray-700 min-w-[48%] focus:ring-2 focus:ring-coral focus:border-transparent";
+  const fileButtonClasses = "text-2xl bg-transparent border-none cursor-pointer animate-pulse text-coral hover:text-coral-dark";
+  const submitButtonClasses = "w-full bg-white text-coral py-3.5 border border-coral rounded-full font-bold text-base cursor-pointer transition-colors duration-200 ease-in-out hover:bg-coral hover:text-white disabled:opacity-50 disabled:cursor-not-allowed";
+  const mediaPreviewClasses = "max-w-full max-h-48 sm:max-h-52 object-cover rounded-xl mb-4";
+
 
   return (
-    <form onSubmit={handlePost} style={{ display: "flex", flexDirection: "column", gap: "1rem", backgroundColor: "white", padding: "1.5rem", borderRadius: "1.5rem", boxShadow: "0 5px 25px rgba(0,0,0,0.1)", zIndex: 0 }}>
+    <form onSubmit={handlePost} className={formClasses}>
+      {notification.message && (
+        <div className="mb-2">
+          <InlineNotification
+            message={notification.message}
+            type={notification.type}
+            onClose={() => setNotification({ message: '', type: '' })}
+          />
+        </div>
+      )}
       <textarea
         id="post-content"
         name="content"
@@ -116,17 +147,17 @@ const PostForm = ({ onClose, post = null }) => {
         value={content}
         onChange={(e) => setContent(e.target.value)}
         rows={4}
-        style={{ width: "100%", padding: "1rem", borderRadius: "1rem", border: "1px solid #ccc", backgroundColor: "#fff", color: "#FF6B6B", fontFamily: "Comfortaa, sans-serif", fontSize: "1rem", resize: "none" }}
+        className={textareaClasses}
       />
 
-      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+      <div className="flex gap-4 flex-wrap">
         <select
           id="tagged-amigos"
           name="taggedAmigos"
           multiple
           value={taggedAmigos}
           onChange={(e) => setTaggedAmigos(Array.from(e.target.selectedOptions, option => option.value))}
-          style={{ flex: 1, padding: "0.6rem", borderRadius: "1rem", fontFamily: "Comfortaa, sans-serif", fontSize: "0.95rem", border: "1px solid #ccc", backgroundColor: "#fff", color: "#444", minWidth: "48%" }}
+          className={selectClasses}
         >
           <option disabled value="">Tag amigos</option>
           {allAmigos.map(a => <option key={a.id} value={a.id}>{a.displayName || a.email}</option>)}
@@ -138,7 +169,7 @@ const PostForm = ({ onClose, post = null }) => {
           multiple
           value={taggedGrupos}
           onChange={(e) => setTaggedGrupos(Array.from(e.target.selectedOptions, option => option.value))}
-          style={{ flex: 1, padding: "0.6rem", borderRadius: "1rem", fontFamily: "Comfortaa, sans-serif", fontSize: "0.95rem", border: "1px solid #ccc", backgroundColor: "#fff", color: "#444", minWidth: "48%" }}
+          className={selectClasses}
         >
           <option disabled value="">Tag grupos</option>
           {allGrupos.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
@@ -147,11 +178,11 @@ const PostForm = ({ onClose, post = null }) => {
 
       {!isEdit && (
         <>
-          <div style={{ display: "flex", justifyContent: "center" }}>
+          <div className="flex justify-center">
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              style={{ fontSize: "1.5rem", backgroundColor: "transparent", border: "none", cursor: "pointer", animation: "pulse 2s infinite", color: "#FF6B6B" }}
+              className={fileButtonClasses}
             >📸 / 🎥</button>
           </div>
 
@@ -162,22 +193,22 @@ const PostForm = ({ onClose, post = null }) => {
             ref={fileInputRef}
             accept="image/*,video/*"
             onChange={(e) => setFile(e.target.files[0])}
-            style={{ display: "none" }}
+            className="hidden"
           />
 
           {file && (
-            <div style={{ textAlign: "center" }}>
+            <div className="text-center">
               {file.type.startsWith("image") ? (
-                <img src={URL.createObjectURL(file)} alt="Preview" style={{ maxWidth: "100%", maxHeight: "200px", objectFit: "cover", borderRadius: "1rem", marginBottom: "1rem" }} />
+                <img src={URL.createObjectURL(file)} alt="Preview" className={mediaPreviewClasses} />
               ) : (
-                <video src={URL.createObjectURL(file)} controls style={{ maxWidth: "100%", maxHeight: "240px", borderRadius: "1rem", marginBottom: "1rem" }} />
+                <video src={URL.createObjectURL(file)} controls className={mediaPreviewClasses} />
               )}
             </div>
           )}
         </>
       )}
 
-      <button type="submit" disabled={loading} style={{ width: "100%", backgroundColor: "#FFFFFF", color: "#FF6B6B", padding: "0.9rem", border: "1px solid #FF6B6B", borderRadius: "9999px", fontWeight: "bold", fontFamily: "Comfortaa, sans-serif", fontSize: "1rem", cursor: "pointer", transition: "0.2s ease-in-out" }}>
+      <button type="submit" disabled={loading} className={submitButtonClasses}>
         {loading ? (isEdit ? "Saving..." : "Posting...") : isEdit ? "Save Changes" : "Post"}
       </button>
     </form>

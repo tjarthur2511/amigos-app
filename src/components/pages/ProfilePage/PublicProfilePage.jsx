@@ -94,20 +94,21 @@ const PublicProfilePage = () => {
                           userData.background === 'city' ? 'bg-gradient-to-br from-gray-200 to-gray-400' :
                           userData.background === 'forest' ? 'bg-gradient-to-br from-green-100 to-green-400' :
                           userData.background === 'galaxy' ? 'bg-gradient-to-br from-purple-900 to-indigo-700 text-white' :
-                          'bg-[#FFF1F1]';
+                          userData.background === 'blush' ? 'bg-blush' : // Added blush option from theme
+                          'bg-coral'; // Default to coral if no specific background or if 'Default Coral' was selected
 
   return (
-    <div className={`min-h-screen font-[Comfortaa] ${backgroundClass}`}>
+    <div className={`min-h-screen font-comfortaa ${backgroundClass}`}> {/* Used font-comfortaa */}
       <NavBar />
       <div className="max-w-3xl mx-auto py-8 px-4">
         <div className="flex items-center gap-4 mb-6">
           <img
             src={userData.photoURL || 'https://cdn-icons-png.flaticon.com/512/847/847969.png'}
             alt="avatar"
-            className="w-20 h-20 rounded-full object-cover border-2 border-[#FF6B6B]"
+            className="w-20 h-20 rounded-full object-cover border-2 border-coral" // Used border-coral
           />
           <div className="flex-1">
-            <h2 className="text-2xl font-bold text-[#FF6B6B]">{userData.displayName || 'Unnamed Amigo'}</h2>
+            <h2 className="text-2xl font-bold text-coral">{userData.displayName || 'Unnamed Amigo'}</h2> {/* Used text-coral */}
             <p className="text-sm text-gray-600 text-center">{userData.bio || 'No bio provided.'}</p>
             <div className="text-xs text-center mt-1 text-gray-500">
               <p><strong>Status:</strong> {userData.status || 'No status'}</p>
@@ -122,7 +123,7 @@ const PublicProfilePage = () => {
               className={`px-4 py-2 rounded-full font-semibold text-sm transition duration-150 ${
                 isFollowing
                   ? 'bg-gray-300 text-black hover:bg-gray-400'
-                  : 'bg-[#FF6B6B] text-white hover:bg-[#ff4c4c]'
+                  : 'bg-coral text-white hover:bg-coral-dark' // Used bg-coral and hover:bg-coral-dark
               }`}
             >
               {isFollowing ? 'Unfollow' : 'Follow'}
@@ -132,11 +133,11 @@ const PublicProfilePage = () => {
 
         <div className="space-y-6">
           <div>
-            <h3 className="text-lg font-semibold text-[#FF6B6B] mb-2">Recent Posts</h3>
+            <h3 className="text-lg font-semibold text-coral mb-2">Recent Posts</h3> {/* Used text-coral */}
             {posts.length > 0 ? (
               <ul className="space-y-2">
                 {posts.map(post => (
-                  <li key={post.id} className="p-4 bg-white rounded shadow">
+                  <li key={post.id} className="p-4 bg-white rounded-xl shadow"> {/* Added rounded-xl */}
                     <p>{post.content}</p>
                   </li>
                 ))}
@@ -147,11 +148,11 @@ const PublicProfilePage = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold text-[#FF6B6B] mb-2">Recent Quiz Answers</h3>
+            <h3 className="text-lg font-semibold text-coral mb-2">Recent Quiz Answers</h3> {/* Used text-coral */}
             {answers.length > 0 ? (
               <ul className="space-y-2">
                 {answers.map(answer => (
-                  <li key={answer.id} className="p-4 bg-white rounded shadow">
+                  <li key={answer.id} className="p-4 bg-white rounded-xl shadow"> {/* Added rounded-xl */}
                     <p><strong>Q:</strong> {answer.question}</p>
                     <p><strong>A:</strong> {answer.answer}</p>
                   </li>
@@ -163,11 +164,11 @@ const PublicProfilePage = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold text-[#FF6B6B] mb-2">Grupos</h3>
+            <h3 className="text-lg font-semibold text-coral mb-2">Grupos</h3> {/* Used text-coral */}
             {grupos.length > 0 ? (
               <ul className="space-y-2">
                 {grupos.map(grupo => (
-                  <li key={grupo.id} className="p-4 bg-white rounded shadow">
+                  <li key={grupo.id} className="p-4 bg-white rounded-xl shadow"> {/* Added rounded-xl */}
                     <p className="font-bold">{grupo.name}</p>
                     <p>{grupo.description}</p>
                   </li>

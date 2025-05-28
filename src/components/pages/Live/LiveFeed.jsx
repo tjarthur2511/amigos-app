@@ -17,8 +17,8 @@ const LiveFeed = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center space-y-6">
-      <h2 className="text-3xl font-bold text-[#FF6B6B]">Live Feed</h2>
+    <div className="flex flex-col items-center space-y-6 font-comfortaa"> {/* Added font-comfortaa */}
+      <h2 className="text-3xl font-bold text-coral">Live Feed</h2> {/* Used text-coral */}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl">
         {liveEvents.map((event) => (
@@ -39,7 +39,7 @@ const LiveFeed = () => {
               />
             </motion.div>
 
-            <h3 className="text-2xl font-bold text-[#FF6B6B]">{event.title}</h3>
+            <h3 className="text-2xl font-bold text-coral">{event.title}</h3> {/* Used text-coral */}
             <p className="text-gray-700">Hosted by: {event.host}</p>
             <p className="text-gray-500">{event.time}</p>
           </div>

@@ -53,49 +53,25 @@ const PostCard = ({ post }) => {
     setEmojiPickerVisible(null);
   };
 
+  const viewAllCommentsButtonClasses = "bg-white text-coral border border-coral py-2.5 px-5 rounded-xl font-bold text-sm mt-4 cursor-pointer hover:bg-coral hover:text-white transition-colors";
+
   return (
-    <div
-      style={{
-        backgroundColor: "#fff",
-        borderRadius: "1.5rem",
-        padding: "1.5rem",
-        marginBottom: "2rem",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-        fontFamily: "Comfortaa, sans-serif",
-        position: "relative",
-        zIndex: 0
-      }}
-    >
+    <div className="bg-white rounded-[1.5rem] p-6 mb-8 shadow-[0_4px_12px_rgba(0,0,0,0.1)] font-comfortaa relative z-0">
       {currentUser?.uid === post.userId && (
         <button
           onClick={() => setShowEditModal(true)}
-          style={{
-            position: "absolute",
-            top: "1rem",
-            right: "1rem",
-            background: "transparent",
-            border: "none",
-            fontSize: "1.25rem",
-            cursor: "pointer",
-            color: "#FF6B6B"
-          }}
+          className="absolute top-4 right-4 bg-transparent border-none text-xl cursor-pointer text-coral hover:text-coral-dark"
         >
           ✏️
         </button>
       )}
 
-      <div style={{ marginBottom: "0.5rem", fontWeight: "bold", color: "#FF6B6B" }}>
+      <div className="mb-2 font-bold text-coral">
         @{author?.displayName || "anon"}
       </div>
 
       {post.content && (
-        <p style={{
-          fontSize: "1rem",
-          color: "#FF6B6B",
-          marginBottom: "1rem",
-          wordWrap: "break-word",
-          whiteSpace: "pre-line"
-        }}>
+        <p className="text-base text-coral mb-4 break-words whitespace-pre-line">
           {post.content}
         </p>
       )}
@@ -104,12 +80,7 @@ const PostCard = ({ post }) => {
         <img
           src={post.imageUrl}
           alt="post media"
-          style={{
-            width: "100%",
-            borderRadius: "1rem",
-            marginBottom: "1rem",
-            objectFit: "cover"
-          }}
+          className="w-full rounded-xl mb-4 object-cover"
         />
       )}
 
@@ -117,55 +88,41 @@ const PostCard = ({ post }) => {
         <video
           src={post.videoUrl}
           controls
-          style={{
-            width: "100%",
-            borderRadius: "1rem",
-            marginBottom: "1rem"
-          }}
+          className="w-full rounded-xl mb-4"
         />
       )}
 
-      <div style={{ fontSize: "0.9rem", color: "#FF6B6B", marginBottom: "0.5rem" }}>
+      <div className="text-sm text-coral mb-2">
         {post.hashtags?.map((tag) => (
-          <span key={tag} style={{ marginRight: "0.5rem" }}>{tag}</span>
+          <span key={tag} className="mr-2">{tag}</span>
         ))}
       </div>
 
-      <div style={{ fontSize: "0.9rem", color: "#999", marginBottom: "1rem" }}>
+      <div className="text-sm text-gray-500 mb-4"> {/* text-gray-500 for #999 */}
         Tagged:
         {(post.taggedAmigos || []).map(uid => (
-          <span key={uid} style={{ marginLeft: "0.3rem" }}>👤</span>
+          <span key={uid} className="ml-1">👤</span>
         ))}
         {(post.taggedGrupos || []).map(gid => (
-          <span key={gid} style={{ marginLeft: "0.3rem" }}>👥</span>
+          <span key={gid} className="ml-1">👥</span>
         ))}
       </div>
 
-      <div style={{ marginTop: "1rem" }}>
+      <div className="mt-4">
         {comments.map((comment) => {
           const reactions = comment.emojis || {};
           return (
             <div
               key={comment.id}
-              style={{
-                backgroundColor: "#ffffff",
-                padding: "0.5rem 1rem",
-                borderRadius: "0.75rem",
-                marginBottom: "0.5rem",
-                fontSize: "0.95rem",
-                color: "#FF6B6B",
-                fontWeight: "500",
-                position: "relative",
-                border: "1px solid #FF6B6B"
-              }}
+              className="bg-white py-2 px-4 rounded-lg mb-2 text-base text-coral font-medium relative border border-coral" // text-base for 0.95rem approx
             >
-              <strong style={{ marginRight: "0.3rem" }}>💬</strong>
+              <strong className="mr-1">💬</strong>
               {comment.content}
-              <div style={{ marginTop: "0.4rem", display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+              <div className="mt-1.5 flex flex-wrap gap-1.5">
                 {Object.entries(reactions).map(([emoji, users]) => (
                   <span
                     key={emoji}
-                    style={{ fontSize: "1.1rem", color: "#FF6B6B", marginRight: "0.5rem" }}
+                    className="text-lg text-coral mr-2" // text-lg for 1.1rem approx
                   >
                     {emoji} {users.length}
                   </span>
@@ -174,13 +131,7 @@ const PostCard = ({ post }) => {
                   onClick={() =>
                     setEmojiPickerVisible(emojiPickerVisible === comment.id ? null : comment.id)
                   }
-                  style={{
-                    background: "none",
-                    border: "none",
-                    fontSize: "1.1rem",
-                    cursor: "pointer",
-                    color: "#FF6B6B"
-                  }}
+                  className="bg-transparent border-none text-lg cursor-pointer text-coral hover:text-coral-dark"
                 >
                   😀
                 </button>
@@ -193,20 +144,10 @@ const PostCard = ({ post }) => {
         })}
       </div>
 
-      <div style={{ textAlign: "right" }}>
+      <div className="text-right">
         <button
           onClick={() => setShowModal(true)}
-          style={{
-            backgroundColor: "#FFFFFF",
-            color: "#FF6B6B",
-            border: "1px solid #FF6B6B",
-            padding: "0.6rem 1.2rem",
-            borderRadius: "1rem",
-            fontWeight: "bold",
-            fontSize: "0.9rem",
-            marginTop: "1rem",
-            cursor: "pointer"
-          }}
+          className={viewAllCommentsButtonClasses}
         >
           View All Comments
         </button>

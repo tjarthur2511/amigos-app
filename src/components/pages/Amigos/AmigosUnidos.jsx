@@ -30,75 +30,35 @@ const AmigosUnidos = () => {
     loadFollowedAmigos();
   }, []);
 
+  // Define reused class strings
+  const titleClasses = "text-xl text-coral font-bold text-center mb-4"; // text-xl for 1.5rem approx
+  const userNameClasses = "text-lg font-bold"; // text-lg for 1.2rem approx
+  const userDetailClasses = "text-sm text-gray-600"; // text-sm for 0.9rem, gray-600 for #555
+  const itemClasses = "bg-white p-4 rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.15)] z-0"; // rounded-xl for 1rem
+
   return (
-    <div style={containerStyle}>
-      <h3 style={titleStyle}>Amigos Unidos</h3>
+    <div className="font-comfortaa bg-white p-8 rounded-[1.5rem] shadow-[0_5px_20px_rgba(0,0,0,0.1)] z-0">
+      <h3 className={titleClasses}>Amigos Unidos</h3>
       {followedAmigos.length > 0 ? (
-        <ul style={listStyle}>
+        <ul className="flex flex-col gap-4">
           {followedAmigos.map(amigo => (
             <li
               key={amigo.id}
-              style={itemStyle}
+              className={`${itemClasses} hover:bg-blush transition cursor-pointer`} // Used blush from theme
               onClick={() => navigate(`/profile/${amigo.id}`)}
-              className="hover:bg-[#fff7f7] transition cursor-pointer"
             >
-              <p style={userName}>{amigo.displayName}</p>
-              <p style={userDetail}>{amigo.email}</p>
+              <p className={userNameClasses}>{amigo.displayName}</p>
+              <p className={userDetailClasses}>{amigo.email}</p>
             </li>
           ))}
         </ul>
       ) : (
-        <p style={noDataStyle}>You aren’t following any amigos yet.</p>
+        <p className="text-coral text-center mt-4">You aren’t following any amigos yet.</p>
       )}
     </div>
   );
 };
 
-const containerStyle = {
-  fontFamily: 'Comfortaa, sans-serif',
-  backgroundColor: '#ffffff',
-  padding: '2rem',
-  borderRadius: '1.5rem',
-  boxShadow: '0 5px 20px rgba(0,0,0,0.1)',
-  zIndex: 0
-};
-
-const titleStyle = {
-  fontSize: '1.5rem',
-  fontWeight: 'bold',
-  color: '#FF6B6B',
-  textAlign: 'center',
-  marginBottom: '1rem'
-};
-
-const listStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '1rem'
-};
-
-const itemStyle = {
-  backgroundColor: '#ffffff',
-  padding: '1rem',
-  borderRadius: '1rem',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-  zIndex: 0
-};
-
-const userName = {
-  fontSize: '1.2rem',
-  fontWeight: 'bold'
-};
-
-const userDetail = {
-  fontSize: '0.9rem',
-  color: '#555'
-};
-
-const noDataStyle = {
-  color: '#FF6B6B',
-  textAlign: 'center',
-  marginTop: '1rem'
-};
+// Style object constants are no longer needed.
 
 export default AmigosUnidos;

@@ -10,8 +10,8 @@ const formatDate = (ts) => {
 
 const EventCard = ({ event }) => {
   return (
-    <div className="bg-white text-[#333] p-4 rounded-xl shadow-md">
-      <h3 className="text-xl font-bold text-[#FF6B6B]">{event.title || "Untitled Event"}</h3>
+    <div className="bg-white text-charcoal p-4 rounded-xl shadow-md font-comfortaa"> {/* Used text-charcoal and font-comfortaa */}
+      <h3 className="text-xl font-bold text-coral">{event.title || "Untitled Event"}</h3> {/* Used text-coral */}
       <p className="text-sm italic text-gray-600 mb-2">{formatDate(event.date)}</p>
       <p className="text-sm">{event.description || "No description provided"}</p>
       {event.location && (

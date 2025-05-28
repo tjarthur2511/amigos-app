@@ -48,38 +48,44 @@ const Explore = () => {
     fetchMarkers();
   }, [selectedType]);
 
+  // Define reused class strings
+  const tabClasses = "bg-coral text-white border-none py-3 px-5 rounded-[30px] text-base font-bold font-comfortaa cursor-pointer shadow-[0_3px_8px_rgba(0,0,0,0.2)] hover:bg-coral-dark transition-all";
+  const sectionTitleClasses = "text-3xl text-coral mb-4 text-center"; // Adjusted from 2rem to 3xl
+  const dropdownClasses = "py-2.5 px-4 text-base rounded-full border border-coral font-comfortaa text-coral cursor-pointer mb-4 focus:outline-none focus:ring-2 focus:ring-coral focus:border-transparent";
+  const mapContainerClasses = "w-full h-[400px] rounded-xl"; // For GoogleMap mapContainerStyle
+
   return (
-    <div style={pageStyle} className="font-[Comfortaa] bg-transparent min-h-screen overflow-hidden relative z-0">
-      <div className="absolute top-0 left-0 w-full h-full -z-[1000] bg-[#FF6B6B]" />
-      <div style={bgEffect} className="absolute top-0 left-0 w-full h-full -z-[500] pointer-events-none">
+    <div className="font-comfortaa bg-transparent min-h-screen overflow-hidden relative z-0">
+      <div className="absolute top-0 left-0 w-full h-full -z-[1000] bg-coral" />
+      <div className="absolute top-0 left-0 w-full h-full -z-[500] pointer-events-none">
         <FallingAEffect />
       </div>
 
-      <header style={headerStyle} className="z-[10]">
+      <header className="flex justify-center pt-4 mb-[-1rem] z-[10]">
         <img
           src="/assets/amigoshangouts1.png"
           alt="Amigos Hangouts"
-          style={{ height: '20em', width: 'auto', animation: 'pulse-a 1.75s infinite', marginBottom: '-5rem' }}
+          className="h-[20em] w-auto animate-[pulse-a_1.75s_infinite] mb-[-5rem]"
         />
       </header>
 
-      <nav style={navWrapper} className="z-[10]">
-        <div style={navStyle}>
-          <button onClick={() => navigate('/')} style={tabStyle}>Home</button>
-          <button onClick={() => navigate('/amigos')} style={tabStyle}>Amigos</button>
-          <button onClick={() => navigate('/grupos')} style={tabStyle}>Grupos</button>
-          <button onClick={() => navigate('/profile')} style={tabStyle}>Profile</button>
+      <nav className="flex justify-center mt-0 mb-6 z-[10]">
+        <div className="bg-white py-3 px-4 rounded-[30px] shadow-[0_5px_15px_rgba(0,0,0,0.1)] flex gap-4">
+          <button onClick={() => navigate('/')} className={tabClasses}>Home</button>
+          <button onClick={() => navigate('/amigos')} className={tabClasses}>Amigos</button>
+          <button onClick={() => navigate('/grupos')} className={tabClasses}>Grupos</button>
+          <button onClick={() => navigate('/profile')} className={tabClasses}>Profile</button>
         </div>
       </nav>
 
-      <div style={mainCardWrapper} className="z-[10]">
-        <div style={mainCardStyle}>
-          <h2 style={sectionTitle}>Explore {selectedType.charAt(0).toUpperCase() + selectedType.slice(1)}</h2>
+      <div className="flex justify-center mb-8 z-[10]">
+        <div className="bg-white p-8 rounded-[1.5rem] shadow-[0_5px_25px_rgba(0,0,0,0.2)] w-[90%] max-w-[800px] min-h-[60vh] text-center relative z-0">
+          <h2 className={sectionTitleClasses}>Explore {selectedType.charAt(0).toUpperCase() + selectedType.slice(1)}</h2>
 
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
-            style={dropdownStyle}
+            className={dropdownClasses}
           >
             <option value="amigos">Explore Amigos</option>
             <option value="grupos">Explore Grupos</option>
@@ -88,7 +94,8 @@ const Explore = () => {
 
           {isLoaded && (
             <div className="mt-6">
-              <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10}>
+              {/* Ensure mapContainerClassName is used if available, otherwise pass style directly */}
+              <GoogleMap mapContainerClassName={mapContainerClasses} mapContainerStyle={{width: '100%', height: '400px', borderRadius: '1rem'}} center={center} zoom={10}>
                 {mapMarkers.map((m) => (
                   <Marker key={m.id} position={{ lat: m.lat, lng: m.lng }} />
                 ))}
@@ -101,98 +108,6 @@ const Explore = () => {
   );
 };
 
-// Layout styles
-const pageStyle = {
-  fontFamily: 'Comfortaa, sans-serif',
-  backgroundColor: 'transparent',
-  minHeight: '100vh',
-  overflow: 'hidden',
-  position: 'relative',
-  zIndex: 0,
-};
-
-const bgEffect = {
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '100%',
-  zIndex: 0,
-  pointerEvents: 'none',
-};
-
-const headerStyle = {
-  display: 'flex',
-  justifyContent: 'center',
-  paddingTop: '1rem',
-  marginBottom: '-1rem',
-};
-
-const navWrapper = {
-  display: 'flex',
-  justifyContent: 'center',
-  marginTop: '0rem',
-  marginBottom: '1.5rem',
-  zIndex: 0,
-};
-
-const navStyle = {
-  backgroundColor: 'white',
-  padding: '0.8rem 1rem',
-  borderRadius: '30px',
-  boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
-  display: 'flex',
-  gap: '1rem',
-};
-
-const tabStyle = {
-  backgroundColor: '#FF6B6B',
-  color: 'white',
-  border: 'none',
-  padding: '12px 20px',
-  borderRadius: '30px',
-  fontSize: '1rem',
-  fontWeight: 'bold',
-  fontFamily: 'Comfortaa, sans-serif',
-  cursor: 'pointer',
-  boxShadow: '0 3px 8px rgba(0,0,0,0.2)',
-};
-
-const mainCardWrapper = {
-  display: 'flex',
-  justifyContent: 'center',
-  marginBottom: '2rem',
-  zIndex: 0,
-};
-
-const mainCardStyle = {
-  backgroundColor: 'white',
-  padding: '2rem',
-  borderRadius: '1.5rem',
-  boxShadow: '0 5px 25px rgba(0,0,0,0.2)',
-  width: '90%',
-  maxWidth: '800px',
-  minHeight: '60vh',
-  textAlign: 'center',
-  position: 'relative',
-  zIndex: 0,
-};
-
-const sectionTitle = {
-  fontSize: '2rem',
-  color: '#FF6B6B',
-  marginBottom: '1rem',
-};
-
-const dropdownStyle = {
-  padding: '10px 16px',
-  fontSize: '1rem',
-  borderRadius: '30px',
-  border: '1px solid #FF6B6B',
-  fontFamily: 'Comfortaa, sans-serif',
-  color: '#FF6B6B',
-  cursor: 'pointer',
-  marginBottom: '1rem',
-};
+// Style object constants are no longer needed.
 
 export default Explore;

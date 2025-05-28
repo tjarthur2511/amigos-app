@@ -43,15 +43,20 @@ const SuggestedAmigos = ({ amigosToExclude = [] }) => {
     );
   };
 
+  // Define reused class strings
+  const userNameClasses = "text-lg text-coral font-bold"; // text-lg is approx 1.125rem, using instead of 1.2rem
+  const userDetailClasses = "text-sm text-gray-600"; // text-sm for 0.9rem, gray-600 for #555
+  const itemClasses = "bg-white p-4 rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.15)] z-0"; // rounded-xl for 1rem
+
   return (
-    <div style={containerStyle}>
+    <div className="bg-white p-4 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.1)] font-comfortaa z-0">
       {suggested.length > 0 ? (
-        <ul style={listStyle}>
+        <ul className="flex flex-col gap-4 mt-4">
           {suggested.map((user) => (
-            <li key={user.id} style={itemStyle} className="flex justify-between items-center hover:bg-[#fff7f7] transition cursor-pointer">
-              <div onClick={() => navigate(`/profile/${user.id}`)}>
-                <p style={userName}>{user.displayName}</p>
-                <p style={userDetail}>{user.email}</p>
+            <li key={user.id} className={`${itemClasses} flex justify-between items-center hover:bg-blush transition cursor-pointer`}> {/* Used blush from theme for #fff7f7 approx */}
+              <div onClick={() => navigate(`/profile/${user.id}`)} className="flex-grow">
+                <p className={userNameClasses}>{user.displayName}</p>
+                <p className={userDetailClasses}>{user.email}</p>
               </div>
               <button
                 onClick={() => toggleFollow(user.id)}
@@ -67,51 +72,12 @@ const SuggestedAmigos = ({ amigosToExclude = [] }) => {
           ))}
         </ul>
       ) : (
-        <p style={noDataStyle}>No suggested amigos yet.</p>
+        <p className="text-center text-coral mt-4">No suggested amigos yet.</p>
       )}
     </div>
   );
 };
 
-const containerStyle = {
-  backgroundColor: '#ffffff',
-  padding: '1rem',
-  borderRadius: '1rem',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-  fontFamily: 'Comfortaa, sans-serif',
-  zIndex: 0
-};
-
-const listStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '1rem',
-  marginTop: '1rem'
-};
-
-const itemStyle = {
-  backgroundColor: '#ffffff',
-  padding: '1rem',
-  borderRadius: '1rem',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-  zIndex: 0
-};
-
-const userName = {
-  fontSize: '1.2rem',
-  fontWeight: 'bold',
-  color: '#FF6B6B'
-};
-
-const userDetail = {
-  fontSize: '0.9rem',
-  color: '#555'
-};
-
-const noDataStyle = {
-  textAlign: 'center',
-  color: '#FF6B6B',
-  marginTop: '1rem'
-};
+// Style object constants are no longer needed.
 
 export default SuggestedAmigos;

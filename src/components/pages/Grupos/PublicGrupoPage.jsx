@@ -68,17 +68,17 @@ const PublicGrupoPage = () => {
   if (loading || !grupo) return null;
 
   return (
-    <div className="max-w-3xl mx-auto py-8 px-4 font-[Comfortaa]">
+    <div className="max-w-3xl mx-auto py-8 px-4 font-comfortaa"> {/* Applied font-comfortaa directly */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-[#FF6B6B]">{grupo.name || 'Unnamed Grupo'}</h1>
+          <h1 className="text-3xl font-bold text-coral">{grupo.name || 'Unnamed Grupo'}</h1> {/* Used text-coral */}
           <p className="text-sm text-gray-600">{grupo.description || 'No description available.'}</p>
           <p className="text-sm text-gray-500 mt-1">{members.length} member{members.length === 1 ? '' : 's'}</p>
         </div>
         <button
           onClick={toggleMembership}
           className={`px-4 py-2 rounded-full font-semibold text-sm transition duration-150 ${
-            isMember ? 'bg-gray-300 text-black hover:bg-gray-400' : 'bg-[#FF6B6B] text-white hover:bg-[#e15555]'
+            isMember ? 'bg-gray-300 text-black hover:bg-gray-400' : 'bg-coral text-white hover:bg-coral-dark' // Used bg-coral and hover:bg-coral-dark
           }`}
         >
           {isMember ? 'Leave' : 'Join'} Grupo
@@ -92,7 +92,7 @@ const PublicGrupoPage = () => {
       )}
 
       <div>
-        <h3 className="text-xl font-semibold text-[#FF6B6B] mb-2">Recent Posts</h3>
+        <h3 className="text-xl font-semibold text-coral mb-2">Recent Posts</h3> {/* Used text-coral */}
         {posts.length === 0 ? (
           <p className="text-sm text-gray-500">No posts yet in this grupo.</p>
         ) : (
@@ -100,7 +100,7 @@ const PublicGrupoPage = () => {
             {posts.map(post => (
               <div
                 key={post.id}
-                className="bg-white p-4 rounded-xl shadow border border-[#ffe0e0]"
+                className="bg-white p-4 rounded-xl shadow border border-blush" // Used border-blush
               >
                 <PostCard post={post} />
               </div>
@@ -110,8 +110,8 @@ const PublicGrupoPage = () => {
       </div>
 
       {isMember && (
-        <div className="mt-10 p-6 bg-white border border-[#ffe0e0] rounded-xl shadow">
-          <h4 className="text-lg font-semibold text-[#FF6B6B] mb-3">New Post (Coming Soon)</h4>
+        <div className="mt-10 p-6 bg-white border border-blush rounded-xl shadow"> {/* Used border-blush */}
+          <h4 className="text-lg font-semibold text-coral mb-3">New Post (Coming Soon)</h4> {/* Used text-coral */}
           <p className="text-sm text-gray-500">Posting UI will be enabled for members only.</p>
         </div>
       )}

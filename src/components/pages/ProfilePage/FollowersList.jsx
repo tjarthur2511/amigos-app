@@ -15,77 +15,35 @@ const FollowersList = ({ userId }) => {
     loadFollowers();
   }, [userId]);
 
+  // Define reused class strings
+  const titleClasses = "text-xl text-coral font-bold text-center mb-4"; // text-xl for 1.5rem approx
+  const userNameClasses = "text-lg text-coral font-bold"; // text-lg for 1.2rem approx
+  const userDetailClasses = "text-sm text-gray-600"; // text-sm for 0.9rem, gray-600 for #555
+  const itemClasses = "bg-white p-4 rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.15)] z-0"; // rounded-xl for 1rem
+
   return (
-    <div style={containerStyle}>
-      <h3 style={titleStyle}>Followers</h3>
+    <div className="bg-white p-4 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.1)] font-comfortaa z-0 mt-6"> {/* Added mt-6 for spacing */}
+      <h3 className={titleClasses}>Followers</h3>
       {followers.length > 0 ? (
-        <ul style={listStyle}>
+        <ul className="flex flex-col gap-4 mt-4">
           {followers.map((f) => (
             <li
               key={f.id}
-              style={itemStyle}
+              className={`${itemClasses} hover:bg-blush transition cursor-pointer`} // Used blush from theme
               onClick={() => navigate(`/profile/${f.id}`)}
-              className="hover:bg-[#fff7f7] transition cursor-pointer"
             >
-              <p style={userName}>{f.displayName}</p>
-              <p style={userDetail}>{f.email}</p>
+              <p className={userNameClasses}>{f.displayName}</p>
+              <p className={userDetailClasses}>{f.email}</p>
             </li>
           ))}
         </ul>
       ) : (
-        <p style={noDataStyle}>No followers yet.</p>
+        <p className="text-center text-coral mt-4">No followers yet.</p>
       )}
     </div>
   );
 };
 
-const containerStyle = {
-  backgroundColor: '#ffffff',
-  padding: '1rem',
-  borderRadius: '1rem',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-  fontFamily: 'Comfortaa, sans-serif',
-  zIndex: 0
-};
-
-const titleStyle = {
-  fontSize: '1.5rem',
-  fontWeight: 'bold',
-  color: '#FF6B6B',
-  textAlign: 'center',
-  marginBottom: '1rem'
-};
-
-const listStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '1rem',
-  marginTop: '1rem'
-};
-
-const itemStyle = {
-  backgroundColor: '#ffffff',
-  padding: '1rem',
-  borderRadius: '1rem',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-  zIndex: 0
-};
-
-const userName = {
-  fontSize: '1.2rem',
-  fontWeight: 'bold',
-  color: '#FF6B6B'
-};
-
-const userDetail = {
-  fontSize: '0.9rem',
-  color: '#555'
-};
-
-const noDataStyle = {
-  textAlign: 'center',
-  color: '#FF6B6B',
-  marginTop: '1rem'
-};
+// Style object constants are no longer needed.
 
 export default FollowersList;

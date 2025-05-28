@@ -87,64 +87,45 @@ const ThemePanel = ({ onClose }) => {
     onClose();
   };
 
+  // Define Tailwind classes
+  const modalContainerClasses = "fixed top-10 right-4 w-96 bg-white text-coral p-6 rounded-[1.5rem] shadow-[0_4px_20px_rgba(255,107,107,0.4)] font-comfortaa z-[100010] max-h-[80vh] overflow-y-auto flex flex-col gap-4";
+  const titleClasses = "text-2xl font-bold text-center"; // text-2xl for 1.6rem approx
+  const sectionClasses = "space-y-2"; // Replaces marginBottom
+  const labelClasses = "text-lg font-bold text-coral"; // text-lg for 1.1rem approx
+  const swatchContainerClasses = "flex flex-wrap gap-2 mt-2";
+  const swatchButtonBaseClasses = "w-8 h-8 rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2";
+  const presetButtonBaseClasses = "py-1.5 px-3 rounded-full font-bold text-xs border-none cursor-pointer hover:opacity-90 transition-opacity";
+  const actionButtonClasses = "w-full py-2 px-4 rounded-full font-bold cursor-pointer transition-colors duration-150";
+
+
   const renderSwatch = (current, setter) => (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.5rem" }}>
+    <div className={swatchContainerClasses}>
       {swatches.map((color) => (
         <button
           key={color}
           onClick={() => setter(color)}
-          style={{
-            width: "32px",
-            height: "32px",
-            borderRadius: "50%",
-            backgroundColor: color,
-            border: color === current ? "3px solid black" : "1px solid #ccc",
-            cursor: "pointer",
-          }}
+          className={`${swatchButtonBaseClasses} ${color === current ? 'ring-2 ring-black' : 'ring-1 ring-gray-300'}`}
+          style={{ backgroundColor: color }} // Inline style for dynamic background is acceptable
         />
       ))}
     </div>
   );
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: "2.5rem",
-        right: "1rem",
-        width: "360px",
-        backgroundColor: "#fff",
-        color: "#FF6B6B",
-        padding: "1.5rem",
-        borderRadius: "1.5rem",
-        boxShadow: "0 4px 20px rgba(255, 107, 107, 0.4)",
-        fontFamily: "Comfortaa, sans-serif",
-        zIndex: 1000010,
-        maxHeight: "80vh",
-        overflowY: "auto",
-      }}
-    >
-      <h2 style={{ fontSize: "1.6rem", marginBottom: "1rem", fontWeight: "bold", textAlign: "center" }}>
+    <div className={modalContainerClasses}>
+      <h2 className={titleClasses}>
         Customize Theme
       </h2>
 
-      <div style={sectionStyle}>
-        <h3 style={labelStyle}>Presets</h3>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+      <div className={sectionClasses}>
+        <h3 className={labelClasses}>Presets</h3>
+        <div className="flex flex-wrap gap-2">
           {presets.map((preset) => (
             <button
               key={preset.name}
               onClick={() => applyPreset(preset)}
-              style={{
-                padding: "0.4rem 0.8rem",
-                backgroundColor: preset.themeColor,
-                color: preset.textColor,
-                borderRadius: "9999px",
-                fontWeight: "bold",
-                fontSize: "0.8rem",
-                border: "none",
-                cursor: "pointer",
-              }}
+              className={presetButtonBaseClasses}
+              style={{ backgroundColor: preset.themeColor, color: preset.textColor }} // Dynamic styles
             >
               {preset.name}
             </button>
@@ -152,51 +133,32 @@ const ThemePanel = ({ onClose }) => {
         </div>
       </div>
 
-      <div style={sectionStyle}>
-        <h3 style={labelStyle}>Base Color</h3>
+      <div className={sectionClasses}>
+        <h3 className={labelClasses}>Base Color</h3>
         {renderSwatch(primary, setPrimary)}
       </div>
 
-      <div style={sectionStyle}>
-        <h3 style={labelStyle}>Text Color</h3>
+      <div className={sectionClasses}>
+        <h3 className={labelClasses}>Text Color</h3>
         {renderSwatch(text, setText)}
       </div>
 
-      <div style={sectionStyle}>
-        <h3 style={labelStyle}>Hover Color</h3>
+      <div className={sectionClasses}>
+        <h3 className={labelClasses}>Hover Color</h3>
         {renderSwatch(hover, setHover)}
       </div>
 
       <button
         onClick={handleSave}
-        style={{
-          marginTop: "1rem",
-          backgroundColor: primary,
-          color: text,
-          padding: "0.5rem 1rem",
-          width: "100%",
-          border: "none",
-          borderRadius: "9999px",
-          fontWeight: "bold",
-          cursor: "pointer",
-        }}
+        className={`${actionButtonClasses} mt-4`} // Added mt-4 for spacing from sections
+        style={{ backgroundColor: primary, color: text }} // Dynamic styles
       >
         Save Theme
       </button>
 
       <button
         onClick={onClose}
-        style={{
-          marginTop: "0.5rem",
-          backgroundColor: "#FF6B6B",
-          color: "#fff",
-          padding: "0.5rem 1rem",
-          width: "100%",
-          border: "none",
-          borderRadius: "9999px",
-          fontWeight: "bold",
-          cursor: "pointer",
-        }}
+        className={`${actionButtonClasses} bg-coral text-white hover:bg-coral-dark`}
       >
         Close
       </button>
@@ -204,14 +166,6 @@ const ThemePanel = ({ onClose }) => {
   );
 };
 
-const sectionStyle = {
-  marginBottom: "1.5rem",
-};
-
-const labelStyle = {
-  fontSize: "1.1rem",
-  fontWeight: "bold",
-  marginBottom: "0.25rem",
-};
+// Style object constants sectionStyle and labelStyle are no longer needed.
 
 export default ThemePanel;

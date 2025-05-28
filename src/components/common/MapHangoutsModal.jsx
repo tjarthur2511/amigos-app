@@ -27,7 +27,7 @@ const getPinIcon = (type) => {
 const MapHangoutsModal = ({ onClose }) => {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: "AIzaSyC635cp2x54I0JHITYia5Cy0j540BRKr2Q",
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY, // CRITICAL SECURITY FIX
   });
 
   const navigate = useNavigate();
@@ -97,73 +97,29 @@ const MapHangoutsModal = ({ onClose }) => {
     />
   );
 
+  // Define Tailwind classes
+  const modalOverlayClasses = "fixed inset-0 w-screen h-screen bg-black/60 z-[1000000] flex items-center justify-center font-comfortaa";
+  const modalContainerClasses = "bg-white rounded-[1.25rem] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.2)] w-[90%] max-w-xl relative"; // max-w-xl for 600px
+  const closeModalButtonClasses = "absolute top-3 right-4 text-lg text-coral bg-transparent border-none cursor-pointer p-1 rounded-full transition-all duration-200 ease-in-out hover:bg-coral hover:text-white";
+  const titleClasses = "text-center text-coral text-xl font-bold mb-4"; // text-xl for 1.5rem
+  const mapElementContainerClasses = "w-full h-[300px] rounded-lg"; // For GoogleMap mapContainerStyle
+
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        backgroundColor: "rgba(0, 0, 0, 0.6)",
-        zIndex: 1000000,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontFamily: "Comfortaa, sans-serif",
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: "#ffffff",
-          borderRadius: "1.25rem",
-          padding: "1.5rem",
-          boxShadow: "0 10px 40px rgba(0,0,0,0.2)",
-          width: "90%",
-          maxWidth: "600px",
-          position: "relative",
-        }}
-      >
+    <div className={modalOverlayClasses}>
+      <div className={modalContainerClasses}>
         <button
           onClick={onClose}
-          style={{
-            position: "absolute",
-            top: "12px",
-            right: "16px",
-            fontSize: "1.2rem",
-            color: "#FF6B6B",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: "4px 8px",
-            borderRadius: "9999px",
-            transition: "all 0.2s ease-in-out",
-          }}
-          onMouseOver={(e) => {
-            e.target.style.backgroundColor = "#FF6B6B";
-            e.target.style.color = "white";
-          }}
-          onMouseOut={(e) => {
-            e.target.style.backgroundColor = "transparent";
-            e.target.style.color = "#FF6B6B";
-          }}
+          className={closeModalButtonClasses}
         >
           ✕
         </button>
 
-        <h2
-          style={{
-            textAlign: "center",
-            color: "#FF6B6B",
-            fontSize: "1.5rem",
-            marginBottom: "1rem",
-          }}
-        >
+        <h2 className={titleClasses}>
           Map Hangouts
         </h2>
 
         {isLoaded ? (
-          <GoogleMap mapContainerStyle={containerStyle} center={mapCenter} zoom={10}>
+          <GoogleMap mapContainerClassName={mapElementContainerClasses} mapContainerStyle={{width: '100%', height: '300px', borderRadius: '0.75rem'}} center={mapCenter} zoom={10}>
             {grupos.map((grupo) => renderMarker("grupo", grupo))}
             {amigos.map((amigo) => renderMarker("amigo", amigo))}
             {events.map((event) => renderMarker("event", event))}
@@ -173,13 +129,13 @@ const MapHangoutsModal = ({ onClose }) => {
                 position={activeInfo.item.location}
                 onCloseClick={handleInfoClose}
               >
-                <div className="text-sm p-2">
-                  <p className="font-bold text-[#FF6B6B]">
+                <div className="text-sm p-2 font-comfortaa">
+                  <p className="font-bold text-coral">
                     {activeInfo.item.displayName || activeInfo.item.name || activeInfo.item.title}
                   </p>
                   <button
                     onClick={handleViewClick}
-                    className="mt-2 text-white bg-[#FF6B6B] px-2 py-1 rounded hover:bg-red-500 transition"
+                    className="mt-2 text-white bg-coral px-2 py-1 rounded hover:bg-coral-dark transition-colors"
                   >
                     View
                   </button>
@@ -188,11 +144,13 @@ const MapHangoutsModal = ({ onClose }) => {
             )}
           </GoogleMap>
         ) : (
-          <p style={{ textAlign: "center", color: "#888" }}>Loading map...</p>
+          <p className="text-center text-gray-500">Loading map...</p>
         )}
       </div>
     </div>
   );
 };
+
+// containerStyle constant is no longer needed.
 
 export default MapHangoutsModal;

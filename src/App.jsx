@@ -49,13 +49,7 @@ function AppContent({ user }) {
 
   return (
     <div
-      style={{
-        minHeight: '100vh',
-        position: 'relative',
-        overflowX: 'hidden',
-        fontFamily: 'Comfortaa, sans-serif',
-        zIndex: 0,
-      }}
+      className="min-h-screen relative overflow-x-hidden font-comfortaa z-0" // Applied Tailwind classes
     >
       {/* 🔴 Background */}
       <div

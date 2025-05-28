@@ -16,7 +16,7 @@ const AdminPanel = () => {
 
   if (!isAdmin) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-center text-red-600 font-[Comfortaa]">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-center text-red-600 font-comfortaa"> {/* Used font-comfortaa */}
         <h1 className="text-3xl font-bold mb-4">Unauthorized</h1>
         <p>You do not have access to this page.</p>
       </div>
@@ -45,10 +45,10 @@ const AdminPanel = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50"
+      className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50 font-comfortaa" // Added font-comfortaa
     >
       <div className="w-full max-w-4xl bg-white p-8 rounded-2xl shadow-lg">
-        <h1 className="text-3xl font-bold text-[#FF6B6B] mb-4 text-center">
+        <h1 className="text-3xl font-bold text-coral mb-4 text-center"> {/* Used text-coral */}
           Admin Control Center
         </h1>
 
@@ -61,7 +61,7 @@ const AdminPanel = () => {
             <button
               key={key}
               onClick={() => handleScriptRun(key)}
-              className="px-4 py-3 bg-[#FF6B6B] text-white rounded-xl hover:bg-[#e15555] transition"
+              className="px-4 py-3 bg-coral text-white rounded-xl hover:bg-coral-dark transition" // Used bg-coral and hover:bg-coral-dark
             >
               {key}
             </button>

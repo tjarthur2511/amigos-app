@@ -12,9 +12,9 @@ const LivePage = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="flex flex-col items-center min-h-screen space-y-6 p-6 bg-gray-50"
+      className="flex flex-col items-center min-h-screen space-y-6 p-6 bg-gray-50 font-comfortaa" // Added font-comfortaa
     >
-      <h1 className="text-4xl font-bold text-[#FF6B6B]">Go Live</h1>
+      <h1 className="text-4xl font-bold text-coral">Go Live</h1> {/* Used text-coral */}
 
       <div className="flex flex-wrap justify-center gap-4 mb-6">
         {[
@@ -27,8 +27,8 @@ const LivePage = () => {
             disabled={tab === id}
             className={`px-4 py-2 rounded-full font-semibold transition-all ${
               tab === id
-                ? "bg-[#FF6B6B] text-white"
-                : "bg-white text-[#FF6B6B] border border-[#FF6B6B]"
+                ? "bg-coral text-white" // Used bg-coral
+                : "bg-white text-coral border border-coral" // Used text-coral and border-coral
             }`}
           >
             {label}

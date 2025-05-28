@@ -48,59 +48,28 @@ const AmigosPosts = () => {
     loadAmigosPosts();
   }, []);
 
+  // Define reused class strings
+  const titleClasses = "text-xl text-coral font-bold text-center mb-4"; // text-xl for 1.5rem approx
+  const itemClasses = "bg-white p-4 rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.15)] z-0"; // rounded-xl for 1rem
+
   return (
-    <div style={containerStyle}>
-      <h3 style={titleStyle}>Your Amigos’ Posts</h3>
+    <div className="font-comfortaa bg-white p-8 rounded-[1.5rem] shadow-[0_5px_20px_rgba(0,0,0,0.1)] z-0">
+      <h3 className={titleClasses}>Your Amigos’ Posts</h3>
       {amigosPosts.length > 0 ? (
-        <ul style={listStyle}>
+        <ul className="flex flex-col gap-4">
           {amigosPosts.map(post => (
-            <li key={post.id} style={itemStyle}>
+            <li key={post.id} className={itemClasses}> {/* Using itemClasses defined above */}
               <PostCard post={post} />
             </li>
           ))}
         </ul>
       ) : (
-        <p style={noPostText}>Your amigos haven’t posted anything yet.</p>
+        <p className="text-coral text-center mt-4">Your amigos haven’t posted anything yet.</p>
       )}
     </div>
   );
 };
 
-const containerStyle = {
-  fontFamily: 'Comfortaa, sans-serif',
-  backgroundColor: '#ffffff',
-  padding: '2rem',
-  borderRadius: '1.5rem',
-  boxShadow: '0 5px 20px rgba(0,0,0,0.1)',
-  zIndex: 0
-};
-
-const titleStyle = {
-  fontSize: '1.5rem',
-  fontWeight: 'bold',
-  color: '#FF6B6B',
-  textAlign: 'center',
-  marginBottom: '1rem'
-};
-
-const listStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '1rem'
-};
-
-const itemStyle = {
-  backgroundColor: '#ffffff',
-  padding: '1rem',
-  borderRadius: '1rem',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-  zIndex: 0
-};
-
-const noPostText = {
-  color: '#FF6B6B',
-  textAlign: 'center',
-  marginTop: '1rem'
-};
+// Style object constants are no longer needed.
 
 export default AmigosPosts;

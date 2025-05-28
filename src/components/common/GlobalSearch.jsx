@@ -23,117 +23,52 @@ const GlobalSearch = () => {
     setResults([...amigoResults, ...grupoResults]);
   };
 
+  // Define Tailwind classes
+  const searchButtonTriggerClasses = "bg-white border-2 border-coral rounded-full py-2 px-6 text-sm text-coral font-comfortaa font-bold cursor-pointer shadow-[0_6px_18px_rgba(0,0,0,0.12)] transition-all duration-300 ease-in-out hover:bg-coral hover:text-white";
+  const modalOverlayClasses = "fixed inset-0 w-screen h-screen bg-black/60 flex items-center justify-center z-[1000001]";
+  const modalContainerClasses = "bg-white p-8 rounded-[1.5rem] w-[90%] max-w-xl shadow-[0_8px_30px_rgba(0,0,0,0.2)] font-comfortaa relative"; // max-w-xl for 600px approx
+  const closeModalButtonClasses = "absolute top-4 right-4 bg-transparent border-none text-2xl text-coral cursor-pointer hover:text-coral-dark";
+  const modalTitleClasses = "text-center mb-4 text-coral text-xl font-bold"; // text-xl for 1.5rem approx
+  const searchInputClasses = "flex-1 py-2 px-4 border border-gray-300 rounded-l-full font-comfortaa focus:ring-1 focus:ring-coral focus:border-coral outline-none";
+  const searchButtonClasses = "bg-coral text-white py-2 px-4 border-none rounded-r-full cursor-pointer font-bold hover:bg-coral-dark transition-colors";
+  const resultItemClasses = "py-2 px-3 border-b border-gray-200 text-charcoal"; // text-charcoal for #333
+  const noResultClasses = "text-center text-gray-500"; // text-gray-500 for #888
+
   return (
     <>
-      <div
-        style={{
-          position: "absolute",
-          top: "1rem",
-          left: "50%",
-          transform: "translateX(-50%)",
-          zIndex: 1000000,
-          pointerEvents: "auto",
-        }}
-      >
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000000] pointer-events-auto">
         <button
           onClick={() => setShowModal(true)}
-          style={{
-            backgroundColor: "#FFFFFF",
-            border: "2px solid #FF6B6B",
-            borderRadius: "9999px",
-            padding: "0.5rem 1.5rem",
-            fontSize: "0.95rem",
-            color: "#FF6B6B",
-            fontFamily: "Comfortaa, sans-serif",
-            fontWeight: "bold",
-            cursor: "pointer",
-            boxShadow: "0 6px 18px rgba(0,0,0,0.12)",
-            transition: "all 0.3s ease",
-          }}
-          onMouseOver={(e) => {
-            e.target.style.backgroundColor = "#FF6B6B";
-            e.target.style.color = "#FFFFFF";
-          }}
-          onMouseOut={(e) => {
-            e.target.style.backgroundColor = "#FFFFFF";
-            e.target.style.color = "#FF6B6B";
-          }}
+          className={searchButtonTriggerClasses}
         >
           Search Amigos & Grupos
         </button>
       </div>
 
       {showModal && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            backgroundColor: "rgba(0,0,0,0.6)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000001,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "#fff",
-              padding: "2rem",
-              borderRadius: "1.5rem",
-              width: "90%",
-              maxWidth: "600px",
-              boxShadow: "0 8px 30px rgba(0,0,0,0.2)",
-              fontFamily: "Comfortaa, sans-serif",
-              position: "relative",
-            }}
-          >
+        <div className={modalOverlayClasses}>
+          <div className={modalContainerClasses}>
             <button
               onClick={() => setShowModal(false)}
-              style={{
-                position: "absolute",
-                top: "1rem",
-                right: "1rem",
-                background: "none",
-                border: "none",
-                fontSize: "1.5rem",
-                color: "#FF6B6B",
-                cursor: "pointer",
-              }}
+              className={closeModalButtonClasses}
             >
               ✕
             </button>
 
-            <h2 style={{ textAlign: "center", marginBottom: "1rem", color: "#FF6B6B" }}>
+            <h2 className={modalTitleClasses}>
               Search Amigos & Grupos
             </h2>
 
-            <div style={{ display: "flex", marginBottom: "1rem" }}>
+            <div className="flex mb-4">
               <input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Enter name or keyword..."
-                style={{
-                  flex: 1,
-                  padding: "0.5rem 1rem",
-                  border: "1px solid #ccc",
-                  borderRadius: "9999px 0 0 9999px",
-                  fontFamily: "Comfortaa, sans-serif",
-                }}
+                className={searchInputClasses}
               />
               <button
                 onClick={handleSearch}
-                style={{
-                  backgroundColor: "#FF6B6B",
-                  color: "white",
-                  padding: "0.5rem 1rem",
-                  border: "none",
-                  borderRadius: "0 9999px 9999px 0",
-                  cursor: "pointer",
-                  fontWeight: "bold",
-                }}
+                className={searchButtonClasses}
               >
                 Search
               </button>
@@ -144,17 +79,13 @@ const GlobalSearch = () => {
                 results.map((item) => (
                   <div
                     key={item.id}
-                    style={{
-                      padding: "0.5rem 0.75rem",
-                      borderBottom: "1px solid #eee",
-                      color: "#333",
-                    }}
+                    className={resultItemClasses}
                   >
-                    <strong>{item.type.toUpperCase()}:</strong> {item.displayName || item.name}
+                    <strong className="text-coral">{item.type.toUpperCase()}:</strong> {item.displayName || item.name}
                   </div>
                 ))
               ) : (
-                <p style={{ textAlign: "center", color: "#888" }}>No results yet.</p>
+                <p className={noResultClasses}>No results yet.</p>
               )}
             </div>
           </div>

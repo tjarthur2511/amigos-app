@@ -103,17 +103,17 @@ const ProfileQuestionsCenter = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-[#fffafa] font-[Comfortaa] p-6"
+      className="min-h-screen bg-blush font-comfortaa p-6" // Used bg-blush and font-comfortaa
     >
-      <div className="max-w-2xl mx-auto bg-white p-6 sm:p-8 rounded-3xl shadow-xl border border-[#ffe0e0]">
+      <div className="max-w-2xl mx-auto bg-white p-6 sm:p-8 rounded-3xl shadow-xl border border-blush"> {/* Used border-blush */}
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl text-[#FF6B6B] font-bold">
+          <h2 className="text-2xl text-coral font-bold"> {/* Used text-coral */}
             🌈 Your Question Center
           </h2>
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="bg-[#ffe0e0] text-[#FF6B6B] font-semibold border border-[#FF6B6B] rounded-xl p-2"
+            className="bg-blush text-coral font-semibold border border-coral rounded-xl p-2" // Used bg-blush, text-coral, border-coral
           >
             <option value="onboarding">Onboarding</option>
             <option value="monthly">Monthly</option>
@@ -132,7 +132,7 @@ const ProfileQuestionsCenter = () => {
             return (
               <div key={q.id} className="flex flex-col items-start space-y-3 mb-6">
                 {/* 💬 Android-style bubble */}
-                <div className="bg-[#ffe0e0] text-[#FF6B6B] px-4 py-3 rounded-2xl shadow-md max-w-[90%]">
+                <div className="bg-blush text-coral px-4 py-3 rounded-2xl shadow-md max-w-[90%]"> {/* Used bg-blush, text-coral */}
                   <p className="font-semibold">{q.text}</p>
                   {q.month && (
                     <span className="text-xs text-gray-500 block mt-1">
@@ -152,7 +152,7 @@ const ProfileQuestionsCenter = () => {
                   value={answers[q.id] || ''}
                   onChange={(e) => handleChange(q.id, e.target.value)}
                   placeholder="Type your answer..."
-                  className="w-full sm:w-3/4 p-3 border border-[#FF6B6B] rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#ff6b6b]"
+                  className="w-full sm:w-3/4 p-3 border border-coral rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-coral" // Used border-coral and focus:ring-coral
                 />
 
                 {/* 💾 Buttons */}
@@ -163,7 +163,7 @@ const ProfileQuestionsCenter = () => {
                     className={`px-4 py-2 rounded-full transition duration-150 text-sm ${
                       !edited[q.id] || !answers[q.id]?.trim()
                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        : 'bg-[#FF6B6B] text-white hover:bg-[#e15555]'
+                        : 'bg-coral text-white hover:bg-coral-dark' // Used bg-coral and hover:bg-coral-dark
                     }`}
                   >
                     Save
@@ -182,7 +182,7 @@ const ProfileQuestionsCenter = () => {
         </div>
 
         {status && (
-          <p className="mt-6 text-center text-sm text-[#FF6B6B] animate-pulse">
+          <p className="mt-6 text-center text-sm text-coral animate-pulse"> {/* Used text-coral */}
             {status}
           </p>
         )}

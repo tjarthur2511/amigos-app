@@ -67,39 +67,37 @@ const HelpCard = ({ onClose }) => {
     { label: "Extra Large", scale: "1.5" },
   ];
 
+  // Define Tailwind classes
+  const modalContainerClasses = "fixed bottom-6 right-[26rem] w-96 bg-white text-coral p-6 rounded-[1.5rem] shadow-[0_4px_20px_rgba(255,107,107,0.4)] font-comfortaa z-[100010] max-h-[80vh] overflow-y-auto flex flex-col gap-6"; // Added flex flex-col gap-6
+  const titleClasses = "text-2xl font-bold text-center"; // text-2xl for 1.6rem approx, added text-center
+  const sectionClasses = "space-y-2"; // Replaces marginBottom on sectionStyle, adds space between elements in a section
+  const labelClasses = "text-lg font-bold text-coral"; // text-lg for 1.1rem approx
+  const inputBaseClasses = "w-full py-2 px-4 rounded-full border font-comfortaa focus:ring-2 focus:ring-coral focus:border-transparent";
+  const selectInputClasses = `${inputBaseClasses} border-coral text-coral`;
+  const generalButtonClasses = "block w-full mt-2 py-1.5 px-3 rounded-full border font-comfortaa cursor-pointer transition-colors duration-150";
+  const primaryButtonClasses = `${generalButtonClasses} bg-coral text-white hover:bg-coral-dark`;
+  const secondaryButtonClasses = `${generalButtonClasses} bg-blush text-coral border-coral hover:bg-coral hover:text-white`;
+  const checkboxLabelClasses = "flex items-center text-sm text-gray-700"; // For notification checkboxes
+  const checkboxClasses = "mr-2 h-4 w-4 text-coral focus:ring-coral border-gray-300 rounded";
+
+
   return (
     <>
-      <div
-        style={{
-          position: "fixed",
-          bottom: "1.5rem",
-          right: "26rem",
-          width: "360px",
-          backgroundColor: "#fff",
-          color: "#FF6B6B",
-          padding: "1.5rem",
-          borderRadius: "1.5rem",
-          boxShadow: "0 4px 20px rgba(255, 107, 107, 0.4)",
-          fontFamily: "Comfortaa, sans-serif",
-          zIndex: 1000010,
-          maxHeight: "80vh",
-          overflowY: "auto",
-        }}
-      >
-        <h2 style={{ fontSize: "1.6rem", marginBottom: "1rem", fontWeight: "bold" }}>
+      <div className={modalContainerClasses}>
+        <h2 className={titleClasses}>
           Amigos Dashboard
         </h2>
 
         {/* Language */}
-        <div style={sectionStyle}>
-          <label htmlFor="language-select" style={labelStyle}>Language</label>
-          <p>Change your preferred language.</p>
+        <div className={sectionClasses}>
+          <label htmlFor="language-select" className={labelClasses}>Language</label>
+          <p className="text-sm text-gray-600">Change your preferred language.</p>
           <select
             id="language-select"
             name="language"
             defaultValue={i18n.language}
             onChange={handleLanguageChange}
-            style={inputStyle}
+            className={selectInputClasses}
           >
             <option value="en">English</option>
             <option value="es">Español</option>
@@ -117,20 +115,20 @@ const HelpCard = ({ onClose }) => {
         </div>
 
         {/* Theme */}
-        <div style={sectionStyle}>
-          <h3 style={labelStyle}>Theme</h3>
-          <p>Open the full theme settings panel.</p>
-          <button style={buttonStyle} onClick={() => setShowThemePanel(true)}>
+        <div className={sectionClasses}>
+          <h3 className={labelClasses}>Theme</h3>
+          <p className="text-sm text-gray-600">Open the full theme settings panel.</p>
+          <button className={secondaryButtonClasses} onClick={() => setShowThemePanel(true)}>
             Customize Theme
           </button>
         </div>
 
         {/* Accessibility */}
-        <div style={sectionStyle}>
-          <h3 style={labelStyle}>Accessibility</h3>
-          <p>Enable font scaling and high contrast options.</p>
+        <div className={sectionClasses}>
+          <h3 className={labelClasses}>Accessibility</h3>
+          <p className="text-sm text-gray-600">Enable font scaling and high contrast options.</p>
           <button
-            style={buttonStyle}
+            className={secondaryButtonClasses}
             onClick={() => {
               setAccessibility(!accessibility);
               savePreferences("accessibility", !accessibility);
@@ -140,14 +138,14 @@ const HelpCard = ({ onClose }) => {
           </button>
 
           {accessibility && (
-            <div style={{ marginTop: "1rem" }}>
-              <label htmlFor="font-size-select" style={{ display: "block", marginBottom: "0.5rem" }}>Font Size</label>
+            <div className="mt-4">
+              <label htmlFor="font-size-select" className="block mb-2 text-sm font-medium text-gray-700">Font Size</label>
               <select
                 id="font-size-select"
                 name="fontSize"
                 value={fontSize}
                 onChange={handleFontSizeChange}
-                style={inputStyle}
+                className={selectInputClasses}
               >
                 {fontSizes.map((f) => (
                   <option key={f.label} value={f.scale}>
@@ -160,9 +158,9 @@ const HelpCard = ({ onClose }) => {
         </div>
 
         {/* Notifications */}
-        <div style={sectionStyle}>
-          <h3 style={labelStyle}>Notifications</h3>
-          <label htmlFor="push-alerts">
+        <div className={sectionClasses}>
+          <h3 className={labelClasses}>Notifications</h3>
+          <label htmlFor="push-alerts" className={checkboxLabelClasses}>
             <input
               id="push-alerts"
               name="pushAlerts"
@@ -172,12 +170,12 @@ const HelpCard = ({ onClose }) => {
                 setPushAlerts(!pushAlerts);
                 savePreferences("pushAlerts", !pushAlerts);
               }}
-              style={{ marginRight: "0.5rem" }}
+              className={checkboxClasses}
             />
             Enable push alerts
           </label>
-          <br />
-          <label htmlFor="weekly-suggestions">
+          
+          <label htmlFor="weekly-suggestions" className={checkboxLabelClasses}>
             <input
               id="weekly-suggestions"
               name="weeklySuggestions"
@@ -187,12 +185,12 @@ const HelpCard = ({ onClose }) => {
                 setWeeklySuggestions(!weeklySuggestions);
                 savePreferences("weeklySuggestions", !weeklySuggestions);
               }}
-              style={{ marginRight: "0.5rem" }}
+              className={checkboxClasses}
             />
             Weekly suggestions
           </label>
-          <br />
-          <label htmlFor="quiz-reminder">
+          
+          <label htmlFor="quiz-reminder" className={checkboxLabelClasses}>
             <input
               id="quiz-reminder"
               name="quizReminder"
@@ -202,16 +200,16 @@ const HelpCard = ({ onClose }) => {
                 setQuizReminder(!quizReminder);
                 savePreferences("quizReminder", !quizReminder);
               }}
-              style={{ marginRight: "0.5rem" }}
+              className={checkboxClasses}
             />
             Monthly quiz reminder
           </label>
         </div>
 
         {/* Location Access */}
-        <div style={sectionStyle}>
-          <h3 style={labelStyle}>Location Access</h3>
-          <label htmlFor="location-access">
+        <div className={sectionClasses}>
+          <h3 className={labelClasses}>Location Access</h3>
+          <label htmlFor="location-access" className={checkboxLabelClasses}>
             <input
               id="location-access"
               name="locationAllowed"
@@ -221,44 +219,34 @@ const HelpCard = ({ onClose }) => {
                 setLocationAllowed(!locationAllowed);
                 savePreferences("locationAllowed", !locationAllowed);
               }}
-              style={{ marginRight: "0.5rem" }}
+              className={checkboxClasses}
             />
             Allow location access for local events and suggestions
           </label>
         </div>
 
         {/* Account Info */}
-        <div style={sectionStyle}>
-          <h3 style={labelStyle}>Account Info</h3>
-          <button style={buttonStyle} onClick={() => setShowEditProfile(true)}>
+        <div className={sectionClasses}>
+          <h3 className={labelClasses}>Account Info</h3>
+          <button className={secondaryButtonClasses} onClick={() => setShowEditProfile(true)}>
             Edit Profile
           </button>
-          <button style={buttonStyle} onClick={() => setShowChangePassword(true)}>
+          <button className={secondaryButtonClasses} onClick={() => setShowChangePassword(true)}>
             Change Password
           </button>
         </div>
 
         {/* Support */}
-        <div style={sectionStyle}>
-          <h3 style={labelStyle}>Support</h3>
-          <button style={buttonStyle} onClick={() => setShowSupportModal(true)}>
+        <div className={sectionClasses}>
+          <h3 className={labelClasses}>Support</h3>
+          <button className={secondaryButtonClasses} onClick={() => setShowSupportModal(true)}>
             Open Support Form
           </button>
         </div>
 
         <button
           onClick={onClose}
-          style={{
-            marginTop: "1rem",
-            backgroundColor: "#FF6B6B",
-            color: "#fff",
-            padding: "0.5rem 1rem",
-            borderRadius: "9999px",
-            border: "none",
-            fontWeight: "bold",
-            cursor: "pointer",
-            width: "100%",
-          }}
+          className={primaryButtonClasses}
         >
           Close
         </button>
@@ -277,37 +265,6 @@ const HelpCard = ({ onClose }) => {
   );
 };
 
-// Styles
-const sectionStyle = {
-  marginBottom: "1.5rem",
-};
-
-const labelStyle = {
-  fontSize: "1.1rem",
-  fontWeight: "bold",
-  marginBottom: "0.5rem",
-};
-
-const inputStyle = {
-  padding: "0.5rem",
-  borderRadius: "9999px",
-  border: "1px solid #FF6B6B",
-  marginTop: "0.5rem",
-  width: "100%",
-  fontFamily: "Comfortaa, sans-serif",
-};
-
-const buttonStyle = {
-  display: "block",
-  width: "100%",
-  marginTop: "0.5rem",
-  padding: "0.4rem 0.8rem",
-  borderRadius: "9999px",
-  backgroundColor: "#fff0f0",
-  color: "#FF6B6B",
-  border: "1px solid #FF6B6B",
-  fontFamily: "Comfortaa, sans-serif",
-  cursor: "pointer",
-};
+// Style object constants are no longer needed.
 
 export default HelpCard;
