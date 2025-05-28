@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useAuth } from "../../context/AuthContext";
-import InlineNotification from "./InlineNotification"; // Import InlineNotification
+import InlineNotification from "./modals/InlineNotification"; // Import InlineNotification
 
 const GoLiveModal = ({ onClose }) => {
   const { currentUser } = useAuth();

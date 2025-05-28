@@ -72,80 +72,6 @@ const ProfilePage = () => {
   const nextCard = () => setCurrentCard((prev) => (prev + 1) % profileCards.length);
   const prevCard = () => setCurrentCard((prev) => (prev - 1 + profileCards.length) % profileCards.length);
 
-  const renderCardContent = () => {
-    switch (profileCards[currentCard]) {
-      case 'Your Profile':
-        return (
-          <>
-            <h2 style={sectionTitle}>Customize Your Public Profile</h2>
-            <p className="text-center text-sm text-[#FF6B6B] font-semibold">Followers: {followerCount}</p>
-            <div style={{ maxWidth: '500px', margin: '0 auto' }} className="space-y-5 pt-4">
-              {[{ label: 'Display Name', value: displayName, setter: setDisplayName },
-              { label: 'Bio', value: bio, setter: setBio },
-              { label: 'Hobbies', value: hobbies, setter: setHobbies },
-              { label: 'Status', value: status, setter: setStatus },
-              { label: 'Pronouns', value: pronouns, setter: setPronouns },
-              { label: 'Location', value: location, setter: setLocation }].map(
-                ({ label, value, setter }) => (
-                  <div key={label} className="text-center">
-                    <label className="block text-sm text-gray-700 mb-1 text-center font-medium">{label}</label>
-                    <textarea
-                      value={value}
-                      onChange={(e) => setter(e.target.value)}
-                      className="w-full border border-coral rounded-full px-5 py-3 text-sm text-center bg-white shadow shadow-coral/50 focus:outline-none focus:ring-2 focus:ring-coral focus:border-transparent resize-y"
-                      rows={3}
-                    />
-                  </div>
-                )
-              )}
-              <div className="text-center" style={{ marginBottom: '1rem' }}>
-                <label className="block text-sm text-gray-700 mb-1 text-center font-medium">Profile Background</label>
-                <select
-                  value={background || ''}
-                  onChange={(e) => setBackground(e.target.value)}
-                  className="w-full border border-coral rounded-full px-5 py-3 text-sm text-center bg-white shadow shadow-coral/50 focus:outline-none focus:ring-2 focus:ring-coral focus:border-transparent"
-                >
-                  <option value="">Default Coral</option>
-                  <option value="beach">🏖️ Beach Vibes</option>
-                  <option value="city">🌆 Urban Skyline</option>
-                  <option value="forest">🌲 Nature Escape</option>
-                  <option value="galaxy">🌌 Galaxy Mode</option>
-                </select>
-              </div>
-              <div className="mt-4 flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <button
-                  onClick={handleSavePublicProfile}
-                  className="text-[#FF6B6B] border-2 border-[#FF6B6B] px-8 py-3 rounded-full font-bold transition duration-300 hover:bg-[#FF6B6B] hover:text-white hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
-                  disabled={saving}
-                >
-                  {saving ? 'Saving...' : '💾 Save Profile'}
-                </button>
-                <button
-                  onClick={() => navigate(`/profile/${userId}`)}
-                  className="text-[#FF6B6B] border-2 border-[#FF6B6B] px-8 py-3 rounded-full font-bold transition duration-300 hover:bg-[#FF6B6B] hover:text-white hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FF6B6B]"
-                >
-                  🔍 View Public Profile
-                </button>
-              </div>
-              <FollowersList userId={userId} />
-            </div>
-          </>
-        );
-      case 'Quiz Questions':
-        return <ProfileQuestionsCenter />;
-      case 'Your Photos':
-        return (
-          <>
-            <h2 style={sectionTitle}>📸 Your Photos</h2>
-            <ProfilePhotos />
-          </>
-        );
-      default:
-        return null;
-    }
-  };
-
-  // Define reused class strings
   const sectionTitleClasses = "text-3xl text-coral mb-4 text-center";
   const tabClasses = "bg-coral text-white border-none py-3 px-5 rounded-[30px] text-base font-bold font-comfortaa cursor-pointer shadow-[0_3px_8px_rgba(0,0,0,0.2)] hover:bg-coral-dark transition-all";
   const arrowButtonClasses = "text-2xl bg-coral text-white border-none rounded-full py-2 px-4 cursor-pointer hover:bg-coral-dark transition-colors";
@@ -155,7 +81,6 @@ const ProfilePage = () => {
   const formTextareaClasses = "w-full border border-coral rounded-xl px-5 py-3 text-sm text-center bg-white shadow-sm shadow-coral/50 focus:outline-none focus:ring-2 focus:ring-coral focus:border-transparent resize-y";
   const formSelectClasses = "w-full border border-coral rounded-full px-5 py-3 text-sm text-center bg-white shadow-sm shadow-coral/50 focus:outline-none focus:ring-2 focus:ring-coral focus:border-transparent";
 
-
   const renderCardContent = () => {
     switch (profileCards[currentCard]) {
       case 'Your Profile':
@@ -163,7 +88,7 @@ const ProfilePage = () => {
           <>
             <h2 className={sectionTitleClasses}>Customize Your Public Profile</h2>
             <p className="text-center text-sm text-coral font-semibold">Followers: {followerCount}</p>
-            <div className="max-w-md mx-auto space-y-5 pt-4"> {/* Adjusted max-width */}
+            <div className="max-w-md mx-auto space-y-5 pt-4">
               {[{ label: 'Display Name', value: displayName, setter: setDisplayName, type: 'input' },
               { label: 'Bio', value: bio, setter: setBio, type: 'textarea' },
               { label: 'Hobbies', value: hobbies, setter: setHobbies, type: 'textarea' },
@@ -226,7 +151,6 @@ const ProfilePage = () => {
           </>
         );
       case 'Quiz Questions':
-        // Assuming ProfileQuestionsCenter renders its own title or doesn't need one here
         return <ProfileQuestionsCenter />;
       case 'Your Photos':
         return (
@@ -239,7 +163,7 @@ const ProfilePage = () => {
         return null;
     }
   };
-  
+
   return (
     <div className="font-comfortaa bg-transparent min-h-screen overflow-hidden relative z-0">
       <div className="absolute top-0 left-0 w-full h-full -z-[1000] bg-coral" />
@@ -265,7 +189,7 @@ const ProfilePage = () => {
       </nav>
 
       {isAdmin && (
-        <div className="absolute top-[105px] right-[40px] z-50"> {/* Values from original adminButtonWrapper */}
+        <div className="absolute top-[105px] right-[40px] z-50">
           <button onClick={() => navigate('/profile/admin')} className={adminButtonClasses}>
             🛠️ Admin Panel
           </button>
@@ -274,8 +198,6 @@ const ProfilePage = () => {
 
       <div className="flex justify-center mb-8 z-[10]">
         <div className="bg-white p-8 rounded-[1.5rem] shadow-[0_5px_25px_rgba(0,0,0,0.2)] w-[90%] max-w-[800px] min-h-[60vh] text-center relative z-0">
-          {/* The main title for the card content is now handled within renderCardContent for 'Your Profile' or by individual components */}
-          {/* For other cards like 'Quiz Questions' or 'Your Photos', if they don't render their own title, the generic one below might be needed */}
           {profileCards[currentCard] !== 'Your Profile' && profileCards[currentCard] !== 'Your Photos' && (
              <h2 className={sectionTitleClasses}>{profileCards[currentCard]}</h2>
           )}
@@ -291,7 +213,5 @@ const ProfilePage = () => {
     </div>
   );
 };
-
-// Style object constants are no longer needed.
 
 export default ProfilePage;

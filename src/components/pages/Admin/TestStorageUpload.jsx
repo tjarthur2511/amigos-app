@@ -1,8 +1,6 @@
-// src/components/pages/Admin/TestStorageUpload.jsx
 import React, { useState } from "react";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
-import { storage } from "../../../firebase";
-import { auth } from "../../../firebase";
+import { storage, auth } from "../../../firebase";
 
 const TestStorageUpload = () => {
   const [status, setStatus] = useState("");
@@ -21,8 +19,8 @@ const TestStorageUpload = () => {
       return;
     }
 
-    const fileRef = ref(storage, `test_uploads/${file.name}`);
     try {
+      const fileRef = ref(storage, `test_uploads/${Date.now()}-${file.name}`);
       await uploadBytes(fileRef, file);
       const downloadURL = await getDownloadURL(fileRef);
       setUrl(downloadURL);
@@ -33,7 +31,11 @@ const TestStorageUpload = () => {
   };
 
   const handleDelete = async () => {
-    if (!file) return;
+    if (!file) {
+      setStatus("⚠️ No file selected to delete");
+      return;
+    }
+
     const fileRef = ref(storage, `test_uploads/${file.name}`);
     try {
       await deleteObject(fileRef);
@@ -50,9 +52,15 @@ const TestStorageUpload = () => {
 
       <input
         type="file"
-        onChange={(e) => setFile(e.target.files[0])}
+        onChange={(e) => {
+          const selected = e.target.files[0];
+          console.log("📁 File selected:", selected);
+          setFile(selected);
+        }}
         className="mb-4"
       />
+
+      {file && <p className="text-sm text-gray-700 mb-2">Selected: {file.name}</p>}
 
       <div className="space-x-4 mb-4">
         <button

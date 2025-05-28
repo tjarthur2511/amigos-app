@@ -4,7 +4,7 @@ import FallingAEffect from "../common/FallingAEffect";
 import { signInWithEmailAndPassword, browserLocalPersistence, browserSessionPersistence, setPersistence } from "firebase/auth"; // Import persistence types
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase";
-import InlineNotification from "../common/InlineNotification"; // Import the notification component
+import InlineNotification from "../common/modals/InlineNotification"; // Import the notification component
 
 const LandingPage = () => {
   const navigate = useNavigate();

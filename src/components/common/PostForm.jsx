@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import InlineNotification from "./InlineNotification"; // Import InlineNotification
+import InlineNotification from "./modals/InlineNotification"; // Import InlineNotification
 
 const PostForm = ({ onClose, post = null }) => {
   const isEdit = !!post;
