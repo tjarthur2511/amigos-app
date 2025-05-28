@@ -16,7 +16,6 @@
   "dependencies": {
     "@firebase/component": "^0.6.5",
     "@firebase/util": "^1.9.3",
-    "@heroicons/react": "^2.2.0",
     "@react-google-maps/api": "^2.20.6",
     "firebase": "^9.23.0",
     "framer-motion": "^12.9.2",

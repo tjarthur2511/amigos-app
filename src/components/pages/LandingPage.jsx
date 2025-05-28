@@ -4,7 +4,7 @@ import FallingAEffect from "../common/FallingAEffect";
 import { signInWithEmailAndPassword, browserLocalPersistence, browserSessionPersistence, setPersistence } from "firebase/auth"; // Import persistence types
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase";
-import InlineNotification from "../common/modals/InlineNotification"; // Import the notification component
+import InlineNotification from "../common/InlineNotification"; // Import the notification component
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -84,7 +84,7 @@ const LandingPage = () => {
 
             <button
               onClick={handleGetStarted}
-              className="bg-coral text-white border-none py-3 px-6 rounded-[30px] text-base cursor-pointer transition-colors duration-300 ease-in-out hover:bg-coral-dark"
+              className="bg-coral text-white py-3 px-6 rounded-full font-comfortaa font-bold text-base cursor-pointer transition-all duration-200 ease-in-out shadow-md hover:bg-coral-dark" // Applied new standard style
             >
               Get Started
             </button>
@@ -149,7 +149,7 @@ const LandingPage = () => {
 
             <button
               type="submit"
-              className="bg-coral text-white border-none p-[0.6em_1em] rounded-[30px] text-base cursor-pointer transition-colors duration-300 ease-in-out w-full hover:bg-coral-dark disabled:opacity-70"
+              className="bg-coral text-white p-[0.6em_1em] rounded-full font-comfortaa font-bold text-base cursor-pointer transition-all duration-200 ease-in-out shadow-md w-full hover:bg-coral-dark disabled:opacity-70" // Applied new standard style
               disabled={isLoggingIn}
             >
               {isLoggingIn ? 'Logging in...' : 'Login'}

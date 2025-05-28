@@ -182,7 +182,7 @@ const SignUpPage = () => {
               />
               <button
                 type="submit"
-                className="bg-coral text-white border-none py-3 px-6 rounded-[30px] text-base font-comfortaa cursor-pointer transition-colors duration-300 ease-in-out hover:bg-coral-dark disabled:opacity-70"
+                className="bg-coral text-white py-3 px-6 rounded-full font-comfortaa font-bold text-base cursor-pointer transition-all duration-200 ease-in-out shadow-md hover:bg-coral-dark disabled:opacity-70" // Applied new standard style
                 disabled={isSigningUp}
               >
                 {isSigningUp ? 'Signing up...' : 'Sign Up'}

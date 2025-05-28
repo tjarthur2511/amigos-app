@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import InlineNotification from "./modals/InlineNotification"; // Import InlineNotification
+import InlineNotification from "./InlineNotification"; // Import InlineNotification
 
 const PostForm = ({ onClose, post = null }) => {
   const isEdit = !!post;
@@ -125,7 +125,7 @@ const PostForm = ({ onClose, post = null }) => {
   const textareaClasses = "w-full p-4 rounded-xl border border-gray-300 bg-white text-coral placeholder-coral/70 text-base resize-none focus:ring-2 focus:ring-coral focus:border-transparent";
   const selectClasses = "flex-1 p-2.5 rounded-xl font-comfortaa text-sm border border-gray-300 bg-white text-gray-700 min-w-[48%] focus:ring-2 focus:ring-coral focus:border-transparent";
   const fileButtonClasses = "text-2xl bg-transparent border-none cursor-pointer animate-pulse text-coral hover:text-coral-dark";
-  const submitButtonClasses = "w-full bg-white text-coral py-3.5 border border-coral rounded-full font-bold text-base cursor-pointer transition-colors duration-200 ease-in-out hover:bg-coral hover:text-white disabled:opacity-50 disabled:cursor-not-allowed";
+  const submitButtonClasses = "w-full bg-coral text-white py-3 px-6 rounded-full font-comfortaa font-bold text-base cursor-pointer transition-all duration-200 ease-in-out shadow-md hover:bg-coral-dark disabled:opacity-50 disabled:cursor-not-allowed";
   const mediaPreviewClasses = "max-w-full max-h-48 sm:max-h-52 object-cover rounded-xl mb-4";
 
 

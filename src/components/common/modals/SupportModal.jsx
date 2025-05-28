@@ -37,13 +37,17 @@ const SupportModal = ({ onClose }) => {
   };
 
   // Define Tailwind classes
+  const standardButtonBase = "rounded-full font-comfortaa font-bold shadow-md transition-all duration-200 ease-in-out disabled:opacity-70 disabled:cursor-not-allowed";
+  const primaryButtonClasses = `${standardButtonBase} bg-coral text-white hover:bg-coral-dark`;
+  const secondaryButtonClasses = `${standardButtonBase} bg-blush text-coral border border-coral hover:bg-coral hover:text-white`; // For Cancel
+
   const modalContainerClasses = "fixed top-24 right-4 w-[340px] bg-white text-coral p-6 rounded-[1.5rem] shadow-[0_4px_20px_rgba(255,107,107,0.4)] font-comfortaa z-[100010] max-h-[80vh] overflow-y-auto flex flex-col gap-4";
-  const titleClasses = "text-xl font-bold mb-0 text-center"; // Adjusted size and mb
-  const labelClasses = "font-bold text-base mb-1 block text-gray-700"; // Adjusted color
+  const titleClasses = "text-xl font-bold mb-0 text-center";
+  const labelClasses = "font-bold text-base mb-1 block text-gray-700";
   const selectClasses = "w-full py-2 px-3 rounded-full border border-coral font-comfortaa focus:ring-2 focus:ring-coral focus:border-transparent";
   const textareaClasses = "w-full p-2.5 rounded-xl border border-coral font-comfortaa resize-y mt-1 focus:ring-2 focus:ring-coral focus:border-transparent";
-  const submitButtonClasses = "w-full py-2.5 bg-coral text-white border-none rounded-full font-bold font-comfortaa mt-4 cursor-pointer hover:bg-coral-dark transition-colors";
-  const cancelButtonClasses = "w-full py-2.5 bg-blush text-coral border-none rounded-full font-bold font-comfortaa mt-2 cursor-pointer hover:bg-coral-dark hover:text-white transition-colors";
+  const submitButtonClasses = `${primaryButtonClasses} w-full py-2.5 mt-4 text-base`; // Added text-base
+  const cancelButtonClasses = `${secondaryButtonClasses} w-full py-2.5 mt-2 text-base`; // Added text-base
 
 
   return (

@@ -40,8 +40,9 @@ const GruposPage = () => {
 
   // Define reused class strings (similar to AmigosPage)
   const tabClasses = "bg-coral text-white border-none py-3 px-5 rounded-[30px] text-base font-bold font-comfortaa cursor-pointer shadow-[0_3px_8px_rgba(0,0,0,0.2)] hover:bg-coral-dark transition-all";
-  const exploreButtonClasses = "bg-white text-coral border border-coral rounded-[30px] py-1 px-3 text-sm cursor-pointer font-comfortaa hover:bg-coral hover:text-white transition-colors";
-  const arrowButtonClasses = "text-2xl bg-coral text-white border-none rounded-full py-2 px-4 cursor-pointer hover:bg-coral-dark transition-colors";
+  const standardButtonBase = "rounded-full bg-coral text-white font-comfortaa font-bold shadow-md transition-all duration-200 ease-in-out hover:bg-coral-dark disabled:opacity-70 disabled:cursor-not-allowed";
+  const exploreButtonClasses = `${standardButtonBase} py-1 px-4 text-sm`; // Adjusted padding & text size
+  const arrowButtonClasses = `${standardButtonBase} py-2 px-3 text-xl`; // Adjusted padding & text size for arrow
 
   const renderCurrentFeed = () => {
     switch (feedCards[currentCard]) {

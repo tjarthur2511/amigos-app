@@ -68,16 +68,21 @@ const HelpCard = ({ onClose }) => {
   ];
 
   // Define Tailwind classes
-  const modalContainerClasses = "fixed bottom-6 right-[26rem] w-96 bg-white text-coral p-6 rounded-[1.5rem] shadow-[0_4px_20px_rgba(255,107,107,0.4)] font-comfortaa z-[100010] max-h-[80vh] overflow-y-auto flex flex-col gap-6"; // Added flex flex-col gap-6
-  const titleClasses = "text-2xl font-bold text-center"; // text-2xl for 1.6rem approx, added text-center
-  const sectionClasses = "space-y-2"; // Replaces marginBottom on sectionStyle, adds space between elements in a section
-  const labelClasses = "text-lg font-bold text-coral"; // text-lg for 1.1rem approx
+  const standardButtonBase = "rounded-full font-comfortaa font-bold shadow-md transition-all duration-200 ease-in-out disabled:opacity-70 disabled:cursor-not-allowed";
+  const primaryButtonClasses = `${standardButtonBase} bg-coral text-white hover:bg-coral-dark`;
+  // Secondary buttons in HelpCard were originally blush bg with coral text and border.
+  // To align with the "single primary style" directive as much as possible while providing some distinction,
+  // we'll use the primary style but perhaps with adjusted padding/text size if contextually appropriate.
+  // For this pass, all buttons will get the primary style.
+  const helpCardButtonClasses = `${primaryButtonClasses} py-2 px-4 text-sm w-full block mt-2`; // text-sm and specific padding for help card buttons
+
+  const modalContainerClasses = "fixed bottom-6 right-[26rem] w-96 bg-white text-coral p-6 rounded-[1.5rem] shadow-[0_4px_20px_rgba(255,107,107,0.4)] font-comfortaa z-[100010] max-h-[80vh] overflow-y-auto flex flex-col gap-6";
+  const titleClasses = "text-2xl font-bold text-center";
+  const sectionClasses = "space-y-2";
+  const labelClasses = "text-lg font-bold text-coral";
   const inputBaseClasses = "w-full py-2 px-4 rounded-full border font-comfortaa focus:ring-2 focus:ring-coral focus:border-transparent";
   const selectInputClasses = `${inputBaseClasses} border-coral text-coral`;
-  const generalButtonClasses = "block w-full mt-2 py-1.5 px-3 rounded-full border font-comfortaa cursor-pointer transition-colors duration-150";
-  const primaryButtonClasses = `${generalButtonClasses} bg-coral text-white hover:bg-coral-dark`;
-  const secondaryButtonClasses = `${generalButtonClasses} bg-blush text-coral border-coral hover:bg-coral hover:text-white`;
-  const checkboxLabelClasses = "flex items-center text-sm text-gray-700"; // For notification checkboxes
+  const checkboxLabelClasses = "flex items-center text-sm text-gray-700";
   const checkboxClasses = "mr-2 h-4 w-4 text-coral focus:ring-coral border-gray-300 rounded";
 
 
@@ -118,7 +123,7 @@ const HelpCard = ({ onClose }) => {
         <div className={sectionClasses}>
           <h3 className={labelClasses}>Theme</h3>
           <p className="text-sm text-gray-600">Open the full theme settings panel.</p>
-          <button className={secondaryButtonClasses} onClick={() => setShowThemePanel(true)}>
+          <button className={helpCardButtonClasses} onClick={() => setShowThemePanel(true)}>
             Customize Theme
           </button>
         </div>
@@ -128,7 +133,7 @@ const HelpCard = ({ onClose }) => {
           <h3 className={labelClasses}>Accessibility</h3>
           <p className="text-sm text-gray-600">Enable font scaling and high contrast options.</p>
           <button
-            className={secondaryButtonClasses}
+            className={helpCardButtonClasses}
             onClick={() => {
               setAccessibility(!accessibility);
               savePreferences("accessibility", !accessibility);
@@ -228,10 +233,10 @@ const HelpCard = ({ onClose }) => {
         {/* Account Info */}
         <div className={sectionClasses}>
           <h3 className={labelClasses}>Account Info</h3>
-          <button className={secondaryButtonClasses} onClick={() => setShowEditProfile(true)}>
+          <button className={helpCardButtonClasses} onClick={() => setShowEditProfile(true)}>
             Edit Profile
           </button>
-          <button className={secondaryButtonClasses} onClick={() => setShowChangePassword(true)}>
+          <button className={helpCardButtonClasses} onClick={() => setShowChangePassword(true)}>
             Change Password
           </button>
         </div>
@@ -239,14 +244,14 @@ const HelpCard = ({ onClose }) => {
         {/* Support */}
         <div className={sectionClasses}>
           <h3 className={labelClasses}>Support</h3>
-          <button className={secondaryButtonClasses} onClick={() => setShowSupportModal(true)}>
+          <button className={helpCardButtonClasses} onClick={() => setShowSupportModal(true)}>
             Open Support Form
           </button>
         </div>
 
         <button
           onClick={onClose}
-          className={primaryButtonClasses}
+          className={`${helpCardButtonClasses} bg-coral-dark hover:bg-coral`} // Close button slightly darker for distinction
         >
           Close
         </button>

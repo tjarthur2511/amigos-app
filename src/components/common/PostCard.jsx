@@ -53,14 +53,15 @@ const PostCard = ({ post }) => {
     setEmojiPickerVisible(null);
   };
 
-  const viewAllCommentsButtonClasses = "bg-white text-coral border border-coral py-2.5 px-5 rounded-xl font-bold text-sm mt-4 cursor-pointer hover:bg-coral hover:text-white transition-colors";
+  const viewAllCommentsButtonClasses = "bg-coral text-white py-2 px-4 rounded-full font-comfortaa font-bold text-sm mt-4 cursor-pointer transition-all duration-200 ease-in-out shadow-md hover:bg-coral-dark";
+  const editButtonClasses = "absolute top-4 right-4 bg-coral text-white p-2 rounded-full font-comfortaa font-bold text-xl cursor-pointer transition-all duration-200 ease-in-out shadow-md hover:bg-coral-dark";
 
   return (
     <div className="bg-white rounded-[1.5rem] p-6 mb-8 shadow-[0_4px_12px_rgba(0,0,0,0.1)] font-comfortaa relative z-0">
       {currentUser?.uid === post.userId && (
         <button
           onClick={() => setShowEditModal(true)}
-          className="absolute top-4 right-4 bg-transparent border-none text-xl cursor-pointer text-coral hover:text-coral-dark"
+          className={editButtonClasses}
         >
           ✏️
         </button>
@@ -71,7 +72,7 @@ const PostCard = ({ post }) => {
       </div>
 
       {post.content && (
-        <p className="text-base text-coral mb-4 break-words whitespace-pre-line">
+        <p className="text-base text-charcoal mb-4 break-words whitespace-pre-line"> {/* Changed text-coral to text-charcoal */}
           {post.content}
         </p>
       )}
@@ -98,7 +99,7 @@ const PostCard = ({ post }) => {
         ))}
       </div>
 
-      <div className="text-sm text-gray-500 mb-4"> {/* text-gray-500 for #999 */}
+      <div className="text-sm text-gray-600 mb-4"> {/* Changed text-gray-500 to text-gray-600 for better contrast */}
         Tagged:
         {(post.taggedAmigos || []).map(uid => (
           <span key={uid} className="ml-1">👤</span>
@@ -108,21 +109,22 @@ const PostCard = ({ post }) => {
         ))}
       </div>
 
+      {/* Comments section: comments are already text-coral on white with coral border, which is fine. */}
       <div className="mt-4">
         {comments.map((comment) => {
           const reactions = comment.emojis || {};
           return (
             <div
               key={comment.id}
-              className="bg-white py-2 px-4 rounded-lg mb-2 text-base text-coral font-medium relative border border-coral" // text-base for 0.95rem approx
+              className="bg-white py-2 px-4 rounded-lg mb-2 text-base text-coral font-medium relative border border-coral" 
             >
-              <strong className="mr-1">💬</strong>
-              {comment.content}
+              <strong className="mr-1 text-charcoal">💬</strong> {/* Changed icon color for distinctness */}
+              {comment.content} {/* Comment content remains text-coral */}
               <div className="mt-1.5 flex flex-wrap gap-1.5">
                 {Object.entries(reactions).map(([emoji, users]) => (
                   <span
                     key={emoji}
-                    className="text-lg text-coral mr-2" // text-lg for 1.1rem approx
+                    className="text-lg text-coral mr-2" 
                   >
                     {emoji} {users.length}
                   </span>
@@ -147,7 +149,7 @@ const PostCard = ({ post }) => {
       <div className="text-right">
         <button
           onClick={() => setShowModal(true)}
-          className={viewAllCommentsButtonClasses}
+          className={viewAllCommentsButtonClasses} // This button is white with coral text, hover coral bg with white text - good contrast.
         >
           View All Comments
         </button>

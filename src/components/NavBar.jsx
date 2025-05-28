@@ -32,10 +32,10 @@ const NavBar = () => {
             key={to}
             to={to}
             className={({ isActive }) =>
-              `border border-coral px-5 py-2 rounded-full text-base font-bold font-comfortaa transition duration-200 no-underline shadow-md ` +
+              `px-5 py-2 rounded-full text-base font-comfortaa font-bold transition-all duration-200 ease-in-out no-underline ` + // Base styles
               (isActive
-                ? 'bg-coral text-white'
-                : 'bg-white text-coral hover:bg-coral hover:text-white')
+                ? 'bg-coral-dark text-white shadow-lg' // Active: darker coral, white text, more shadow
+                : 'bg-coral text-white shadow-md hover:bg-coral-dark') // Default: coral background, white text, standard shadow, darker hover
             }
             onMouseEnter={() => handleHover(to)}
             onMouseLeave={handleLeave}

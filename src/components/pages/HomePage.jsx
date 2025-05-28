@@ -238,10 +238,16 @@ const HomePage = () => {
   // handleDeleteComment would follow a similar pattern if it used window.confirm
 
   // Define reused class strings
-  const tabClasses = "bg-coral text-white border-none py-3 px-5 rounded-[30px] text-base font-bold font-comfortaa cursor-pointer shadow-[0_3px_8px_rgba(0,0,0,0.2)] hover:bg-coral-dark transition-all"; // Updated hover to hover:bg-coral-dark
-  const itemClasses = "bg-white p-4 rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.15)]"; // Using rounded-xl for 1rem
-  const userNameClasses = "text-lg font-bold font-comfortaa"; // text-lg is approx 1.125rem, text-xl is 1.25rem. Adjusted to text-lg as 1.2rem is between.
-  const reactionButtonClasses = "bg-white text-coral border border-coral rounded-full py-1.5 px-3 font-comfortaa cursor-pointer text-sm hover:bg-coral hover:text-white transition-colors"; // Adjusted padding and font size
+  const tabClasses = "bg-coral text-white border-none py-3 px-5 rounded-[30px] text-base font-bold font-comfortaa cursor-pointer shadow-[0_3px_8px_rgba(0,0,0,0.2)] hover:bg-coral-dark transition-all";
+  const itemClasses = "bg-white p-4 rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.15)]";
+  const postContentClasses = "text-lg font-bold font-comfortaa text-charcoal";
+  // Standard button style for primary actions like posting a comment or loading more
+  const primaryButtonClasses = "bg-coral text-white py-3 px-6 rounded-full font-comfortaa font-bold text-base cursor-pointer transition-all duration-200 ease-in-out shadow-md hover:bg-coral-dark disabled:opacity-50";
+  // Kept reactionButtonClasses for non-primary actions like opening emoji picker
+  const reactionButtonClasses = "bg-white text-coral border border-coral rounded-full py-1.5 px-3 font-comfortaa cursor-pointer text-sm hover:bg-coral hover:text-white transition-colors";
+  // Specific style for the comment post button, derived from primary but smaller
+  const commentPostButtonClasses = "bg-coral text-white py-1.5 px-4 rounded-full font-comfortaa font-bold text-xs cursor-pointer transition-all duration-200 ease-in-out shadow-sm hover:bg-coral-dark disabled:opacity-70";
+
 
   return (
     <div className="relative min-h-screen font-comfortaa overflow-x-hidden z-0">
@@ -280,10 +286,10 @@ const HomePage = () => {
 
                   return (
                     <li key={item.id} className={itemClasses}>
-                      <p className={userNameClasses}>{item.content || 'Untitled Post'}</p>
-                      {item.imageUrl && <img src={item.imageUrl} alt="Post" className="max-w-full rounded-xl my-2" />} {/* rounded-xl for 1rem, added margin */}
+                      <p className={postContentClasses}>{item.content || 'Untitled Post'}</p> {/* Used postContentClasses */}
+                      {item.imageUrl && <img src={item.imageUrl} alt="Post" className="max-w-full rounded-xl my-2" />}
                       {item.videoUrl && (
-                        <video controls className="max-w-full rounded-xl my-2"> {/* rounded-xl for 1rem, added margin */}
+                        <video controls className="max-w-full rounded-xl my-2">
                           <source src={item.videoUrl} type="video/mp4" />
                         </video>
                       )}
@@ -297,16 +303,16 @@ const HomePage = () => {
                           className="flex-1 p-1.5 rounded-xl border border-gray-300 text-sm font-comfortaa mr-2"
                           disabled={isPostingComment[item.id]} // Disable input while posting
                         />
-                        <button 
-                          onClick={() => handleCommentSubmit(item.id)} 
-                          className={`${reactionButtonClasses} ml-2 text-xs disabled:opacity-70`}
+                        <button
+                          onClick={() => handleCommentSubmit(item.id)}
+                          className={`${commentPostButtonClasses} ml-2`} // Applied new style
                           disabled={isPostingComment[item.id]}
                         >
                           {isPostingComment[item.id] ? 'Posting...' : 'Post'}
                         </button>
                         <button
                           onClick={() => setActivePicker(activePicker === item.id ? null : item.id)}
-                          className={`${reactionButtonClasses} ml-2 text-xs`}
+                          className={`${reactionButtonClasses} ml-2 text-xs`} // Kept existing style for this one
                         >
                           {userReact || '😀'} {totalReacts > 0 && <span className="ml-1">{totalReacts}</span>} {/* Adjusted margin */}
                         </button>
@@ -347,7 +353,7 @@ const HomePage = () => {
             {!loadingMorePosts && hasMorePosts && feedItems.length > 0 && (
               <button
                 onClick={fetchMorePosts}
-                className="mt-6 bg-coral text-white py-2 px-4 rounded-lg hover:bg-coral-dark transition-colors duration-300 disabled:opacity-50"
+                className={`${primaryButtonClasses} mt-6 text-sm`} // Applied primary style, adjusted text size
               >
                 Load More Posts
               </button>

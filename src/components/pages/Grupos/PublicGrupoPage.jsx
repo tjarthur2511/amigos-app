@@ -77,8 +77,10 @@ const PublicGrupoPage = () => {
         </div>
         <button
           onClick={toggleMembership}
-          className={`px-4 py-2 rounded-full font-semibold text-sm transition duration-150 ${
-            isMember ? 'bg-gray-300 text-black hover:bg-gray-400' : 'bg-coral text-white hover:bg-coral-dark' // Used bg-coral and hover:bg-coral-dark
+          className={`py-2 px-4 rounded-full font-comfortaa font-bold text-sm shadow-md transition-all duration-200 ease-in-out disabled:opacity-70 disabled:cursor-not-allowed ${
+            isMember 
+              ? 'bg-coral-dark text-white hover:bg-coral' // "Leave" state - active/undo variation
+              : 'bg-coral text-white hover:bg-coral-dark'   // "Join" state - standard primary
           }`}
         >
           {isMember ? 'Leave' : 'Join'} Grupo

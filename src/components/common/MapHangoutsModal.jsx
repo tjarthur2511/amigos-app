@@ -98,18 +98,22 @@ const MapHangoutsModal = ({ onClose }) => {
   );
 
   // Define Tailwind classes
+  const standardButtonBase = "rounded-full font-comfortaa font-bold shadow-md transition-all duration-200 ease-in-out disabled:opacity-70 disabled:cursor-not-allowed";
+  const primaryButtonClasses = `${standardButtonBase} bg-coral text-white hover:bg-coral-dark`;
+  const iconPrimaryButtonClasses = `${primaryButtonClasses} p-2 text-lg`; // For small icon buttons
+
   const modalOverlayClasses = "fixed inset-0 w-screen h-screen bg-black/60 z-[1000000] flex items-center justify-center font-comfortaa";
-  const modalContainerClasses = "bg-white rounded-[1.25rem] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.2)] w-[90%] max-w-xl relative"; // max-w-xl for 600px
-  const closeModalButtonClasses = "absolute top-3 right-4 text-lg text-coral bg-transparent border-none cursor-pointer p-1 rounded-full transition-all duration-200 ease-in-out hover:bg-coral hover:text-white";
-  const titleClasses = "text-center text-coral text-xl font-bold mb-4"; // text-xl for 1.5rem
-  const mapElementContainerClasses = "w-full h-[300px] rounded-lg"; // For GoogleMap mapContainerStyle
+  const modalContainerClasses = "bg-white rounded-[1.25rem] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.2)] w-[90%] max-w-xl relative";
+  const closeModalButtonClasses = `absolute top-3 right-3 ${iconPrimaryButtonClasses}`; // Adjusted position and applied standard
+  const titleClasses = "text-center text-coral text-xl font-bold mb-4";
+  const mapElementContainerClasses = "w-full h-[300px] rounded-lg";
 
   return (
     <div className={modalOverlayClasses}>
       <div className={modalContainerClasses}>
         <button
           onClick={onClose}
-          className={closeModalButtonClasses}
+          className={closeModalButtonClasses} 
         >
           ✕
         </button>

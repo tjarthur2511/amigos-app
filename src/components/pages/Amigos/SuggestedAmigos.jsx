@@ -60,10 +60,10 @@ const SuggestedAmigos = ({ amigosToExclude = [] }) => {
               </div>
               <button
                 onClick={() => toggleFollow(user.id)}
-                className={`ml-4 text-sm px-4 py-1 rounded-full font-semibold transition duration-150 ${
+                className={`ml-4 text-sm px-4 py-2 rounded-full font-comfortaa font-bold shadow-md transition-all duration-200 ease-in-out disabled:opacity-70 disabled:cursor-not-allowed ${
                   followingIds.includes(user.id)
-                    ? 'bg-gray-300 text-black hover:bg-gray-400'
-                    : 'bg-[#FF6B6B] text-white hover:bg-[#e15555]'
+                    ? 'bg-coral-dark text-white hover:bg-coral' // "Unfollow" state - slightly different to show it's an "active" state or "undo"
+                    : 'bg-coral text-white hover:bg-coral-dark' // "Follow" state - standard primary
                 }`}
               >
                 {followingIds.includes(user.id) ? 'Unfollow' : 'Follow'}

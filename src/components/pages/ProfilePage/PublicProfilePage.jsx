@@ -120,10 +120,10 @@ const PublicProfilePage = () => {
           {currentUserId !== userId && (
             <button
               onClick={toggleFollow}
-              className={`px-4 py-2 rounded-full font-semibold text-sm transition duration-150 ${
+              className={`py-2 px-4 rounded-full font-comfortaa font-bold text-sm shadow-md transition-all duration-200 ease-in-out disabled:opacity-70 disabled:cursor-not-allowed ${
                 isFollowing
-                  ? 'bg-gray-300 text-black hover:bg-gray-400'
-                  : 'bg-coral text-white hover:bg-coral-dark' // Used bg-coral and hover:bg-coral-dark
+                  ? 'bg-coral-dark text-white hover:bg-coral' // "Unfollow" state - active/undo variation
+                  : 'bg-coral text-white hover:bg-coral-dark'   // "Follow" state - standard primary
               }`}
             >
               {isFollowing ? 'Unfollow' : 'Follow'}

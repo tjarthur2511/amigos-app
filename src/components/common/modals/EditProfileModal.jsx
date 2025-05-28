@@ -48,13 +48,17 @@ const EditProfileModal = ({ onClose }) => {
   };
 
   // Define Tailwind classes
+  const standardButtonBase = "rounded-full font-comfortaa font-bold shadow-md transition-all duration-200 ease-in-out disabled:opacity-70 disabled:cursor-not-allowed";
+  const primaryButtonClasses = `${standardButtonBase} bg-coral text-white hover:bg-coral-dark`;
+  const secondaryButtonClasses = `${standardButtonBase} bg-blush text-coral border border-coral hover:bg-coral hover:text-white`;
+
   const modalContainerClasses = "fixed top-24 right-4 w-96 bg-white text-coral p-6 rounded-[1.5rem] shadow-[0_4px_20px_rgba(255,107,107,0.4)] font-comfortaa z-[100010] max-h-[80vh] overflow-y-auto flex flex-col gap-4";
-  const titleClasses = "text-2xl mb-0 font-bold text-center"; // Adjusted mb from 1rem to 0, gap handles spacing
-  const labelClasses = "text-sm font-bold mb-1 block text-gray-700"; // Adjusted color and size
+  const titleClasses = "text-2xl mb-0 font-bold text-center";
+  const labelClasses = "text-sm font-bold mb-1 block text-gray-700";
   const inputClasses = "w-full py-2 px-4 rounded-full border border-gray-300 font-comfortaa focus:ring-2 focus:ring-coral focus:border-transparent";
-  const textareaClasses = `${inputClasses} rounded-xl resize-none h-20`; // Specific for textarea
-  const saveButtonClasses = "mt-2 bg-coral text-white py-2.5 px-4 w-full border-none rounded-full font-bold text-base cursor-pointer hover:bg-coral-dark transition-colors";
-  const cancelButtonClasses = "mt-2 bg-blush text-coral py-2 px-4 rounded-full border border-coral font-comfortaa cursor-pointer w-full hover:bg-coral-dark hover:text-white transition-colors";
+  const textareaClasses = `${inputClasses} rounded-xl resize-none h-20`;
+  const saveButtonClasses = `${primaryButtonClasses} mt-2 py-2.5 px-4 w-full text-base`; // Added text-base
+  const cancelButtonClasses = `${secondaryButtonClasses} mt-2 py-2 px-4 w-full text-base`; // Added text-base, adjusted padding
 
 
   return (

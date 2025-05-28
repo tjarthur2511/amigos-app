@@ -24,15 +24,20 @@ const GlobalSearch = () => {
   };
 
   // Define Tailwind classes
-  const searchButtonTriggerClasses = "bg-white border-2 border-coral rounded-full py-2 px-6 text-sm text-coral font-comfortaa font-bold cursor-pointer shadow-[0_6px_18px_rgba(0,0,0,0.12)] transition-all duration-300 ease-in-out hover:bg-coral hover:text-white";
-  const modalOverlayClasses = "fixed inset-0 w-screen h-screen bg-black/60 flex items-center justify-center z-[1000001]";
-  const modalContainerClasses = "bg-white p-8 rounded-[1.5rem] w-[90%] max-w-xl shadow-[0_8px_30px_rgba(0,0,0,0.2)] font-comfortaa relative"; // max-w-xl for 600px approx
-  const closeModalButtonClasses = "absolute top-4 right-4 bg-transparent border-none text-2xl text-coral cursor-pointer hover:text-coral-dark";
-  const modalTitleClasses = "text-center mb-4 text-coral text-xl font-bold"; // text-xl for 1.5rem approx
+  const standardButtonBase = "rounded-full font-comfortaa font-bold shadow-md transition-all duration-200 ease-in-out disabled:opacity-70 disabled:cursor-not-allowed";
+  const primaryButtonClasses = `${standardButtonBase} bg-coral text-white hover:bg-coral-dark`;
+  const iconPrimaryButtonClasses = `${primaryButtonClasses} p-2 text-lg`; // For small icon buttons
+
+  const searchButtonTriggerClasses = `${primaryButtonClasses} py-2 px-6 text-sm`; // Main trigger button
+  const modalOverlayClasses = "fixed inset-0 w-screen h-screen bg-black/60 flex items-center justify-center z-[1000001] font-comfortaa"; // Added font-comfortaa here
+  const modalContainerClasses = "bg-white p-8 rounded-[1.5rem] w-[90%] max-w-xl shadow-[0_8px_30px_rgba(0,0,0,0.2)] relative";
+  const closeModalButtonClasses = `absolute top-3 right-3 ${iconPrimaryButtonClasses}`; // Standardized close button
+  const modalTitleClasses = "text-center mb-4 text-coral text-xl font-bold";
   const searchInputClasses = "flex-1 py-2 px-4 border border-gray-300 rounded-l-full font-comfortaa focus:ring-1 focus:ring-coral focus:border-coral outline-none";
-  const searchButtonClasses = "bg-coral text-white py-2 px-4 border-none rounded-r-full cursor-pointer font-bold hover:bg-coral-dark transition-colors";
-  const resultItemClasses = "py-2 px-3 border-b border-gray-200 text-charcoal"; // text-charcoal for #333
-  const noResultClasses = "text-center text-gray-500"; // text-gray-500 for #888
+  // Search button in input group: kept specific shape but applied primary color scheme
+  const searchGroupButtonClasses = `bg-coral text-white py-2 px-4 border-none rounded-r-full cursor-pointer font-comfortaa font-bold hover:bg-coral-dark transition-colors shadow-sm`; 
+  const resultItemClasses = "py-2 px-3 border-b border-gray-200 text-charcoal";
+  const noResultClasses = "text-center text-gray-500";
 
   return (
     <>
@@ -68,7 +73,7 @@ const GlobalSearch = () => {
               />
               <button
                 onClick={handleSearch}
-                className={searchButtonClasses}
+                className={searchGroupButtonClasses} // Updated to searchGroupButtonClasses
               >
                 Search
               </button>

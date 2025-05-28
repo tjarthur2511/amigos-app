@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useAuth } from "../../context/AuthContext";
-import InlineNotification from "./modals/InlineNotification"; // Import InlineNotification
+import InlineNotification from "./InlineNotification"; // Import InlineNotification
 
 const GoLiveModal = ({ onClose }) => {
   const { currentUser } = useAuth();
@@ -118,23 +118,36 @@ const GoLiveModal = ({ onClose }) => {
   }, [streamId]);
 
   // Define Tailwind classes
+  const standardButtonBase = "rounded-full font-comfortaa font-bold shadow-md transition-all duration-200 ease-in-out disabled:opacity-70 disabled:cursor-not-allowed";
+  const primaryButtonClasses = `${standardButtonBase} bg-coral text-white hover:bg-coral-dark`;
+  // For "Stop Live" or "Cancel" type actions that are still prominent
+  const secondaryStyledAsPrimaryClasses = `${standardButtonBase} bg-blush text-coral border border-coral hover:bg-coral hover:text-white`; 
+  // For small icon-like buttons, primary styling
+  const iconPrimaryButtonClasses = `${primaryButtonClasses} p-2 text-lg`;
+
+
   const modalOverlayClasses = "fixed inset-0 bg-black/60 z-[10000000] flex items-center justify-center font-comfortaa";
-  const modalContainerBaseClasses = "rounded-[1.5rem] p-8 w-[95%] max-w-2xl max-h-[90vh] overflow-y-auto relative shadow-2xl z-[10000001] flex flex-col gap-4"; // max-w-2xl for 680px approx
+  const modalContainerBaseClasses = "rounded-[1.5rem] p-8 w-[95%] max-w-2xl max-h-[90vh] overflow-y-auto relative shadow-2xl z-[10000001] flex flex-col gap-4";
   const modalContainerLiveClasses = "bg-coral text-white";
   const modalContainerNotLiveClasses = "bg-white text-charcoal";
-  const closeModalButtonClasses = "absolute top-4 right-4 text-2xl bg-transparent border-none cursor-pointer";
-  const titleClasses = "text-center text-2xl font-bold"; // text-2xl for 1.75rem approx
+  const closeModalButtonClasses = `absolute top-3 right-3 ${iconPrimaryButtonClasses}`; // Adjusted padding & position
+  const titleClasses = "text-center text-2xl font-bold";
   const visibilitySelectClasses = "py-1.5 px-4 rounded-full font-comfortaa border border-gray-300 focus:ring-2 focus:ring-coral";
   const videoContainerClasses = "bg-black rounded-xl h-60 mb-4 flex items-center justify-center text-center";
   const videoElementClasses = "w-full h-full object-cover rounded-xl";
-  const controlButtonClasses = "py-2.5 px-6 rounded-full border-none font-bold transition-colors duration-150";
-  const startButtonClasses = `${controlButtonClasses} bg-coral text-white hover:bg-coral-dark`;
-  const stopButtonClasses = `${controlButtonClasses} bg-white text-coral hover:bg-blush`;
+  
+  const startButtonClasses = `${primaryButtonClasses} py-2.5 px-6 text-base`;
+  // Stop Live button will use a variation of primary, perhaps darker or inverted if needed, but for now, standard primary.
+  // Or, if "Stop" is a less emphasized action than "Start", it could use a secondary style.
+  // Given the single primary style directive, let's make it primary.
+  // However, the original had `bg-white text-coral`. Let's use the secondary style for it.
+  const stopButtonClasses = `${secondaryStyledAsPrimaryClasses} py-2.5 px-6 text-base`;
+
   const commentsContainerClasses = "max-h-36 overflow-y-auto mb-4 border border-gray-200 rounded-lg bg-white text-charcoal p-2 space-y-1";
   const commentItemClasses = "py-1 px-2 flex justify-between items-center text-sm";
-  const deleteCommentButtonClasses = "text-coral hover:text-coral-dark bg-transparent border-none text-lg";
+  const deleteCommentButtonClasses = "text-coral hover:text-coral-dark bg-transparent border-none text-lg p-1 rounded-full"; // Made it slightly more clickable
   const commentInputClasses = "flex-1 py-2 px-4 rounded-full border border-gray-300 focus:ring-1 focus:ring-coral outline-none";
-  const submitCommentButtonClasses = "bg-coral text-white border-none py-2 px-4 rounded-full font-bold hover:bg-coral-dark transition-colors";
+  const submitCommentButtonClasses = `${primaryButtonClasses} py-2 px-4 text-base`; // Standard primary for submit
 
 
   return (
@@ -142,7 +155,8 @@ const GoLiveModal = ({ onClose }) => {
       <div className={`${modalContainerBaseClasses} ${isLive ? modalContainerLiveClasses : modalContainerNotLiveClasses}`}>
         <button
           onClick={onClose}
-          className={`${closeModalButtonClasses} ${isLive ? 'text-white hover:text-gray-200' : 'text-coral hover:text-coral-dark'}`}
+          // Conditional styling for close button color based on modal background
+          className={`${closeModalButtonClasses} ${isLive ? 'bg-white text-coral hover:bg-gray-200' : 'bg-coral text-white hover:bg-coral-dark'}`}
         >
           ✕
         </button>
