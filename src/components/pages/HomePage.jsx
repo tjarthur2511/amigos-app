@@ -14,9 +14,12 @@ import {
   orderBy,
   Timestamp,
   deleteDoc,
+  limit, // Import limit
+  startAfter, // Import startAfter
 } from 'firebase/firestore';
 import PostDetailModal from '../common/PostDetailModal';
 import FallingAEffect from '../common/FallingAEffect';
+import ConfirmationModal from '../common/ConfirmationModal'; // Import ConfirmationModal
 
 const emojiOptions = ['👍', '👎', '😂', '😢', '😮', '😡', '😍', '👏', '🔥', '🎉', '🤔', '💯'];
 
@@ -28,33 +31,103 @@ const HomePage = () => {
   const [activeCommentPicker, setActiveCommentPicker] = useState(null);
   const [selectedPost, setSelectedPost] = useState(null);
   const [commentInputs, setCommentInputs] = useState({});
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmModalProps, setConfirmModalProps] = useState({});
+  const [isPostingComment, setIsPostingComment] = useState({}); // For comment posting loading state
+  const [lastVisiblePost, setLastVisiblePost] = useState(null); // For pagination
+  const [loadingMorePosts, setLoadingMorePosts] = useState(false); // For pagination loading state
+  const [hasMorePosts, setHasMorePosts] = useState(true); // To hide/disable load more button
 
+  const POSTS_PER_PAGE = 10; // Define page size
+
+  // Initial posts fetch
   useEffect(() => {
     const currentUser = auth.currentUser;
     if (!currentUser) return;
 
-    const feedQuery = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
-    const unsubscribe = onSnapshot(feedQuery, async (snapshot) => {
-      const posts = snapshot.docs
+    setLoadingMorePosts(true);
+    const firstBatchQuery = query(
+      collection(db, 'posts'),
+      orderBy('createdAt', 'desc'),
+      limit(POSTS_PER_PAGE)
+    );
+
+    const unsubscribe = onSnapshot(firstBatchQuery, async (snapshot) => {
+      if (snapshot.empty) {
+        setFeedItems([]);
+        setLastVisiblePost(null);
+        setHasMorePosts(false);
+        setLoadingMorePosts(false);
+        setCommentsMap({});
+        return;
+      }
+      
+      const newPosts = snapshot.docs
         .map((doc) => ({ id: doc.id, ...doc.data() }))
         .filter((post) => post.createdAt);
-      setFeedItems(posts);
+      
+      setFeedItems(newPosts);
+      setLastVisiblePost(snapshot.docs[snapshot.docs.length - 1]);
+      setHasMorePosts(snapshot.docs.length === POSTS_PER_PAGE);
 
       const newCommentsMap = {};
-      for (const post of posts) {
+      for (const post of newPosts) {
         newCommentsMap[post.id] = await fetchRecentComments(post.id);
       }
       setCommentsMap(newCommentsMap);
+      setLoadingMorePosts(false);
     });
 
     return () => unsubscribe();
   }, []);
 
+  const fetchMorePosts = async () => {
+    if (!lastVisiblePost || !hasMorePosts) return;
+
+    setLoadingMorePosts(true);
+    const nextBatchQuery = query(
+      collection(db, 'posts'),
+      orderBy('createdAt', 'desc'),
+      startAfter(lastVisiblePost),
+      limit(POSTS_PER_PAGE)
+    );
+
+    try {
+      const snapshot = await getDocs(nextBatchQuery);
+      if (snapshot.empty) {
+        setHasMorePosts(false);
+        setLoadingMorePosts(false);
+        return;
+      }
+
+      const newPosts = snapshot.docs
+        .map((doc) => ({ id: doc.id, ...doc.data() }))
+        .filter((post) => post.createdAt);
+
+      setFeedItems(prevItems => [...prevItems, ...newPosts]);
+      setLastVisiblePost(snapshot.docs[snapshot.docs.length - 1]);
+      setHasMorePosts(snapshot.docs.length === POSTS_PER_PAGE);
+
+      const newCommentsMapUpdates = {};
+      for (const post of newPosts) {
+        newCommentsMapUpdates[post.id] = await fetchRecentComments(post.id);
+      }
+      setCommentsMap(prevMap => ({ ...prevMap, ...newCommentsMapUpdates }));
+    } catch (error) {
+      console.error("Error fetching more posts:", error);
+      // Optionally show an error notification
+    } finally {
+      setLoadingMorePosts(false);
+    }
+  };
+  
+  // Optimized to fetch only 3 most recent comments for the feed display
   const fetchRecentComments = async (postId) => {
     const q = query(
       collection(db, 'comments'),
       where('postId', '==', postId),
-      orderBy('createdAt', 'desc')
+      orderBy('createdAt', 'desc'),
+      limit(3) // Fetch only 3 most recent comments
     );
     const snapshot = await getDocs(q);
     return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
@@ -112,18 +185,26 @@ const HomePage = () => {
     const content = commentInputs[postId]?.trim();
     if (!content) return;
 
-    await addDoc(collection(db, 'comments'), {
-      content,
-      createdAt: Timestamp.now(),
-      postId,
-      userId: auth.currentUser.uid,
-      parentId: '',
-      emojis: {},
-    });
+    setIsPostingComment(prev => ({ ...prev, [postId]: true })); // Start loading for this post
+    try {
+      await addDoc(collection(db, 'comments'), {
+        content,
+        createdAt: Timestamp.now(),
+        postId,
+        userId: auth.currentUser.uid,
+        parentId: '',
+        emojis: {},
+      });
 
-    setCommentInputs((prev) => ({ ...prev, [postId]: '' }));
-    const updatedComments = await fetchRecentComments(postId);
-    setCommentsMap((prev) => ({ ...prev, [postId]: updatedComments }));
+      setCommentInputs((prev) => ({ ...prev, [postId]: '' }));
+      const updatedComments = await fetchRecentComments(postId);
+      setCommentsMap((prev) => ({ ...prev, [postId]: updatedComments }));
+    } catch (error) {
+      console.error("Error posting comment:", error);
+      // Optionally, show an error notification to the user
+    } finally {
+      setIsPostingComment(prev => ({ ...prev, [postId]: false })); // Stop loading for this post
+    }
   };
 
   const handleDeleteComment = async (commentId, postId) => {
@@ -132,93 +213,124 @@ const HomePage = () => {
     setCommentsMap((prev) => ({ ...prev, [postId]: updatedComments }));
   };
 
-  const handleDeletePost = async (postId) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this post?');
-    if (!confirmDelete) return;
-    await deleteDoc(doc(db, 'posts', postId));
+  const openDeleteConfirmation = (postId) => {
+    setConfirmModalProps({
+      title: 'Delete Post',
+      message: 'Are you sure you want to delete this post? This action cannot be undone.',
+      onConfirm: () => executeDeletePost(postId),
+      onCancel: () => setShowConfirmModal(false),
+      confirmText: 'Delete',
+    });
+    setShowConfirmModal(true);
   };
 
+  const executeDeletePost = async (postId) => {
+    try {
+      await deleteDoc(doc(db, 'posts', postId));
+      // Optionally, show a success notification here
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      // Optionally, show an error notification here
+    }
+    setShowConfirmModal(false);
+  };
+
+  // handleDeleteComment would follow a similar pattern if it used window.confirm
+
+  // Define reused class strings
+  const tabClasses = "bg-coral text-white border-none py-3 px-5 rounded-[30px] text-base font-bold font-comfortaa cursor-pointer shadow-[0_3px_8px_rgba(0,0,0,0.2)] hover:bg-coral-dark transition-all"; // Updated hover to hover:bg-coral-dark
+  const itemClasses = "bg-white p-4 rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.15)]"; // Using rounded-xl for 1rem
+  const userNameClasses = "text-lg font-bold font-comfortaa"; // text-lg is approx 1.125rem, text-xl is 1.25rem. Adjusted to text-lg as 1.2rem is between.
+  const reactionButtonClasses = "bg-white text-coral border border-coral rounded-full py-1.5 px-3 font-comfortaa cursor-pointer text-sm hover:bg-coral hover:text-white transition-colors"; // Adjusted padding and font size
+
   return (
-    <div style={{ position: 'relative', minHeight: '100vh', fontFamily: 'Comfortaa, sans-serif', overflowX: 'hidden', zIndex: 0 }}>
-      <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 0, pointerEvents: 'none' }}>
+    <div className="relative min-h-screen font-comfortaa overflow-x-hidden z-0">
+      <div className="fixed top-0 left-0 w-screen h-screen z-0 pointer-events-none">
         <FallingAEffect />
       </div>
 
-      <div style={{ position: 'relative', zIndex: 0 }}>
-        <header style={{ display: 'flex', justifyContent: 'center', paddingTop: '1rem', marginBottom: '-1rem' }}>
+      <div className="relative z-0"> {/* Ensure content is above FallingAEffect if it had a positive z-index, though it's 0 */}
+        <header className="flex justify-center pt-4 mb-[-1rem]">
           <img
             src="/assets/amigoshangouts1.png"
             alt="Amigos Hangouts"
-            style={{ height: '20em', width: 'auto', animation: 'pulse-a 1.75s infinite', marginBottom: '-5rem' }}
+            className="h-[20em] w-auto animate-[pulse-a_1.75s_infinite] mb-[-5rem]"
           />
         </header>
 
-        <nav style={{ display: 'flex', justifyContent: 'center', marginTop: '0rem', marginBottom: '1.5rem' }}>
-          <div style={{ backgroundColor: 'white', padding: '0.8rem 1rem', borderRadius: '30px', boxShadow: '0 5px 15px rgba(0,0,0,0.1)', display: 'flex', gap: '1rem' }}>
-            <button onClick={() => navigate('/')} style={tabStyle}>Home</button>
-            <button onClick={() => navigate('/amigos')} style={tabStyle}>Amigos</button>
-            <button onClick={() => navigate('/grupos')} style={tabStyle}>Grupos</button>
-            <button onClick={() => navigate('/profile')} style={tabStyle}>Profile</button>
+        <nav className="flex justify-center mt-0 mb-6">
+          <div className="bg-white py-3 px-4 rounded-[30px] shadow-[0_5px_15px_rgba(0,0,0,0.1)] flex gap-4">
+            <button onClick={() => navigate('/')} className={tabClasses}>Home</button>
+            <button onClick={() => navigate('/amigos')} className={tabClasses}>Amigos</button>
+            <button onClick={() => navigate('/grupos')} className={tabClasses}>Grupos</button>
+            <button onClick={() => navigate('/profile')} className={tabClasses}>Profile</button>
           </div>
         </nav>
 
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
-          <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '1.5rem', boxShadow: '0 5px 25px rgba(0,0,0,0.2)', width: '90%', maxWidth: '800px', minHeight: '60vh', textAlign: 'center' }}>
-            <h2 style={{ fontSize: '2rem', color: '#FF6B6B', marginBottom: '1rem' }}>Your Feed</h2>
+        <div className="flex justify-center mb-8">
+          <div className="bg-white p-8 rounded-[1.5rem] shadow-[0_5px_25px_rgba(0,0,0,0.2)] w-[90%] max-w-[800px] min-h-[60vh] text-center">
+            <h2 className="text-3xl text-coral mb-4">Your Feed</h2> {/* text-3xl is approx 2rem */}
             {feedItems.length > 0 ? (
-              <ul style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '1rem' }}>
+              <ul className="flex flex-col gap-6 mt-4">
                 {feedItems.map((item) => {
                   const userReact = getUserReaction(item.emojis || {});
                   const totalReacts = Object.values(item.emojis || {}).reduce((acc, arr) => acc + arr.length, 0);
-                  const comments = commentsMap[item.id]?.slice(0, 3) || [];
+                  const commentsForDisplay = commentsMap[item.id] || []; // Already limited to 3 by fetchRecentComments
                   const isOwner = auth.currentUser?.uid === item.userId;
 
                   return (
-                    <li key={item.id} style={itemStyle}>
-                      <p style={userName}>{item.content || 'Untitled Post'}</p>
-                      {item.imageUrl && <img src={item.imageUrl} alt="Post" style={{ maxWidth: '100%', borderRadius: '1rem' }} />}
+                    <li key={item.id} className={itemClasses}>
+                      <p className={userNameClasses}>{item.content || 'Untitled Post'}</p>
+                      {item.imageUrl && <img src={item.imageUrl} alt="Post" className="max-w-full rounded-xl my-2" />} {/* rounded-xl for 1rem, added margin */}
                       {item.videoUrl && (
-                        <video controls style={{ maxWidth: '100%', borderRadius: '1rem' }}>
+                        <video controls className="max-w-full rounded-xl my-2"> {/* rounded-xl for 1rem, added margin */}
                           <source src={item.videoUrl} type="video/mp4" />
                         </video>
                       )}
 
-                      <div style={{ display: 'flex', alignItems: 'center', marginTop: '0.5rem' }}>
+                      <div className="flex items-center mt-2">
                         <input
                           type="text"
                           value={commentInputs[item.id] || ''}
                           onChange={(e) => setCommentInputs(prev => ({ ...prev, [item.id]: e.target.value }))}
                           placeholder="Write a comment..."
-                          style={{ flex: 1, padding: '0.4rem', borderRadius: '1rem', border: '1px solid #ccc', fontSize: '0.9rem' }}
+                          className="flex-1 p-1.5 rounded-xl border border-gray-300 text-sm font-comfortaa mr-2"
+                          disabled={isPostingComment[item.id]} // Disable input while posting
                         />
-                        <button onClick={() => handleCommentSubmit(item.id)} style={{ ...reactionButtonStyle, marginLeft: '0.5rem', fontSize: '0.8rem' }}>Post</button>
+                        <button 
+                          onClick={() => handleCommentSubmit(item.id)} 
+                          className={`${reactionButtonClasses} ml-2 text-xs disabled:opacity-70`}
+                          disabled={isPostingComment[item.id]}
+                        >
+                          {isPostingComment[item.id] ? 'Posting...' : 'Post'}
+                        </button>
                         <button
                           onClick={() => setActivePicker(activePicker === item.id ? null : item.id)}
-                          style={{ ...reactionButtonStyle, marginLeft: '0.5rem', fontSize: '0.8rem' }}
+                          className={`${reactionButtonClasses} ml-2 text-xs`}
                         >
-                          {userReact || '😀'} {totalReacts > 0 && <span style={{ marginLeft: '0.3rem' }}>{totalReacts}</span>}
+                          {userReact || '😀'} {totalReacts > 0 && <span className="ml-1">{totalReacts}</span>} {/* Adjusted margin */}
                         </button>
                       </div>
 
                       {activePicker === item.id && (
-                        <div style={{ marginTop: '0.5rem', backgroundColor: '#fff', padding: '0.5rem', borderRadius: '1rem', boxShadow: '0 2px 6px rgba(0,0,0,0.15)', display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+                        <div className="mt-2 bg-white p-2 rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.15)] flex flex-wrap justify-center">
                           {emojiOptions.map((emoji) => (
-                            <button key={emoji} onClick={() => handleReaction(item.id, emoji, item.emojis || {})} style={{ fontSize: '1.4rem', margin: '0.25rem', background: 'none', border: 'none', cursor: 'pointer' }}>{emoji}</button>
+                            <button key={emoji} onClick={() => handleReaction(item.id, emoji, item.emojis || {})} className="text-2xl m-1 bg-transparent border-none cursor-pointer hover:scale-125 transition-transform">{emoji}</button> // text-2xl for 1.4rem approx.
                           ))}
                         </div>
                       )}
 
-                      <div style={{ marginTop: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
+                      <div className="mt-2 flex justify-between">
                         <button
                           onClick={() => setSelectedPost(item)}
-                          style={{ fontSize: '0.8rem', color: '#FF6B6B', background: 'none', border: 'none', cursor: 'pointer' }}
+                          className="text-xs text-coral bg-transparent border-none cursor-pointer hover:underline"
                         >
                           View All
                         </button>
                         {isOwner && (
                           <button
-                            onClick={() => handleDeletePost(item.id)}
-                            style={{ fontSize: '0.8rem', color: '#888', background: 'none', border: 'none', cursor: 'pointer' }}
+                            onClick={() => openDeleteConfirmation(item.id)} 
+                            className="text-xs text-gray-500 bg-transparent border-none cursor-pointer hover:text-red-500 transition-colors" // Adjusted color and hover
                           >
                             🗑️ Delete
                           </button>
@@ -229,22 +341,44 @@ const HomePage = () => {
                 })}
               </ul>
             ) : (
-              <p>No content to display yet. Follow amigos or join grupos to see activity.</p>
+              <p className="font-comfortaa text-gray-600">No content to display yet. Follow amigos or join grupos to see activity.</p>
+            )}
+            {loadingMorePosts && <p className="font-comfortaa text-gray-500 mt-4">Loading more posts...</p>}
+            {!loadingMorePosts && hasMorePosts && feedItems.length > 0 && (
+              <button
+                onClick={fetchMorePosts}
+                className="mt-6 bg-coral text-white py-2 px-4 rounded-lg hover:bg-coral-dark transition-colors duration-300 disabled:opacity-50"
+              >
+                Load More Posts
+              </button>
+            )}
+            {!loadingMorePosts && !hasMorePosts && feedItems.length > 0 && (
+              <p className="font-comfortaa text-gray-500 mt-4">You've reached the end of the feed!</p>
             )}
           </div>
         </div>
 
         {selectedPost && (
-          <PostDetailModal post={selectedPost} onClose={() => setSelectedPost(null)} />
+          <PostDetailModal 
+            post={selectedPost} 
+            onClose={() => setSelectedPost(null)} 
+            initialComments={commentsMap[selectedPost.id] || []} // Pass initially fetched comments
+          />
         )}
+
+        <ConfirmationModal
+          isOpen={showConfirmModal}
+          title={confirmModalProps.title}
+          message={confirmModalProps.message}
+          onConfirm={confirmModalProps.onConfirm}
+          onCancel={confirmModalProps.onCancel}
+          confirmText={confirmModalProps.confirmText}
+        />
       </div>
     </div>
   );
 };
 
-const tabStyle = { backgroundColor: '#FF6B6B', color: 'white', border: 'none', padding: '12px 20px', borderRadius: '30px', fontSize: '1rem', fontWeight: 'bold', fontFamily: 'Comfortaa, sans-serif', cursor: 'pointer', boxShadow: '0 3px 8px rgba(0,0,0,0.2)' };
-const itemStyle = { backgroundColor: '#FFFFFF', padding: '1rem', borderRadius: '1rem', boxShadow: '0 2px 6px rgba(0,0,0,0.15)' };
-const userName = { fontSize: '1.2rem', fontWeight: 'bold' };
-const reactionButtonStyle = { backgroundColor: '#fff', color: '#FF6B6B', border: '1px solid #FF6B6B', borderRadius: '9999px', padding: '0.4rem 0.8rem', fontFamily: 'Comfortaa, sans-serif', cursor: 'pointer' };
+// tabStyle, itemStyle, userName, reactionButtonStyle constants are no longer needed.
 
 export default HomePage;

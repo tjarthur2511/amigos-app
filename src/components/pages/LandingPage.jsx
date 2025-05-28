@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import FallingAEffect from "../common/FallingAEffect";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, browserLocalPersistence, browserSessionPersistence, setPersistence } from "firebase/auth"; // Import persistence types
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase";
+import InlineNotification from "../common/InlineNotification"; // Import the notification component
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ const LandingPage = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [notification, setNotification] = useState({ message: '', type: '' }); // State for notification
+  const [isLoggingIn, setIsLoggingIn] = useState(false); // State for login loading
 
   const handleGetStarted = () => {
     navigate("/signup");
@@ -20,7 +23,16 @@ const LandingPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setIsLoggingIn(true); // Start loading
+    setNotification({ message: '', type: '' }); // Clear previous notifications
     try {
+      // Set persistence based on rememberMe state
+      if (rememberMe) {
+        await setPersistence(auth, browserLocalPersistence);
+      } else {
+        await setPersistence(auth, browserSessionPersistence);
+      }
+
       const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
       const user = userCredential.user;
 
@@ -28,13 +40,15 @@ const LandingPage = () => {
       const userSnap = await getDoc(userRef);
 
       if (!userSnap.exists()) {
-        alert("User data not found in Firestore.");
+        setNotification({ message: "User data not found in Firestore.", type: 'error' });
         return;
       }
 
       navigate("/");
     } catch (error) {
-      alert("Login failed: " + error.message);
+      setNotification({ message: "Login failed: " + error.message, type: 'error' });
+    } finally {
+      setIsLoggingIn(false); // Stop loading
     }
   };
 
@@ -45,71 +59,32 @@ const LandingPage = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Define input style as a Tailwind string to reuse
+  const inputClasses = "p-[0.5em] border border-gray-300 rounded-[0.5em] font-comfortaa text-base w-full box-border";
+
   return (
-    <div style={{
-      minHeight: "100vh",
-      position: "relative",
-      overflow: "hidden",
-      width: "100%",
-      fontFamily: "Comfortaa, sans-serif"
-    }}>
+    <div className="min-h-screen relative overflow-hidden w-full font-comfortaa">
       <FallingAEffect />
 
-      <div style={{ position: "relative", zIndex: 5 }}>
+      <div className="relative z-[5]">
         {/* Main Card */}
-        <div style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "2rem",
-          paddingTop: "4rem",
-          paddingBottom: "4rem",
-        }}>
-          <div style={{
-            backgroundColor: "white",
-            padding: "2rem",
-            borderRadius: "1rem",
-            boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-            width: "90%",
-            maxWidth: "500px",
-            textAlign: "center"
-          }}>
-            <div style={{ marginBottom: "1rem" }}>
+        <div className="flex flex-col items-center justify-center gap-8 pt-16 pb-16">
+          <div className="bg-white p-8 rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.3)] w-[90%] max-w-[500px] text-center">
+            <div className="mb-4">
               <img
                 src="/assets/amigoshangouts1.png"
                 alt="Amigos Logo"
-                style={{
-                  height: "20em",
-                  width: "auto",
-                  marginBottom: "-7rem",
-                  animation: "pulse-a 1.75s infinite"
-                }}
+                className="h-[20em] w-auto mb-[-7rem] animate-[pulse-a_1.75s_infinite] mx-auto" // Added mx-auto for centering if parent is text-center
               />
             </div>
 
-            <p style={{
-              fontSize: "1.2rem",
-              color: "#555",
-              marginBottom: "2rem"
-            }}>
+            <p className="text-lg text-gray-600 mb-8"> {/* Assuming #555 is a shade of gray, using gray-600 */}
               Find your place. Find your passion. Find your amigos
             </p>
 
             <button
               onClick={handleGetStarted}
-              style={{
-                backgroundColor: "#FF6B6B",
-                color: "white",
-                border: "none",
-                padding: "12px 24px",
-                borderRadius: "30px",
-                fontSize: "1rem",
-                cursor: "pointer",
-                transition: "background-color 0.3s ease"
-              }}
-              onMouseOver={(e) => e.target.style.backgroundColor = "#e15555"}
-              onMouseOut={(e) => e.target.style.backgroundColor = "#FF6B6B"}
+              className="bg-coral text-white border-none py-3 px-6 rounded-[30px] text-base cursor-pointer transition-colors duration-300 ease-in-out hover:bg-coral-dark"
             >
               Get Started
             </button>
@@ -117,34 +92,31 @@ const LandingPage = () => {
         </div>
 
         {/* Login Card */}
-        <div style={{
-          backgroundColor: "white",
-          padding: "0.8em",
-          borderRadius: "1rem",
-          boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-          width: "14em",
-          position: isMobile ? "relative" : "absolute",
-          top: isMobile ? "auto" : "30px",
-          right: isMobile ? "auto" : "30px",
-          textAlign: "center",
-          fontSize: "0.8em"
-        }}>
-          <h2 style={{
-            fontSize: "1.4em",
-            color: "#FF6B6B",
-            marginBottom: "0.5em"
-          }}>
+        <div
+          className={`bg-white p-[0.8em] rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.3)] w-[14em] text-center text-[0.8em] ${
+            isMobile ? "relative mx-auto mt-8" : "absolute top-[30px] right-[30px]" // Added mx-auto and mt-8 for mobile layout
+          }`}
+        >
+          <h2 className="text-[1.4em] text-coral mb-[0.5em]">
             Login
           </h2>
-
-          <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "0.6em" }}>
+          {notification.message && (
+            <div className="my-2"> {/* Added margin for notification spacing */}
+              <InlineNotification
+                message={notification.message}
+                type={notification.type}
+                onClose={() => setNotification({ message: '', type: '' })}
+              />
+            </div>
+          )}
+          <form onSubmit={handleLogin} className={`flex flex-col gap-[0.6em] ${notification.message ? 'mt-[0.5em]' : ''}`}>
             <input
               type="text"
               placeholder="Username or Email"
               value={loginEmail}
               onChange={(e) => setLoginEmail(e.target.value)}
               required
-              style={inputStyle}
+              className={inputClasses}
             />
             <input
               type={showPassword ? "text" : "password"}
@@ -152,46 +124,35 @@ const LandingPage = () => {
               value={loginPassword}
               onChange={(e) => setLoginPassword(e.target.value)}
               required
-              style={inputStyle}
+              className={inputClasses}
             />
 
-            <label style={{ fontSize: "0.75em" }}>
+            <label className="text-[0.75em] flex items-center"> {/* Added flex and items-center for alignment */}
               <input
                 type="checkbox"
                 checked={showPassword}
                 onChange={(e) => setShowPassword(e.target.checked)}
-                style={{ marginRight: "8px" }}
+                className="mr-2" // Replaced style with Tailwind margin
               />
               Show Password
             </label>
 
-            <label style={{ fontSize: "0.75em" }}>
+            <label className="text-[0.75em] flex items-center"> {/* Added flex and items-center for alignment */}
               <input
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                style={{ marginRight: "8px" }}
+                className="mr-2" // Replaced style with Tailwind margin
               />
               Remember Me
             </label>
 
             <button
               type="submit"
-              style={{
-                backgroundColor: "#FF6B6B",
-                color: "white",
-                border: "none",
-                padding: "0.6em 1em",
-                borderRadius: "30px",
-                fontSize: "1em",
-                cursor: "pointer",
-                transition: "background-color 0.3s ease",
-                width: "100%"
-              }}
-              onMouseOver={(e) => e.target.style.backgroundColor = "#e15555"}
-              onMouseOut={(e) => e.target.style.backgroundColor = "#FF6B6B"}
+              className="bg-coral text-white border-none p-[0.6em_1em] rounded-[30px] text-base cursor-pointer transition-colors duration-300 ease-in-out w-full hover:bg-coral-dark disabled:opacity-70"
+              disabled={isLoggingIn}
             >
-              Login
+              {isLoggingIn ? 'Logging in...' : 'Login'}
             </button>
           </form>
         </div>
@@ -200,14 +161,6 @@ const LandingPage = () => {
   );
 };
 
-const inputStyle = {
-  padding: "0.5em",
-  border: "1px solid #ccc",
-  borderRadius: "0.5em",
-  fontFamily: "Comfortaa, sans-serif",
-  fontSize: "1em",
-  width: "100%",
-  boxSizing: "border-box"
-};
+// inputStyle constant is no longer needed as its Tailwind equivalent is used directly or via inputClasses.
 
 export default LandingPage;

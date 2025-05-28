@@ -13,6 +13,8 @@ const SignUpPage = () => {
   const [dob, setDob] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const [isSigningUp, setIsSigningUp] = useState(false); // State for signup loading
+  const [passwordStrength, setPasswordStrength] = useState(''); // State for password strength
 
   const calculateAge = (dob) => {
     const birthDate = new Date(dob);
@@ -24,14 +26,17 @@ const SignUpPage = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     setError('');
+    setIsSigningUp(true); // Start loading
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
+      setIsSigningUp(false); // Stop loading on validation error
       return;
     }
 
     if (calculateAge(dob) < 13) {
       setError('You must be at least 13 years old to join amigos.');
+      setIsSigningUp(false); // Stop loading on validation error
       return;
     }
 
@@ -64,74 +69,63 @@ const SignUpPage = () => {
       navigate('/setup');
     } catch (err) {
       setError(err.message || 'Sign-up failed');
+    } finally {
+      setIsSigningUp(false); // Stop loading
     }
   };
 
+  const checkPasswordStrength = (password) => {
+    if (!password) return '';
+    const length = password.length;
+    const hasLower = /[a-z]/.test(password);
+    const hasUpper = /[A-Z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSymbol = /[^A-Za-z0-9]/.test(password);
+
+    if (length < 8) return 'Weak';
+    if (length >= 8 && ((hasLower && !hasUpper && !hasNumber && !hasSymbol) || (!hasLower && hasUpper && !hasNumber && !hasSymbol) || (!hasLower && !hasUpper && hasNumber && !hasSymbol))) return 'Medium';
+    if (length >= 8 && (hasLower || hasUpper) && hasNumber && (hasSymbol || (!hasSymbol && (hasLower || hasUpper) && hasNumber))) return 'Strong'; // Strong if it has letters, numbers, and optionally symbols or just a good mix
+    if (length >= 8 && (hasLower || hasUpper) && hasNumber) return 'Medium'; // Covers cases like only letters and numbers
+    return 'Weak'; // Default to weak if other conditions not met
+  };
+
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    setPasswordStrength(checkPasswordStrength(newPassword));
+  };
+
+  const getStrengthColor = (strength) => {
+    if (strength === 'Weak') return 'text-red-500';
+    if (strength === 'Medium') return 'text-orange-500';
+    if (strength === 'Strong') return 'text-green-500';
+    return 'text-gray-500'; // Default or for empty string
+  };
+
+  const inputClasses = "p-3 border border-gray-300 rounded-[10px] font-comfortaa text-base outline-none w-full"; // Added w-full
+
   return (
-    <div style={{
-      minHeight: "100vh",
-      position: "relative",
-      overflow: "hidden",
-      width: "100%",
-      fontFamily: "Comfortaa, sans-serif"
-    }}>
+    <div className="min-h-screen relative overflow-hidden w-full font-comfortaa">
       {/* 🔴 Falling A Effect */}
-      <div style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        zIndex: -500,
-        pointerEvents: "none"
-      }}>
+      <div className="fixed top-0 left-0 w-screen h-screen z-[-500] pointer-events-none">
         <FallingAEffect />
       </div>
 
       {/* 🔴 Sign Up Card */}
-      <div style={{ zIndex: 5, position: 'relative' }}>
-        <div style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "2rem",
-          paddingTop: "4rem",
-          paddingBottom: "4rem"
-        }}>
-          <div style={{
-            backgroundColor: "white",
-            padding: "2rem",
-            borderRadius: "1rem",
-            boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-            width: "90%",
-            maxWidth: "500px",
-            textAlign: "center"
-          }}>
-            <h2 style={{
-              fontSize: "1.8rem",
-              color: "#FF6B6B",
-              marginBottom: "1rem",
-              fontFamily: "sans-serif"
-            }}>
-              Join <span style={{ fontFamily: "'Comfortaa', sans-serif" }}>a</span>migos
+      <div className="relative z-[5]">
+        <div className="flex flex-col items-center justify-center gap-8 pt-16 pb-16">
+          <div className="bg-white p-8 rounded-xl shadow-[0_5px_15px_rgba(0,0,0,0.3)] w-[90%] max-w-[500px] text-center">
+            <h2 className="text-2xl text-coral mb-4 font-sans"> {/* Adjusted font size, using Tailwind's text-2xl for 1.8rem approx. */}
+              Join <span className="font-comfortaa">a</span>migos
             </h2>
 
             {error && (
-              <div style={{
-                backgroundColor: "#ffe6e6",
-                color: "#cc0000",
-                padding: "10px",
-                borderRadius: "8px",
-                marginBottom: "1rem",
-                fontFamily: "Comfortaa, sans-serif",
-                fontSize: "0.9rem"
-              }}>
+              <div className="bg-red-100 text-red-700 p-2.5 rounded-lg mb-4 font-comfortaa text-sm"> {/* Tailwind classes for error message */}
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleSignup} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <form onSubmit={handleSignup} className="flex flex-col gap-4">
               <input
                 id="displayName"
                 name="displayName"
@@ -140,7 +134,7 @@ const SignUpPage = () => {
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 required
-                style={inputStyle}
+                className={inputClasses}
               />
               <input
                 id="email"
@@ -150,18 +144,23 @@ const SignUpPage = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                style={inputStyle}
+                className={inputClasses}
               />
               <input
                 id="password"
                 name="password"
                 type="password"
-                placeholder="Password (6+ characters)"
+                placeholder="Password (8+ characters, mix types)"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handlePasswordChange} // Updated onChange handler
                 required
-                style={inputStyle}
+                className={inputClasses}
               />
+              {passwordStrength && (
+                <p className={`text-xs mt-1 ${getStrengthColor(passwordStrength)}`}>
+                  Password Strength: {passwordStrength}
+                </p>
+              )}
               <input
                 id="confirmPassword"
                 name="confirmPassword"
@@ -170,7 +169,7 @@ const SignUpPage = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                style={inputStyle}
+                className={inputClasses}
               />
               <input
                 id="dob"
@@ -179,25 +178,14 @@ const SignUpPage = () => {
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
                 required
-                style={inputStyle}
+                className={inputClasses} // Applied common input classes
               />
               <button
                 type="submit"
-                style={{
-                  backgroundColor: "#FF6B6B",
-                  color: "white",
-                  border: "none",
-                  padding: "12px 24px",
-                  borderRadius: "30px",
-                  fontSize: "1rem",
-                  fontFamily: "Comfortaa, sans-serif",
-                  cursor: "pointer",
-                  transition: "background-color 0.3s ease"
-                }}
-                onMouseOver={(e) => e.target.style.backgroundColor = "#e15555"}
-                onMouseOut={(e) => e.target.style.backgroundColor = "#FF6B6B"}
+                className="bg-coral text-white border-none py-3 px-6 rounded-[30px] text-base font-comfortaa cursor-pointer transition-colors duration-300 ease-in-out hover:bg-coral-dark disabled:opacity-70"
+                disabled={isSigningUp}
               >
-                Sign Up
+                {isSigningUp ? 'Signing up...' : 'Sign Up'}
               </button>
             </form>
           </div>
@@ -207,13 +195,6 @@ const SignUpPage = () => {
   );
 };
 
-const inputStyle = {
-  padding: "12px",
-  border: "1px solid #ccc",
-  borderRadius: "10px",
-  fontFamily: "Comfortaa, sans-serif",
-  fontSize: "1rem",
-  outline: "none"
-};
+// inputStyle constant is no longer needed
 
 export default SignUpPage;

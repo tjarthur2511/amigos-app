@@ -4,6 +4,7 @@ import { auth, db } from "../../firebase";
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { motion } from 'framer-motion';
 import FallingAEffect from '../common/FallingAEffect';
+import InlineNotification from '../common/InlineNotification'; // Import the notification component
 
 const staticQuestions = [
   "What's your favorite way to relax?",
@@ -39,9 +40,10 @@ const SetupQuizPage = () => {
   const handleNext = async () => {
     const wordCount = answers[currentQuestion]?.trim().split(/\s+/).length;
     if (wordCount < 3) {
-      alert('Please write at least 3 words! Amigos love details 🌟');
+      setError('Please write at least 3 words! Amigos love details 🌟'); // Use setError for notification
       return;
     }
+    setError(''); // Clear error if validation passes
 
     if (currentQuestion < staticQuestions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
@@ -81,7 +83,7 @@ const SetupQuizPage = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="flex flex-col items-center justify-center min-h-screen p-6 bg-[#FF6B6B] relative font-[Comfortaa] overflow-hidden"
+      className="flex flex-col items-center justify-center min-h-screen p-6 bg-coral relative font-comfortaa overflow-hidden" // Used bg-coral and font-comfortaa
     >
       {/* 🔴 background animation */}
       <div className="absolute top-0 left-0 w-full h-full z-0 pointer-events-none">
@@ -92,15 +94,15 @@ const SetupQuizPage = () => {
       <div className="w-full max-w-xl z-10 mb-4">
         <div className="h-2 bg-white rounded-full overflow-hidden">
           <div
-            className="h-full bg-[#FF6B6B] transition-all duration-500"
-            style={{ width: getProgressWidth() }}
+            className="h-full bg-coral transition-all duration-500" // Used bg-coral
+            style={{ width: getProgressWidth() }} // Dynamic width, keep inline style
           ></div>
         </div>
       </div>
 
       {/* 🔴 card */}
       <div className="w-full max-w-xl bg-white p-8 rounded-2xl shadow-lg z-10">
-        <h2 className="text-3xl font-bold text-[#FF6B6B] mb-6 text-center">
+        <h2 className="text-3xl font-bold text-coral mb-6 text-center"> {/* Used text-coral */}
           Let's Get to Know You
         </h2>
 
@@ -116,9 +118,19 @@ const SetupQuizPage = () => {
           value={answers[currentQuestion] || ''}
           onChange={handleAnswer}
           placeholder="Type your answer here"
-          className="w-full p-3 border border-gray-300 rounded-xl focus:border-[#FF6B6B] outline-none transition"
+          className="w-full p-3 border border-gray-300 rounded-xl focus:border-coral outline-none transition" // Used focus:border-coral
           disabled={loading}
         />
+
+        {error && !loading && ( // Display notification if there's an error and not loading
+          <div className="mt-4">
+            <InlineNotification
+              message={error}
+              type="warning" // Using warning type for this kind of message
+              onClose={() => setError('')}
+            />
+          </div>
+        )}
 
         <div className="flex justify-between items-center gap-4 mt-6">
           <button
@@ -131,7 +143,7 @@ const SetupQuizPage = () => {
           <button
             onClick={handleNext}
             disabled={loading}
-            className="bg-[#FF6B6B] text-white py-3 px-6 rounded-xl hover:bg-[#e15555] transition w-1/2"
+            className="bg-coral text-white py-3 px-6 rounded-xl hover:bg-coral-dark transition w-1/2" // Used bg-coral and hover:bg-coral-dark
           >
             {loading
               ? 'Saving...'
@@ -141,7 +153,8 @@ const SetupQuizPage = () => {
           </button>
         </div>
 
-        {error && (
+        {/* Original error display for API errors, keep or integrate based on preference */}
+        {error && loading && ( // Only show this if it's a loading-related error
           <p className="text-red-500 text-center text-sm mt-4">{error}</p>
         )}
       </div>

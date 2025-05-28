@@ -16,6 +16,7 @@ export default {
         charcoal: '#2B2B2B',
         gray: '#666666',
         coral: '#FF6B6B',
+        'coral-dark': '#e15555', // Added coral-dark
       },
       keyframes: {
         fall: {
