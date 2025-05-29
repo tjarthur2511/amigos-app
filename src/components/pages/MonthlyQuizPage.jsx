@@ -1,12 +1,14 @@
 // src/components/pages/MonthlyQuizPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useNotification } from '../../context/NotificationContext.jsx'; // Import useNotification
 import { auth, db } from '../../firebase.js';
 import { doc, updateDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { motion } from 'framer-motion';
 import FallingAEffect from '../common/FallingAEffect';
 
 const MonthlyQuizPage = () => {
+  const { showNotification } = useNotification(); // Initialize useNotification
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [current, setCurrent] = useState(0);
@@ -52,7 +54,7 @@ const MonthlyQuizPage = () => {
   const handleNext = async () => {
     const wordCount = answers[current]?.trim().split(/\s+/).length;
     if (wordCount < 3) {
-      alert('Please write at least 3 words! Amigos love details 🌟');
+      showNotification('Please write at least 3 words! Amigos love details 🌟', 'warning', 3000);
       return;
     }
 

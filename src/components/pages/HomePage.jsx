@@ -20,6 +20,7 @@ import {
 import PostDetailModal from '../common/PostDetailModal';
 import FallingAEffect from '../common/FallingAEffect';
 import ConfirmationModal from '../common/ConfirmationModal'; // Import ConfirmationModal
+import Spinner from '../common/Spinner'; // Import Spinner
 
 const emojiOptions = ['👍', '👎', '😂', '😢', '😮', '😡', '😍', '👏', '🔥', '🎉', '🤔', '💯'];
 
@@ -276,7 +277,11 @@ const HomePage = () => {
         <div className="flex justify-center mb-8">
           <div className="bg-white p-8 rounded-[1.5rem] shadow-[0_5px_25px_rgba(0,0,0,0.2)] w-[90%] max-w-[800px] min-h-[60vh] text-center">
             <h2 className="text-3xl text-coral mb-4">Your Feed</h2> {/* text-3xl is approx 2rem */}
-            {feedItems.length > 0 ? (
+            {loadingMorePosts && feedItems.length === 0 ? ( // Initial loading state
+              <div className="flex justify-center items-center h-64">
+                <Spinner size="lg" color="coral" />
+              </div>
+            ) : feedItems.length > 0 ? (
               <ul className="flex flex-col gap-6 mt-4">
                 {feedItems.map((item) => {
                   const userReact = getUserReaction(item.emojis || {});
@@ -305,10 +310,14 @@ const HomePage = () => {
                         />
                         <button
                           onClick={() => handleCommentSubmit(item.id)}
-                          className={`${commentPostButtonClasses} ml-2`} // Applied new style
+                          className={`${commentPostButtonClasses} ml-2 flex items-center justify-center w-[70px]`} // Applied new style, added flex and fixed width to prevent size change
                           disabled={isPostingComment[item.id]}
                         >
-                          {isPostingComment[item.id] ? 'Posting...' : 'Post'}
+                          {isPostingComment[item.id] ? (
+                            <Spinner size="sm" color="white" />
+                          ) : (
+                            'Post'
+                          )}
                         </button>
                         <button
                           onClick={() => setActivePicker(activePicker === item.id ? null : item.id)}
@@ -349,16 +358,24 @@ const HomePage = () => {
             ) : (
               <p className="font-comfortaa text-gray-600">No content to display yet. Follow amigos or join grupos to see activity.</p>
             )}
-            {loadingMorePosts && <p className="font-comfortaa text-gray-500 mt-4">Loading more posts...</p>}
-            {!loadingMorePosts && hasMorePosts && feedItems.length > 0 && (
+            {/* The paragraph for "Loading more posts..." will be removed as the button itself will show this state */}
+            {hasMorePosts && feedItems.length > 0 && ( // Show button only if there are more posts and some items are already loaded
               <button
                 onClick={fetchMorePosts}
-                className={`${primaryButtonClasses} mt-6 text-sm`} // Applied primary style, adjusted text size
+                className={`${primaryButtonClasses} mt-6 text-sm flex items-center justify-center`}
+                disabled={loadingMorePosts}
               >
-                Load More Posts
+                {loadingMorePosts ? (
+                  <>
+                    <Spinner size="sm" color="white" />
+                    <span className="ml-2">Loading More...</span>
+                  </>
+                ) : (
+                  'Load More Posts'
+                )}
               </button>
             )}
-            {!loadingMorePosts && !hasMorePosts && feedItems.length > 0 && (
+            {!loadingMorePosts && !hasMorePosts && feedItems.length > 0 && ( // Keep this message for when there are no more posts
               <p className="font-comfortaa text-gray-500 mt-4">You've reached the end of the feed!</p>
             )}
           </div>

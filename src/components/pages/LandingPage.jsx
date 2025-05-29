@@ -5,6 +5,7 @@ import { signInWithEmailAndPassword, browserLocalPersistence, browserSessionPers
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase";
 import InlineNotification from "../common/modals/InlineNotification"; // Import the notification component
+import Spinner from "../common/Spinner"; // Import Spinner
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -60,7 +61,8 @@ const LandingPage = () => {
   }, []);
 
   // Define input style as a Tailwind string to reuse
-  const inputClasses = "p-[0.5em] border border-gray-300 rounded-[0.5em] font-comfortaa text-base w-full box-border";
+  // Using theme values: rounded-input (0.5em -> p-2.5), neutral-300 for border, focus:ring-coral. Using p-2.5 for 0.625rem which is close to 0.5em.
+  const inputClasses = "p-2.5 border border-neutral-300 rounded-input font-comfortaa text-base w-full box-border focus:outline-none focus:ring-2 focus:ring-coral focus:border-transparent disabled:bg-neutral-100 disabled:text-neutral-500 disabled:cursor-not-allowed";
 
   return (
     <div className="min-h-screen relative overflow-hidden w-full font-comfortaa">
@@ -84,7 +86,7 @@ const LandingPage = () => {
 
             <button
               onClick={handleGetStarted}
-              className="bg-coral text-white py-3 px-6 rounded-full font-comfortaa font-bold text-base cursor-pointer transition-all duration-200 ease-in-out shadow-md hover:bg-coral-dark" // Applied new standard style
+              className="bg-coral text-white py-3 px-6 rounded-button font-comfortaa font-bold text-base cursor-pointer transition-all duration-200 ease-in-out shadow-md hover:bg-coral-dark active:bg-coral-dark/90 focus:outline-none focus:ring-2 focus:ring-coral-dark focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed" // Added active, focus, disabled states and used rounded-button
             >
               Get Started
             </button>
@@ -132,7 +134,7 @@ const LandingPage = () => {
                 type="checkbox"
                 checked={showPassword}
                 onChange={(e) => setShowPassword(e.target.checked)}
-                className="mr-2" // Replaced style with Tailwind margin
+                className="mr-2 h-4 w-4 text-coral focus:ring-coral border-neutral-300 rounded disabled:opacity-70" // Styled checkbox
               />
               Show Password
             </label>
@@ -142,17 +144,24 @@ const LandingPage = () => {
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="mr-2" // Replaced style with Tailwind margin
+                className="mr-2 h-4 w-4 text-coral focus:ring-coral border-neutral-300 rounded disabled:opacity-70" // Styled checkbox
               />
               Remember Me
             </label>
 
             <button
               type="submit"
-              className="bg-coral text-white p-[0.6em_1em] rounded-full font-comfortaa font-bold text-base cursor-pointer transition-all duration-200 ease-in-out shadow-md w-full hover:bg-coral-dark disabled:opacity-70" // Applied new standard style
+              className="bg-coral text-white p-2.5 rounded-button font-comfortaa font-bold text-base cursor-pointer transition-all duration-200 ease-in-out shadow-md w-full hover:bg-coral-dark active:bg-coral-dark/90 focus:outline-none focus:ring-2 focus:ring-coral-dark focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center" // Added flex items-center justify-center
               disabled={isLoggingIn}
             >
-              {isLoggingIn ? 'Logging in...' : 'Login'}
+              {isLoggingIn ? (
+                <>
+                  <Spinner size="sm" color="white" />
+                  <span className="ml-2">Logging in...</span>
+                </>
+              ) : (
+                'Login'
+              )}
             </button>
           </form>
         </div>

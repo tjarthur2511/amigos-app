@@ -32,12 +32,12 @@ const NavBar = () => {
             key={to}
             to={to}
             className={({ isActive }) =>
-              `px-5 py-2 rounded-full text-base font-comfortaa font-bold transition-all duration-200 ease-in-out no-underline ` +
+              `px-5 py-2 rounded-button text-base font-comfortaa font-bold transition-all duration-200 ease-in-out no-underline focus:outline-none focus:ring-2 focus:ring-coral-dark focus:ring-offset-1 active:scale-95 ` + // Added focus, active states, and rounded-button. Adjusted focus offset due to shadow.
               (isActive
-                ? 'bg-coral-dark text-white shadow-lg' // Active state
+                ? 'bg-coral-dark text-white shadow-lg' // Active routing state
                 : 'bg-coral text-white shadow-md hover:bg-coral-dark') // Default non-active state
             }
-            style={ to === '/' ? { border: 'none !important', padding: '0.5rem 1.25rem !important' } : {} } // Temporary debug style for 'Home' link
+            // Removed temporary inline style for 'Home' link, assuming standard padding is acceptable or should be handled via conditional classes if truly necessary.
             onMouseEnter={() => handleHover(to)}
             onMouseLeave={handleLeave}
           >

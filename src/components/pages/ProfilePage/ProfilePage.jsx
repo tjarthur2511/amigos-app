@@ -8,10 +8,15 @@ import ProfileQuestionsCenter from './ProfileQuestionsCenter';
 import ProfilePhotos from './ProfilePhotos';
 import FallingAEffect from '../../common/FallingAEffect';
 import FollowersList from './FollowersList';
+import Spinner from '../../common/Spinner'; // Import Spinner
+import NotificationSettings from './NotificationSettings'; // Import NotificationSettings
+import { useNotification } from '../../../context/NotificationContext.jsx'; // Import useNotification
 
 const ProfilePage = () => {
+  const { showNotification } = useNotification(); // Initialize useNotification
   const navigate = useNavigate();
   const [currentCard, setCurrentCard] = useState(0);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true); // Added loading state for initial profile fetch
   const [displayName, setDisplayName] = useState('');
   const [userId, setUserId] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
@@ -21,15 +26,20 @@ const ProfilePage = () => {
   const [pronouns, setPronouns] = useState('');
   const [location, setLocation] = useState('');
   const [background, setBackground] = useState('');
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = useState(false); // This is for the save button
   const [followerCount, setFollowerCount] = useState(0);
 
-  const profileCards = ['Your Profile', 'Quiz Questions', 'Your Photos'];
+  // Added 'Notification Settings' to profileCards
+  const profileCards = ['Your Profile', 'Quiz Questions', 'Your Photos', 'Notification Settings'];
 
   useEffect(() => {
     const fetchUser = async () => {
+      setIsLoadingProfile(true); // Start loading before fetch
       const user = auth.currentUser;
-      if (!user) return;
+      if (!user) {
+        setIsLoadingProfile(false); // Stop loading if no user
+        return;
+      }
 
       setUserId(user.uid);
       const ref = doc(db, 'users', user.uid);
@@ -49,6 +59,7 @@ const ProfilePage = () => {
       const allUsersSnap = await getDocs(collection(db, 'users'));
       const followers = allUsersSnap.docs.filter(doc => (doc.data().following || []).includes(user.uid));
       setFollowerCount(followers.length);
+      setIsLoadingProfile(false); // Stop loading after fetch
     };
     fetchUser();
   }, []);
@@ -67,6 +78,12 @@ const ProfilePage = () => {
       background,
     });
     setSaving(false);
+    showNotification("Profile saved successfully!", "success");
+  } catch (error) {
+    console.error("Error saving profile: ", error);
+    setSaving(false);
+    showNotification("Failed to save profile. Please try again.", "error");
+  }
   };
 
   const nextCard = () => setCurrentCard((prev) => (prev + 1) % profileCards.length);
@@ -132,12 +149,26 @@ const ProfilePage = () => {
                 </select>
               </div>
               <div className="mt-4 flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <button onClick={handleSavePublicProfile} className={profileFormButtonClasses} disabled={saving}>
-                  {saving ? 'Saving...' : '💾 Save Profile'}
+                <button 
+                  onClick={handleSavePublicProfile} 
+                  className={`${profileFormButtonClasses} flex items-center justify-center`} 
+                  disabled={saving}
+                >
+                  {saving ? (
+                    <>
+                      <Spinner size="sm" color="white" />
+                      <span className="ml-2">Saving...</span>
+                    </>
+                  ) : (
+                    '💾 Save Profile'
+                  )}
                 </button>
-                <button onClick={() => navigate(`/profile/${userId}`)} className={profileFormButtonClasses}>
+                <button 
+                  onClick={() => navigate(`/profile/${userId}`)} 
+                  className={profileFormButtonClasses}
+                  disabled={saving} // Optionally disable while saving
+                >
                   🔍 View Public Profile
-                </button>
               </div>
               <FollowersList userId={userId} />
             </div>
@@ -152,6 +183,8 @@ const ProfilePage = () => {
             <ProfilePhotos />
           </>
         );
+      case 'Notification Settings':
+        return <NotificationSettings />;
       default:
         return null;
     }
@@ -187,15 +220,26 @@ const ProfilePage = () => {
 
       <div className="flex justify-center mb-8 z-[10]">
         <div className="bg-white p-8 rounded-[1.5rem] shadow-[0_5px_25px_rgba(0,0,0,0.2)] w-[90%] max-w-[800px] min-h-[60vh] text-center relative z-0">
-          {profileCards[currentCard] !== 'Your Profile' && profileCards[currentCard] !== 'Your Photos' && (
-            <h2 className={sectionTitleClasses}>{profileCards[currentCard]}</h2>
+          {isLoadingProfile ? (
+            <div className="flex justify-center items-center h-40">
+              <Spinner size="lg" color="coral" />
+            </div>
+          ) : (
+            <>
+              {/* Conditionally render title only if it's not one of the cards that renders its own main title */}
+              {profileCards[currentCard] !== 'Your Profile' && 
+               profileCards[currentCard] !== 'Your Photos' &&
+               profileCards[currentCard] !== 'Notification Settings' && (
+                <h2 className={sectionTitleClasses}>{profileCards[currentCard]}</h2>
+              )}
+              {renderCardContent()}
+            </>
           )}
-          {renderCardContent()}
           <div className="absolute right-4 top-1/2 -translate-y-1/2 z-0">
-            <button onClick={nextCard} className={arrowButtonClasses}>→</button>
+            <button onClick={nextCard} className={arrowButtonClasses} disabled={isLoadingProfile}>→</button>
           </div>
           <div className="absolute left-4 top-1/2 -translate-y-1/2 z-0">
-            <button onClick={prevCard} className={arrowButtonClasses}>←</button>
+            <button onClick={prevCard} className={arrowButtonClasses} disabled={isLoadingProfile}>←</button>
           </div>
         </div>
       </div>

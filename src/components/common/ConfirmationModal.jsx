@@ -19,74 +19,49 @@ const ConfirmationModal = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 50, // Ensure it's above other content
-            fontFamily: "'Comfortaa', sans-serif",
-          }}
+          // Backdrop styles replaced with Tailwind classes
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 font-comfortaa p-4"
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            style={{
-              backgroundColor: 'white',
-              padding: '2rem',
-              borderRadius: '1rem',
-              boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-              width: '90%',
-              maxWidth: '400px',
-              textAlign: 'center',
-            }}
+            // Modal container styles replaced with Tailwind classes
+            // Using theme values: bg-neutral-50 (very light gray), rounded-xl, shadow-lg
+            // padding from theme: modal-p (defaulting to p-8 if not specifically set, or using p-8 directly)
+            className="bg-neutral-50 p-6 sm:p-8 rounded-xl shadow-xl w-full max-w-md text-center"
           >
-            <h2 style={{ fontSize: '1.5rem', color: '#333', marginBottom: '1rem', fontWeight: 'bold' }}>
+            <h2 
+              // Title styles replaced with Tailwind classes
+              // Using theme colors: text-neutral-800 or text-charcoal
+              className="text-2xl font-bold text-neutral-800 mb-4"
+            >
               {title}
             </h2>
-            <p style={{ fontSize: '1rem', color: '#555', marginBottom: '2rem' }}>
+            <p 
+              // Message styles replaced with Tailwind classes
+              // Using theme colors: text-neutral-600
+              className="text-base text-neutral-600 mb-8"
+            >
               {message}
             </p>
-            <div style={{ display: 'flex', justifyContent: 'space-around', gap: '1rem' }}>
+            <div 
+              // Button container styles replaced with Tailwind classes
+              className="flex justify-between items-center gap-4"
+            >
               <button
                 onClick={onCancel}
-                style={{
-                  backgroundColor: '#6c757d', // A neutral gray
-                  color: 'white',
-                  border: 'none',
-                  padding: '10px 20px',
-                  borderRadius: '20px',
-                  fontSize: '1rem',
-                  cursor: 'pointer',
-                  transition: 'background-color 0.3s ease',
-                  flex: 1,
-                }}
-                onMouseOver={(e) => e.target.style.backgroundColor = '#5a6268'}
-                onMouseOut={(e) => e.target.style.backgroundColor = '#6c757d'}
+                // Cancel button styles replaced with Tailwind classes
+                // Using theme values: bg-neutral-500, text-white, hover:bg-neutral-600, rounded-button
+                className="flex-1 py-2.5 px-5 bg-neutral-300 text-neutral-700 rounded-button font-semibold hover:bg-neutral-400 transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-opacity-50"
               >
                 {cancelText}
               </button>
               <button
                 onClick={onConfirm}
-                style={{
-                  backgroundColor: '#FF6B6B', // Theme color for confirm
-                  color: 'white',
-                  border: 'none',
-                  padding: '10px 20px',
-                  borderRadius: '20px',
-                  fontSize: '1rem',
-                  cursor: 'pointer',
-                  transition: 'background-color 0.3s ease',
-                  flex: 1,
-                }}
-                onMouseOver={(e) => e.target.style.backgroundColor = '#e15555'}
-                onMouseOut={(e) => e.target.style.backgroundColor = '#FF6B6B'}
+                // Confirm button styles replaced with Tailwind classes
+                // Using theme values: bg-coral, text-white, hover:bg-coral-dark, rounded-button
+                className="flex-1 py-2.5 px-5 bg-coral text-white rounded-button font-semibold hover:bg-coral-dark transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-coral-dark focus:ring-opacity-50"
               >
                 {confirmText}
               </button>

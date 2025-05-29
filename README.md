@@ -1,84 +1,121 @@
-# React + Vite
+# Amigos Hangouts
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<!-- TODO: Add Screenshot of HomePage Feed -->
 
-Currently, two official plugins are available:
+Amigos Hangouts helps you connect with friends and like-minded people for real-world activities and online interaction. Discover new groups, share your experiences, and plan your next hangout!
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Key Features
 
-## Expanding the ESLint configuration
+*   **User Authentication:** Secure sign-up and login.
+*   **Personalized Profiles:** Customize your profile and share a bit about yourself.
+*   **Social Feed:** Share updates, photos, and videos with your Amigos and Grupos.
+*   **Amigos Network:** Connect with friends and see their activity.
+*   **Grupos (Groups):** Join or create groups based on shared interests, hobbies, or communities.
+*   **Event Planning:** (Functionality suggested by `EventCard.jsx`, `Events.jsx`) Organize or discover local hangouts and events.
+*   **Onboarding Quiz:** Answer a few questions on signup to help us suggest relevant Amigos and Grupos.
+*   **Interactive Map for Hangouts:** (Functionality suggested by `MapHangoutButton.jsx`, `MapHangoutsModal.jsx`) Explore and mark locations for hangouts.
+*   **Notifications:** Stay updated on relevant activity.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-# Getting Started with Create React App
+<!-- TODO: Add GIF of Group Creation or Event Planning Flow -->
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Tech Stack
 
-## Available Scripts
+*   **Frontend:**
+    *   React
+    *   Vite
+    *   JavaScript (ES6+)
+    *   Tailwind CSS (styling, in progress)
+    *   i18n (for internationalization)
+*   **Backend & Platform:**
+    *   Firebase
+        *   Firebase Authentication
+        *   Firestore (Database)
+        *   Firebase Storage (for images, videos)
+*   **Development & Tooling:**
+    *   npm
+    *   ESLint
 
-In the project directory, you can run:
+## Project Overview
 
-### `npm start`
+Amigos Hangouts is built with a component-based architecture using React. Key directories include:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+*   `src/components/`: Contains reusable UI components (common, navigation, cards, etc.).
+*   `src/components/pages/`: Houses the main page components (HomePage, ProfilePage, AmigosPage, GruposPage, etc.).
+*   `src/firebase.js`: Firebase configuration and initialization.
+*   `src/context/`: React context for global state management (e.g., Auth, UserPreferences).
+*   `src/utils/`: Utility functions used across the application.
+*   `src/seeder/`: Scripts for seeding initial data into Firestore.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The application aims for a simple, intuitive layout, focusing on connecting users for social interaction and activities.
 
-### `npm test`
+<!-- TODO: Add Screenshot of Profile Page or Grupos Page -->
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Getting Started
 
-### `npm run build`
+To get a local copy up and running, follow these simple steps.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Prerequisites
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+*   Node.js (which includes npm) installed on your machine.
+*   A Firebase project set up. You will need to configure your Firebase credentials.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Installation & Setup
 
-### `npm run eject`
+1.  **Clone the repo:**
+    ```sh
+    git clone https://github.com/tjarthur2511/amigos-app.git
+    cd amigos-app
+    ```
+2.  **Install NPM packages:**
+    ```sh
+    npm install
+    ```
+3.  **Set up Firebase:**
+    *   Create a `.env` file in the root of the project.
+    *   Add your Firebase project configuration keys to the `.env` file. Example variables (use your actual Firebase config values):
+        ```env
+        VITE_FIREBASE_API_KEY=your_api_key
+        VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
+        VITE_FIREBASE_PROJECT_ID=your_project_id
+        VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+        VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+        VITE_FIREBASE_APP_ID=your_app_id
+        ```
+    *   Ensure your Firestore database is initialized and you have appropriate security rules set up. You can use `firestore.rules` and `storage.rules` in this repository as a starting point.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+4.  **Run the development server:**
+    The `package.json` uses Vite. The typical command to start the Vite development server is:
+    ```sh
+    npm run dev
+    ```
+    (Previously, the README mentioned `npm start`. If `npm run dev` doesn't work, please check the `scripts` section in `package.json` and update this step accordingly.)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+    Open [http://localhost:5173](http://localhost:5173) (or the port Vite indicates) to view it in your browser.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Available Scripts
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+*   `npm run dev`: Runs the app in development mode with Vite.
+*   `npm run build`: Builds the app for production.
+*   `npm test`: Launches the test runner (if configured).
 
-## Learn More
+## Further Details
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+For more in-depth information about the project's structure, component rules, and specific observations, please refer to:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+*   [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)
+*   [Observations_Report.md](Observations_Report.md)
 
-### Code Splitting
+## Contributing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-### Analyzing the Bundle Size
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+Don't forget to give the project a star! Thanks again!
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+1.  Fork the Project
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the Branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-=======
->>>>>>> 2e03023 (✅ Merged index.css and firebase.js with Amigos styling and Firebase Auth)
+*(Note: As per `PROJECT_STRUCTURE.md`, there are strict rules about maintaining the existing layout and design. Please discuss any significant UI changes before undertaking them.)*
