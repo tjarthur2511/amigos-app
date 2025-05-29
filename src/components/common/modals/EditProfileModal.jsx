@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { auth, db } from "../../../firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import InlineNotification from "./InlineNotification"; // Import InlineNotification
+import InlineNotification from "../modals/InlineNotification"; // Import InlineNotification
 
 const EditProfileModal = ({ onClose }) => {
   const [displayName, setDisplayName] = useState("");

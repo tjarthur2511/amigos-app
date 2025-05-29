@@ -32,7 +32,7 @@ const AmigosUnidos = () => {
 
   // Define reused class strings
   const titleClasses = "text-xl text-coral font-bold text-center mb-4";
-  const userNameClasses = "text-lg font-bold text-coral"; // Explicitly text-coral for accent
+  const userNameClasses = "text-lg font-bold text-coral";
   const userDetailClasses = "text-sm text-gray-600";
   const itemClasses = "bg-white p-4 rounded-xl shadow-[0_2px_6px_rgba(0,0,0,0.15)] z-0";
 
@@ -53,12 +53,13 @@ const AmigosUnidos = () => {
           ))}
         </ul>
       ) : (
-        <p className="text-gray-600 text-center mt-4">You aren’t following any amigos yet.</p> {/* Changed to text-gray-600 */}
+        <p className="text-gray-600 text-center mt-4">
+          {/* Changed to text-gray-600 */}
+          You aren’t following any amigos yet.
+        </p>
       )}
     </div>
   );
 };
-
-// Style object constants are no longer needed.
 
 export default AmigosUnidos;

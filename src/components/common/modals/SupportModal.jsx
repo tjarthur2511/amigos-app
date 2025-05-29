@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { db, auth } from "../../../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import InlineNotification from "./InlineNotification"; // Import InlineNotification
+import InlineNotification from "../modals/InlineNotification"; // Import InlineNotification
 
 const SupportModal = ({ onClose }) => {
   const [selectedOption, setSelectedOption] = useState("");

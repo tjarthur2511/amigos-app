@@ -4,7 +4,7 @@ import { auth, db } from "../../firebase";
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { motion } from 'framer-motion';
 import FallingAEffect from '../common/FallingAEffect';
-import InlineNotification from '../common/InlineNotification'; // Import the notification component
+import InlineNotification from '../common/modals/InlineNotification'; // Import the notification component
 
 const staticQuestions = [
   "What's your favorite way to relax?",
