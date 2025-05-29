@@ -16,46 +16,46 @@ html {
 body.profile-page {
   font-family: 'Comfortaa', cursive;
   background-color: #ffffff;
-  color: var(--text-color);
+  color: #2B2B2B; /* Default body text to charcoal for light themes */
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* DARK THEME */
 body.profile-page[data-theme='dark'] {
-  --theme-color: #ffffff;
-  --text-color: #ffffff;
+  --theme-color: #ffffff; /* This is likely for accents, not primary text */
+  --text-color: #ffffff; /* Primary text for dark mode */
   --hover-color: #cccccc;
   background-color: #121212;
-  color: var(--text-color);
+  color: var(--text-color); /* Use the variable, which is white */
 }
 
-/* CORAL THEME */
+/* CORAL THEME (effectively default light theme) */
 body.profile-page[data-theme='coral'] {
-  --theme-color: #FF6B6B;
-  --text-color: #FF6B6B;
+  --theme-color: #FF6B6B; /* Coral for accents */
+  --text-color: #2B2B2B;   /* Charcoal for body text */
   --hover-color: #E65050;
   background-color: #ffffff;
-  color: var(--text-color);
+  color: var(--text-color); /* Use the variable, which is now charcoal */
 }
 
 /* FALLBACK DARK PREFERENCE */
 @media (prefers-color-scheme: dark) {
   body.profile-page:not([data-theme]) {
-    --theme-color: #ffffff;
-    --text-color: #ffffff;
+    --theme-color: #ffffff; /* Accent */
+    --text-color: #ffffff; /* Body text */
     --hover-color: #cccccc;
     background-color: #121212;
-    color: var(--text-color);
+    color: var(--text-color); /* White */
   }
 }
 
 @media (prefers-color-scheme: light) {
   body.profile-page:not([data-theme]) {
-    --theme-color: #FF6B6B;
-    --text-color: #FF6B6B;
+    --theme-color: #FF6B6B; /* Accent */
+    --text-color: #2B2B2B;   /* Body text charcoal */
     --hover-color: #E65050;
     background-color: #ffffff;
-    color: var(--text-color);
+    color: var(--text-color); /* Charcoal */
   }
 }
 

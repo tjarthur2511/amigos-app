@@ -32,11 +32,12 @@ const NavBar = () => {
             key={to}
             to={to}
             className={({ isActive }) =>
-              `px-5 py-2 rounded-full text-base font-comfortaa font-bold transition-all duration-200 ease-in-out no-underline ` + // Base styles
+              `px-5 py-2 rounded-full text-base font-comfortaa font-bold transition-all duration-200 ease-in-out no-underline ` +
               (isActive
-                ? 'bg-coral-dark text-white shadow-lg' // Active: darker coral, white text, more shadow
-                : 'bg-coral text-white shadow-md hover:bg-coral-dark') // Default: coral background, white text, standard shadow, darker hover
+                ? 'bg-coral-dark text-white shadow-lg' // Active state
+                : 'bg-coral text-white shadow-md hover:bg-coral-dark') // Default non-active state
             }
+            style={ to === '/' ? { border: 'none !important', padding: '0.5rem 1.25rem !important' } : {} } // Temporary debug style for 'Home' link
             onMouseEnter={() => handleHover(to)}
             onMouseLeave={handleLeave}
           >
