@@ -63,7 +63,8 @@ const SetupQuizPage = () => {
             });
           }
         }
-        navigate('/');
+        // Navigate to suggestions page after saving quiz answers
+        navigate('/suggestions'); 
       } catch (err) {
         console.error(err);
         setError('Failed to save your answers. Please try again.');

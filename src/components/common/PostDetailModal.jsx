@@ -15,10 +15,13 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import ReactionPicker from "./ReactionPicker";
+import { useNotification } from "../../context/NotificationContext.jsx"; // Import useNotification
 
 const PostDetailModal = ({ post, onClose }) => {
+  const { showNotification } = useNotification(); // Initialize useNotification
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false); // Loading state for comment submission
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editedContent, setEditedContent] = useState("");
   const [emojiPickerVisible, setEmojiPickerVisible] = useState(null);
@@ -39,15 +42,23 @@ const PostDetailModal = ({ post, onClose }) => {
 
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
-    await addDoc(collection(db, "comments"), {
-      content: newComment,
-      createdAt: Timestamp.now(),
-      postId: post.id,
-      userId: currentUser?.uid || "anon",
-      parentId: "",
-      emojis: {},
-    });
-    setNewComment("");
+    setIsSubmittingComment(true);
+    try {
+      await addDoc(collection(db, "comments"), {
+        content: newComment,
+        createdAt: Timestamp.now(),
+        postId: post.id,
+        userId: currentUser?.uid || "anon",
+        parentId: "",
+        emojis: {},
+      });
+      setNewComment("");
+    } catch (error) {
+      console.error("Error submitting comment:", error);
+      showNotification("Failed to post comment.", "error");
+    } finally {
+      setIsSubmittingComment(false);
+    }
   };
 
   const handleEmojiReact = async (commentId, emoji, currentMap = {}) => {
@@ -83,8 +94,10 @@ const PostDetailModal = ({ post, onClose }) => {
     if (!window.confirm("Are you sure you want to delete this comment?")) return;
     try {
       await deleteDoc(doc(db, "comments", commentId));
-    } catch {
-      alert("Failed to delete comment");
+      showNotification("Comment deleted successfully.", "success", 3000);
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      showNotification("Failed to delete comment. Please try again.", "error", 3000);
     }
   };
 
@@ -111,9 +124,18 @@ const PostDetailModal = ({ post, onClose }) => {
         overflowY: "auto",
         position: "relative",
         fontFamily: "Comfortaa, sans-serif",
-        zIndex: 0
+        zIndex: 0, // This zIndex should be higher if it's a direct child of the portal div with zIndex 0 for backdrop. Let's assume it's part of the modal content flow.
+        // For a full refactor, the parent div would handle backdrop and centering, and this would be the modal content card.
       }}>
-        <button onClick={onClose} style={{ position: "absolute", top: "1rem", right: "1rem", border: "none", background: "none", fontSize: "1.5rem", cursor: "pointer", color: "#FF6B6B" }}>✖</button>
+        <button 
+          onClick={onClose} 
+          aria-label="Close modal"
+          className="absolute top-4 right-4 text-neutral-500 hover:text-coral focus:outline-none focus:ring-2 focus:ring-coral rounded-md p-1 transition-colors"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
 
         <div style={{ backgroundColor: "#ffffff", padding: "1rem", borderRadius: "1rem", boxShadow: "0 2px 10px rgba(0,0,0,0.1)", textAlign: "center", marginBottom: "2rem" }}>
           <h2 style={{ color: "#FF6B6B", marginBottom: "1rem" }}>Full Post</h2>
@@ -123,9 +145,23 @@ const PostDetailModal = ({ post, onClose }) => {
         </div>
 
         <h3 style={{ color: "#FF6B6B", marginTop: "1rem" }}>Comments</h3>
-        <div style={{ display: "flex", gap: "0.5rem", marginTop: "1rem" }}>
-          <textarea value={newComment} onChange={(e) => setNewComment(e.target.value)} placeholder="Write a comment..." style={{ flex: 1, padding: "0.5rem", borderRadius: "0.5rem", border: "1px solid #ccc", fontFamily: "Comfortaa, sans-serif" }} />
-          <button onClick={handleCommentSubmit} style={{ backgroundColor: "#FFFFFF", color: "#FF6B6B", border: "1px solid #FF6B6B", padding: "0.5rem 1rem", borderRadius: "1rem", cursor: "pointer", fontWeight: "bold" }}>Post</button>
+        {/* Comment input area - minor refinement applied */}
+        <div className="flex items-start gap-2 mt-4">
+          <textarea 
+            value={newComment} 
+            onChange={(e) => setNewComment(e.target.value)} 
+            placeholder="Write a comment..." 
+            className="flex-1 p-2.5 border border-neutral-300 rounded-input font-comfortaa text-base w-full box-border focus:outline-none focus:ring-2 focus:ring-coral focus:border-transparent disabled:bg-neutral-100"
+            rows="2"
+            disabled={isSubmittingComment}
+          />
+          <button 
+            onClick={handleCommentSubmit} 
+            className="bg-coral text-white px-4 py-2.5 rounded-button font-comfortaa font-bold text-sm hover:bg-coral-dark active:bg-coral-dark/90 focus:outline-none focus:ring-2 focus:ring-coral-dark focus:ring-offset-1 disabled:opacity-70 flex items-center justify-center min-w-[80px]"
+            disabled={isSubmittingComment}
+          >
+            {isSubmittingComment ? <Spinner size="sm" color="white" /> : 'Post'}
+          </button>
         </div>
 
         <div style={{ maxHeight: "300px", overflowY: "auto", marginTop: "1rem", paddingRight: "0.5rem" }}>

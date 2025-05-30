@@ -7,10 +7,13 @@ import FallingAEffect from '../../common/FallingAEffect';
 import SuggestedGrupos from './SuggestedGrupos';
 import GruposUnidos from './GruposUnidos';
 import GruposPosts from './GruposPosts';
+import GrupoFormModal from './GrupoFormModal'; // Import GrupoFormModal
+import { PlusCircleIcon } from '@heroicons/react/24/solid'; // Icon for create button
 
 const GruposPage = () => {
   const navigate = useNavigate();
   const [currentCard, setCurrentCard] = useState(1);
+  const [isCreateGrupoModalOpen, setIsCreateGrupoModalOpen] = useState(false);
   const [userGrupos, setUserGrupos] = useState([]);
   const [currentUserId, setCurrentUserId] = useState(null);
   const feedCards = ['Suggested Grupos', 'Your Grupos', 'Your Grupos Posts'];
@@ -40,9 +43,9 @@ const GruposPage = () => {
 
   // Define reused class strings (similar to AmigosPage)
   const tabClasses = "bg-coral text-white border-none py-3 px-5 rounded-[30px] text-base font-bold font-comfortaa cursor-pointer shadow-[0_3px_8px_rgba(0,0,0,0.2)] hover:bg-coral-dark transition-all";
-  const standardButtonBase = "rounded-full bg-coral text-white font-comfortaa font-bold shadow-md transition-all duration-200 ease-in-out hover:bg-coral-dark disabled:opacity-70 disabled:cursor-not-allowed";
-  const exploreButtonClasses = `${standardButtonBase} py-1 px-4 text-sm`; // Adjusted padding & text size
-  const arrowButtonClasses = `${standardButtonBase} py-2 px-3 text-xl`; // Adjusted padding & text size for arrow
+  const standardButtonBase = "rounded-button bg-coral text-white font-comfortaa font-bold shadow-md transition-all duration-200 ease-in-out hover:bg-coral-dark active:bg-coral-dark/90 focus:outline-none focus:ring-2 focus:ring-coral-dark focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed";
+  const exploreButtonClasses = `${standardButtonBase} py-1.5 px-4 text-sm`; 
+  const arrowButtonClasses = `${standardButtonBase} py-2 px-3 text-xl`;
 
   const renderCurrentFeed = () => {
     switch (feedCards[currentCard]) {
@@ -89,8 +92,21 @@ const GruposPage = () => {
       </nav>
 
       <div className="flex justify-center mb-8 z-[10]">
-        <div className="bg-white p-8 rounded-[1.5rem] shadow-[0_5px_25px_rgba(0,0,0,0.2)] w-[90%] max-w-[800px] min-h-[60vh] text-center relative z-0">
-          <h2 className="text-3xl text-coral mb-4">{feedCards[currentCard]}</h2>
+        <div className="bg-white p-8 rounded-2xl shadow-xl w-[90%] max-w-[800px] min-h-[60vh] text-center relative z-0">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-3xl text-coral">{feedCards[currentCard]}</h2>
+            {/* Render Create Grupo button only when 'Your Grupos' or 'Suggested Grupos' card is active */}
+            {(feedCards[currentCard] === 'Your Grupos' || feedCards[currentCard] === 'Suggested Grupos') && (
+              <button
+                onClick={() => setIsCreateGrupoModalOpen(true)}
+                className={`${standardButtonBase} py-2 px-4 text-sm flex items-center space-x-2`}
+                title="Create New Grupo"
+              >
+                <PlusCircleIcon className="h-5 w-5" />
+                <span>Create Grupo</span>
+              </button>
+            )}
+          </div>
           {renderCurrentFeed()}
           <div className="absolute right-4 top-1/2 -translate-y-1/2 z-0">
             <button onClick={nextCard} className={arrowButtonClasses}>→</button>
@@ -100,6 +116,10 @@ const GruposPage = () => {
           </div>
         </div>
       </div>
+      <GrupoFormModal 
+        isOpen={isCreateGrupoModalOpen} 
+        onClose={() => setIsCreateGrupoModalOpen(false)} 
+      />
     </div>
   );
 };

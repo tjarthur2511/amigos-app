@@ -104,41 +104,28 @@ const NotificationsBell = () => {
 
   const unseenCount = notifications.filter((n) => !n.seen).length;
 
+  // Tailwind classes for the bell button
+  const bellBaseClasses = "fixed top-[15vh] sm:top-28 right-4 sm:right-8 p-2 rounded-full shadow-lg transition-all duration-300 ease-in-out focus:outline-none z-[1000]"; // Adjusted positioning slightly for responsiveness
+  const bellColorClasses = "bg-coral text-white hover:bg-coral-dark active:bg-coral-dark/90 focus:ring-2 focus:ring-coral-dark focus:ring-offset-2";
+  const pulseAnimationClass = unseenCount > 0 ? "animate-[pulse-a_1.75s_infinite]" : ""; // Using existing pulse-a from theme
+
   return (
     <>
       <button
         onClick={handleClick}
-        style={{
-          position: "absolute",
-          top: "16rem",
-          right: "22rem",
-          backgroundColor: "#FF6B6B",
-          border: "none",
-          padding: "0.5rem",
-          borderRadius: "9999px",
-          cursor: "pointer",
-          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.23)",
-          zIndex: 1000000,
-          animation: unseenCount > 0 ? "pulse 1.5s infinite" : "none",
-          transition: "all 0.3s ease",
-        }}
-        onMouseOver={(e) => {
-          e.target.style.backgroundColor = "#e15555";
-        }}
-        onMouseOut={(e) => {
-          e.target.style.backgroundColor = "#FF6B6B";
-        }}
+        className={`${bellBaseClasses} ${bellColorClasses} ${pulseAnimationClass}`}
+        aria-label={`Notifications (${unseenCount} unseen)`}
       >
         <img
-          src="/assets/amigosaonly.png"
-          alt="notification a"
-          style={{
-            height: "1.6rem",
-            width: "auto",
-            display: "block",
-            filter: "drop-shadow(0 0 2px #fff)",
-          }}
+          src="/assets/amigosaonly.png" // Assuming this is the bell icon
+          alt="Notifications"
+          className="h-6 w-6 block filter drop-shadow-[0_0_1px_rgba(255,255,255,0.7)]" // Standardized size and shadow
         />
+        {unseenCount > 0 && (
+          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+            {unseenCount > 9 ? '9+' : unseenCount}
+          </span>
+        )}
       </button>
 
       {showModal && (

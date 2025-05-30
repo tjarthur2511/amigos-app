@@ -5,8 +5,11 @@ import { doc, getDoc, collection, query, where, getDocs, updateDoc } from "fireb
 import PostDetailModal from "./PostDetailModal";
 import PostModal from "./PostModal";
 import ReactionPicker from "./ReactionPicker";
+import { useNotification } from "../../context/NotificationContext.jsx";
+import { ShareIcon } from '@heroicons/react/24/outline';
 
 const PostCard = ({ post }) => {
+  const { showNotification } = useNotification();
   const [author, setAuthor] = useState(null);
   const [comments, setComments] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -53,26 +56,48 @@ const PostCard = ({ post }) => {
     setEmojiPickerVisible(null);
   };
 
-  const viewAllCommentsButtonClasses = "bg-coral text-white py-2 px-4 rounded-full font-comfortaa font-bold text-sm mt-4 cursor-pointer transition-all duration-200 ease-in-out shadow-md hover:bg-coral-dark";
-  const editButtonClasses = "absolute top-4 right-4 bg-coral text-white p-2 rounded-full font-comfortaa font-bold text-xl cursor-pointer transition-all duration-200 ease-in-out shadow-md hover:bg-coral-dark";
+  const viewAllCommentsButtonClasses = "bg-coral text-white py-2 px-4 rounded-full font-comfortaa font-bold text-sm mt-4 cursor-pointer transition-all duration-200 ease-in-out shadow-md hover:bg-coral-dark active:bg-coral-dark/90 focus:outline-none focus:ring-2 focus:ring-coral-dark focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed";
+  const editButtonClasses = "absolute top-4 right-4 bg-coral text-white p-2 rounded-full font-comfortaa font-bold text-xl cursor-pointer transition-all duration-200 ease-in-out shadow-md hover:bg-coral-dark active:bg-coral-dark/90 focus:outline-none focus:ring-2 focus:ring-coral-dark focus:ring-offset-1 disabled:opacity-70 disabled:cursor-not-allowed";
+
+  const handleShare = async () => {
+    const postUrl = `${window.location.origin}/post/${post.id}`;
+    try {
+      await navigator.clipboard.writeText(postUrl);
+      showNotification("Link copied to clipboard!", "success");
+    } catch (err) {
+      console.error("Failed to copy link:", err);
+      showNotification("Failed to copy link.", "error");
+    }
+  };
 
   return (
-    <div className="bg-white rounded-[1.5rem] p-6 mb-8 shadow-[0_4px_12px_rgba(0,0,0,0.1)] font-comfortaa relative z-0">
-      {currentUser?.uid === post.userId && (
-        <button
-          onClick={() => setShowEditModal(true)}
-          className={editButtonClasses}
-        >
-          ✏️
-        </button>
-      )}
-
-      <div className="mb-2 font-bold text-coral">
-        @{author?.displayName || "anon"}
+    <div className="bg-white rounded-2xl p-6 mb-8 shadow-lg font-comfortaa relative z-0">
+      <div className="flex justify-between items-start">
+        <div className="mb-2 font-bold text-coral">
+          @{author?.displayName || "anon"}
+        </div>
+        <div className="flex items-center space-x-2">
+          {currentUser?.uid === post.userId && (
+            <button
+              onClick={() => setShowEditModal(true)}
+              className={editButtonClasses}
+              aria-label="Edit post"
+            >
+              <span role="img" aria-label="pencil">✏️</span>
+            </button>
+          )}
+          <button
+            onClick={handleShare}
+            className="p-2 rounded-full text-coral hover:bg-coral/10 active:bg-coral/20 focus:outline-none focus:ring-2 focus:ring-coral focus:ring-offset-1"
+            aria-label="Share post"
+          >
+            <ShareIcon className="h-6 w-6" />
+          </button>
+        </div>
       </div>
 
       {post.content && (
-        <p className="text-base text-charcoal mb-4 break-words whitespace-pre-line"> {/* Changed text-coral to text-charcoal */}
+        <p className="text-base text-charcoal mb-4 break-words whitespace-pre-line">
           {post.content}
         </p>
       )}
@@ -99,7 +124,7 @@ const PostCard = ({ post }) => {
         ))}
       </div>
 
-      <div className="text-sm text-gray-600 mb-4"> {/* Changed text-gray-500 to text-gray-600 for better contrast */}
+      <div className="text-sm text-gray-600 mb-4">
         Tagged:
         {(post.taggedAmigos || []).map(uid => (
           <span key={uid} className="ml-1">👤</span>
@@ -109,22 +134,21 @@ const PostCard = ({ post }) => {
         ))}
       </div>
 
-      {/* Comments section: comments are already text-coral on white with coral border, which is fine. */}
       <div className="mt-4">
         {comments.map((comment) => {
           const reactions = comment.emojis || {};
           return (
             <div
               key={comment.id}
-              className="bg-white py-2 px-4 rounded-lg mb-2 text-base text-coral font-medium relative border border-coral" 
+              className="bg-white py-2 px-4 rounded-lg mb-2 text-base text-coral font-medium relative border border-coral"
             >
-              <strong className="mr-1 text-charcoal">💬</strong> {/* Icon color */}
-              <span className="text-charcoal">{comment.content}</span> {/* Comment content changed to text-charcoal */}
+              <strong className="mr-1 text-charcoal">💬</strong>
+              <span className="text-charcoal">{comment.content}</span>
               <div className="mt-1.5 flex flex-wrap gap-1.5">
                 {Object.entries(reactions).map(([emoji, users]) => (
                   <span
                     key={emoji}
-                    className="text-lg text-coral mr-2" 
+                    className="text-lg text-coral mr-2"
                   >
                     {emoji} {users.length}
                   </span>
@@ -133,9 +157,10 @@ const PostCard = ({ post }) => {
                   onClick={() =>
                     setEmojiPickerVisible(emojiPickerVisible === comment.id ? null : comment.id)
                   }
-                  className="bg-transparent border-none text-lg cursor-pointer text-coral hover:text-coral-dark"
+                  className="bg-transparent border-none text-lg cursor-pointer text-coral hover:text-coral-dark focus:outline-none focus:ring-1 focus:ring-coral-dark rounded-full p-1 active:text-coral-dark/90 disabled:opacity-70"
+                  aria-label="Toggle emoji picker"
                 >
-                  😀
+                  <span role="img" aria-label="smile emoji">😀</span>
                 </button>
               </div>
               {emojiPickerVisible === comment.id && (
@@ -146,10 +171,10 @@ const PostCard = ({ post }) => {
         })}
       </div>
 
-      <div className="text-right">
+      <div className="mt-4 flex justify-end">
         <button
           onClick={() => setShowModal(true)}
-          className={viewAllCommentsButtonClasses} // This button is white with coral text, hover coral bg with white text - good contrast.
+          className={viewAllCommentsButtonClasses}
         >
           View All Comments
         </button>

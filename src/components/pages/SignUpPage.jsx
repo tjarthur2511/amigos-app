@@ -4,6 +4,7 @@ import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
 import FallingAEffect from '../common/FallingAEffect';
+import Spinner from '../common/Spinner'; // Import Spinner
 
 const SignUpPage = () => {
   const [email, setEmail] = useState('');
@@ -102,7 +103,8 @@ const SignUpPage = () => {
     return 'text-gray-500'; // Default or for empty string
   };
 
-  const inputClasses = "p-3 border border-gray-300 rounded-[10px] font-comfortaa text-base outline-none w-full"; // Added w-full
+  // Standardized input classes
+  const inputClasses = "p-2.5 border border-neutral-300 rounded-input font-comfortaa text-base w-full box-border focus:outline-none focus:ring-2 focus:ring-coral focus:border-transparent disabled:bg-neutral-100 disabled:text-neutral-500 disabled:cursor-not-allowed";
 
   return (
     <div className="min-h-screen relative overflow-hidden w-full font-comfortaa">
@@ -182,10 +184,17 @@ const SignUpPage = () => {
               />
               <button
                 type="submit"
-                className="bg-coral text-white py-3 px-6 rounded-full font-comfortaa font-bold text-base cursor-pointer transition-all duration-200 ease-in-out shadow-md hover:bg-coral-dark disabled:opacity-70" // Applied new standard style
+                className="bg-coral text-white py-3 px-6 rounded-button font-comfortaa font-bold text-base cursor-pointer transition-all duration-200 ease-in-out shadow-md hover:bg-coral-dark active:bg-coral-dark/90 focus:outline-none focus:ring-2 focus:ring-coral-dark focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center" // Added flex, active, focus, disabled, rounded-button
                 disabled={isSigningUp}
               >
-                {isSigningUp ? 'Signing up...' : 'Sign Up'}
+                {isSigningUp ? (
+                  <>
+                    <Spinner size="sm" color="white" />
+                    <span className="ml-2">Signing up...</span>
+                  </>
+                ) : (
+                  'Sign Up'
+                )}
               </button>
             </form>
           </div>

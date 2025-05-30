@@ -1,66 +1,58 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebase';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
-import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
+import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import FallingAEffect from '../common/FallingAEffect';
-
-const containerStyle = {
-  width: '100%',
-  height: '400px',
-  borderRadius: '1rem',
-};
-
-const center = {
-  lat: 42.25,
-  lng: -83.4,
-};
+import Spinner from '../common/Spinner'; // Import Spinner
+import PostCard from '../common/PostCard'; // Import PostCard
 
 const Explore = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const [selectedType, setSelectedType] = useState('amigos');
-  const [mapMarkers, setMapMarkers] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-  });
+  const POSTS_LIMIT = 20; // Number of recent posts to fetch
 
   useEffect(() => {
-    if (location.state?.defaultTab) {
-      setSelectedType(location.state.defaultTab);
-    }
-  }, [location.state]);
+    const fetchPosts = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const postsRef = collection(db, 'posts');
+        const q = query(postsRef, orderBy('createdAt', 'desc'), limit(POSTS_LIMIT));
+        const snapshot = await getDocs(q);
 
-  useEffect(() => {
-    const fetchMarkers = async () => {
-      let col = selectedType === 'amigos' ? 'users' : selectedType === 'grupos' ? 'grupos' : 'events';
-
-      const ref = collection(db, col);
-      const q = query(ref, orderBy('createdAt', 'desc'));
-      const snapshot = await getDocs(q);
-
-      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      const filtered = data.filter((item) => item.lat && item.lng);
-      setMapMarkers(filtered);
+        if (snapshot.empty) {
+          setPosts([]);
+        } else {
+          const fetchedPosts = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+          setPosts(fetchedPosts);
+        }
+      } catch (err) {
+        console.error("Error fetching posts:", err);
+        setError("Failed to load posts. Please try again later.");
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    fetchMarkers();
-  }, [selectedType]);
+    fetchPosts();
+  }, []);
 
-  // Define reused class strings
-  const tabClasses = "bg-coral text-white border-none py-3 px-5 rounded-[30px] text-base font-bold font-comfortaa cursor-pointer shadow-[0_3px_8px_rgba(0,0,0,0.2)] hover:bg-coral-dark transition-all";
-  const sectionTitleClasses = "text-3xl text-coral mb-4 text-center"; // Adjusted from 2rem to 3xl
-  const dropdownClasses = "py-2.5 px-4 text-base rounded-full border border-coral font-comfortaa text-coral cursor-pointer mb-4 focus:outline-none focus:ring-2 focus:ring-coral focus:border-transparent";
-  const mapContainerClasses = "w-full h-[400px] rounded-xl"; // For GoogleMap mapContainerStyle
+  // Define reused class strings from existing component structure (can be adjusted)
+  const tabClasses = "bg-coral text-white border-none py-3 px-5 rounded-button text-base font-comfortaa font-bold cursor-pointer shadow-md hover:bg-coral-dark transition-all focus:outline-none focus:ring-2 focus:ring-coral-dark active:scale-95";
+  const sectionTitleClasses = "text-3xl text-coral mb-6 text-center";
 
   return (
     <div className="font-comfortaa bg-transparent min-h-screen overflow-hidden relative z-0">
+      {/* Background Effects */}
       <div className="absolute top-0 left-0 w-full h-full -z-[1000] bg-coral" />
       <div className="absolute top-0 left-0 w-full h-full -z-[500] pointer-events-none">
         <FallingAEffect />
       </div>
 
+      {/* Header and Navigation (consistent with other pages) */}
       <header className="flex justify-center pt-4 mb-[-1rem] z-[10]">
         <img
           src="/assets/amigoshangouts1.png"
@@ -70,7 +62,7 @@ const Explore = () => {
       </header>
 
       <nav className="flex justify-center mt-0 mb-6 z-[10]">
-        <div className="bg-white py-3 px-4 rounded-[30px] shadow-[0_5px_15px_rgba(0,0,0,0.1)] flex gap-4">
+        <div className="bg-white py-3 px-4 rounded-button shadow-lg flex gap-4">
           <button onClick={() => navigate('/')} className={tabClasses}>Home</button>
           <button onClick={() => navigate('/amigos')} className={tabClasses}>Amigos</button>
           <button onClick={() => navigate('/grupos')} className={tabClasses}>Grupos</button>
@@ -78,28 +70,41 @@ const Explore = () => {
         </div>
       </nav>
 
+      {/* Main Content Area */}
       <div className="flex justify-center mb-8 z-[10]">
-        <div className="bg-white p-8 rounded-[1.5rem] shadow-[0_5px_25px_rgba(0,0,0,0.2)] w-[90%] max-w-[800px] min-h-[60vh] text-center relative z-0">
-          <h2 className={sectionTitleClasses}>Explore {selectedType.charAt(0).toUpperCase() + selectedType.slice(1)}</h2>
+        <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-[90%] max-w-[800px] min-h-[60vh] text-center relative">
+          <h2 className={sectionTitleClasses}>Explore Recent Posts</h2>
 
-          <select
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            className={dropdownClasses}
-          >
-            <option value="amigos">Explore Amigos</option>
-            <option value="grupos">Explore Grupos</option>
-            <option value="events">Explore Events</option>
-          </select>
+          {isLoading && (
+            <div className="flex justify-center items-center h-64">
+              <Spinner size="lg" color="coral" />
+            </div>
+          )}
 
-          {isLoaded && (
-            <div className="mt-6">
-              {/* Ensure mapContainerClassName is used if available, otherwise pass style directly */}
-              <GoogleMap mapContainerClassName={mapContainerClasses} mapContainerStyle={{width: '100%', height: '400px', borderRadius: '1rem'}} center={center} zoom={10}>
-                {mapMarkers.map((m) => (
-                  <Marker key={m.id} position={{ lat: m.lat, lng: m.lng }} />
-                ))}
-              </GoogleMap>
+          {!isLoading && error && (
+            <div className="text-center py-10">
+              <p className="text-red-500 text-lg">{error}</p>
+              {/* Optionally, add a retry button here */}
+            </div>
+          )}
+
+          {!isLoading && !error && posts.length === 0 && (
+            <div className="text-center py-10">
+              <p className="text-neutral-600 text-lg">No posts found. Be the first to share something, or check back later!</p>
+            </div>
+          )}
+
+          {!isLoading && !error && posts.length > 0 && (
+            <div className="grid grid-cols-1 gap-6 mt-4">
+              {/* 
+                Alternatively, for a multi-column layout on larger screens:
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4"> 
+                This would require PostCard to be designed to fit well in such a grid.
+                For simplicity, starting with a single column (similar to HomePage).
+              */}
+              {posts.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
             </div>
           )}
         </div>
@@ -107,7 +112,5 @@ const Explore = () => {
     </div>
   );
 };
-
-// Style object constants are no longer needed.
 
 export default Explore;

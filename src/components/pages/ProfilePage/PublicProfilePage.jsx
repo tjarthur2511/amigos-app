@@ -16,37 +16,57 @@ import {
   arrayUnion,
   arrayRemove,
 } from 'firebase/firestore';
+import FollowButton from '../../common/FollowButton'; // Import FollowButton
+import Spinner from '../../common/Spinner'; // Import Spinner for loading state
 
 const PublicProfilePage = () => {
-  const { userId } = useParams();
-  const [currentUserId, setCurrentUserId] = useState(null);
+  const { userId } = useParams(); // This is the ID of the profile being viewed
+  const [currentLoggedInUserId, setCurrentLoggedInUserId] = useState(null); // ID of the logged-in user
   const [userData, setUserData] = useState(null);
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingUserCount, setFollowingUserCount] = useState(0);
+  // Not fetching followingGrupoCount for public profile display to keep it simpler for now
   const [posts, setPosts] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [grupos, setGrupos] = useState([]);
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false); // This will be managed by FollowButton now
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const init = async () => {
-      const user = auth.currentUser;
-      if (!user || !userId) return;
-
-      setCurrentUserId(user.uid);
-
-      const userRef = doc(db, 'users', user.uid);
-      const userSnap = await getDoc(userRef);
-      const userData = userSnap.exists() ? userSnap.data() : {};
-      const userFollowing = userData.following || [];
-
-      setIsFollowing(userFollowing.includes(userId));
-
-      const publicRef = doc(db, 'users', userId);
-      const publicSnap = await getDoc(publicRef);
-      if (publicSnap.exists()) {
-        setUserData(publicSnap.data());
+      setLoading(true);
+      const loggedInUser = auth.currentUser;
+      if (!userId) { // userId is from useParams, profile being viewed
+        setLoading(false);
+        return;
+      }
+      
+      if (loggedInUser) {
+        setCurrentLoggedInUserId(loggedInUser.uid);
       }
 
+      // Fetch public profile user's data
+      const publicUserRef = doc(db, 'users', userId);
+      const publicUserSnap = await getDoc(publicUserRef);
+
+      if (publicUserSnap.exists()) {
+        setUserData(publicUserSnap.data());
+
+        // Fetch follower count for the public profile
+        const followersRef = collection(db, 'users', userId, 'followers');
+        const followersSnap = await getDocs(followersRef);
+        setFollowerCount(followersSnap.size);
+
+        // Fetch following count for the public profile (users they are following)
+        const followingUsersRef = collection(db, 'users', userId, 'followingUsers');
+        const followingUsersSnap = await getDocs(followingUsersRef);
+        setFollowingUserCount(followingUsersSnap.size);
+
+      } else {
+        setUserData(null); // User not found
+      }
+
+      // Fetch posts (remains the same)
       const postQuery = query(
         collection(db, 'posts'),
         where('userId', '==', userId),
@@ -87,8 +107,14 @@ const PublicProfilePage = () => {
     setIsFollowing(!isFollowing);
   };
 
-  if (loading) return <div className="text-center mt-20 text-white">Loading profile...</div>;
-  if (!userData) return <div className="text-center mt-20 text-white">User not found.</div>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Spinner size="lg" color="coral" />
+      </div>
+    );
+  }
+  if (!userData) return <div className="text-center py-10 font-comfortaa text-neutral-600">User profile not found.</div>;
 
   const backgroundClass = userData.background === 'beach' ? 'bg-gradient-to-br from-yellow-100 to-blue-200' :
                           userData.background === 'city' ? 'bg-gradient-to-br from-gray-200 to-gray-400' :
@@ -108,75 +134,86 @@ const PublicProfilePage = () => {
             className="w-20 h-20 rounded-full object-cover border-2 border-coral" // Used border-coral
           />
           <div className="flex-1">
-            <h2 className="text-2xl font-bold text-coral">{userData.displayName || 'Unnamed Amigo'}</h2> {/* Used text-coral */}
-            <p className="text-sm text-gray-600 text-center">{userData.bio || 'No bio provided.'}</p>
-            <div className="text-xs text-center mt-1 text-gray-500">
+            <h2 className="text-2xl font-bold text-coral">{userData.displayName || 'Unnamed Amigo'}</h2>
+            <p className="text-sm text-neutral-700">{userData.bio || 'No bio provided.'}</p> {/* Use neutral-700 for better contrast on light BGs */}
+            <div className="mt-2 flex space-x-4 text-sm text-neutral-600">
+              {/* TODO: Make these clickable to open Follower/Following lists */}
+              <span><span className="font-semibold">{followerCount}</span> Followers</span>
+              <span><span className="font-semibold">{followingUserCount}</span> Following</span>
+            </div>
+            <div className="text-xs text-neutral-500 mt-2"> {/* Changed text-gray-500 to text-neutral-500 */}
               <p><strong>Status:</strong> {userData.status || 'No status'}</p>
               <p><strong>Hobbies:</strong> {userData.hobbies || 'No hobbies listed'}</p>
               <p><strong>Pronouns:</strong> {userData.pronouns || 'Not set'}</p>
               <p><strong>Location:</strong> {userData.location || 'Unknown'}</p>
             </div>
           </div>
-          {currentUserId !== userId && (
-            <button
-              onClick={toggleFollow}
-              className={`py-2 px-4 rounded-full font-comfortaa font-bold text-sm shadow-md transition-all duration-200 ease-in-out disabled:opacity-70 disabled:cursor-not-allowed ${
-                isFollowing
-                  ? 'bg-coral-dark text-white hover:bg-coral' // "Unfollow" state - active/undo variation
-                  : 'bg-coral text-white hover:bg-coral-dark'   // "Follow" state - standard primary
-              }`}
-            >
-              {isFollowing ? 'Unfollow' : 'Follow'}
-            </button>
+          {/* FollowButton integration */}
+          {currentLoggedInUserId && currentLoggedInUserId !== userId && (
+            <FollowButton
+              targetId={userId}
+              targetType="user"
+              targetName={userData.displayName || 'this user'}
+              onFollowStateChange={(isNowFollowing, countChange) => {
+                // Update follower count on the public profile being viewed
+                setFollowerCount(prev => prev + countChange);
+                // Note: The button itself manages its isFollowing state.
+                // The isFollowing state previously in this component for the button is removed.
+              }}
+            />
           )}
         </div>
 
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-lg font-semibold text-coral mb-2">Recent Posts</h3> {/* Used text-coral */}
-            {posts.length > 0 ? (
-              <ul className="space-y-2">
-                {posts.map(post => (
-                  <li key={post.id} className="p-4 bg-white rounded-xl shadow"> {/* Added rounded-xl */}
-                    <p>{post.content}</p>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-gray-500">No posts yet.</p>
-            )}
+        {/* Rest of the profile content (posts, answers, grupos) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <div className="md:col-span-2 space-y-6"> {/* Main content: Posts and Answers */}
+            <div>
+              <h3 className="text-lg font-semibold text-coral mb-2">Recent Posts</h3>
+              {posts.length > 0 ? (
+                <ul className="space-y-4"> {/* Increased spacing for PostCard */}
+                  {posts.map(post => (
+                    // Assuming PostCard is self-contained and styled appropriately
+                    <PostCard key={post.id} post={post} />
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-neutral-500 p-4 bg-white rounded-xl shadow">No posts yet.</p>
+              )}
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-coral mb-2">Recent Quiz Answers</h3>
+              {answers.length > 0 ? (
+                <ul className="space-y-2">
+                  {answers.map(answer => (
+                    <li key={answer.id} className="p-4 bg-white rounded-xl shadow">
+                      <p className="font-semibold text-sm text-neutral-700">Q: {answer.question}</p>
+                      <p className="text-sm text-neutral-600">A: {answer.answer}</p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-neutral-500 p-4 bg-white rounded-xl shadow">No recent answers.</p>
+              )}
+            </div>
           </div>
 
-          <div>
-            <h3 className="text-lg font-semibold text-coral mb-2">Recent Quiz Answers</h3> {/* Used text-coral */}
-            {answers.length > 0 ? (
-              <ul className="space-y-2">
-                {answers.map(answer => (
-                  <li key={answer.id} className="p-4 bg-white rounded-xl shadow"> {/* Added rounded-xl */}
-                    <p><strong>Q:</strong> {answer.question}</p>
-                    <p><strong>A:</strong> {answer.answer}</p>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-gray-500">No recent answers.</p>
-            )}
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold text-coral mb-2">Grupos</h3> {/* Used text-coral */}
-            {grupos.length > 0 ? (
-              <ul className="space-y-2">
-                {grupos.map(grupo => (
-                  <li key={grupo.id} className="p-4 bg-white rounded-xl shadow"> {/* Added rounded-xl */}
-                    <p className="font-bold">{grupo.name}</p>
-                    <p>{grupo.description}</p>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-gray-500">Not part of any grupos yet.</p>
-            )}
+          <div className="md:col-span-1 space-y-6"> {/* Sidebar content: Grupos */}
+            <div>
+              <h3 className="text-lg font-semibold text-coral mb-2">Grupos</h3>
+              {grupos.length > 0 ? (
+                <ul className="space-y-2">
+                  {grupos.map(grupo => (
+                    <li key={grupo.id} className="p-4 bg-white rounded-xl shadow">
+                      <Link to={`/grupos/${grupo.id}`} className="font-bold text-coral hover:underline">{grupo.name}</Link>
+                      <p className="text-xs text-neutral-600 mt-1 truncate">{grupo.description || 'No description'}</p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-neutral-500 p-4 bg-white rounded-xl shadow">Not part of any grupos yet.</p>
+              )}
+            </div>
           </div>
         </div>
       </div>

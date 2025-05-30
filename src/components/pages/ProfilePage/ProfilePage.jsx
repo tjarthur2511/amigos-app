@@ -8,10 +8,15 @@ import ProfileQuestionsCenter from './ProfileQuestionsCenter';
 import ProfilePhotos from './ProfilePhotos';
 import FallingAEffect from '../../common/FallingAEffect';
 import FollowersList from './FollowersList';
+import Spinner from '../../common/Spinner'; // Import Spinner
+import NotificationSettings from './NotificationSettings'; // Import NotificationSettings
+import { useNotification } from '../../../context/NotificationContext.jsx'; // Import useNotification
 
 const ProfilePage = () => {
+  const { showNotification } = useNotification(); // Initialize useNotification
   const navigate = useNavigate();
   const [currentCard, setCurrentCard] = useState(0);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true); // Added loading state for initial profile fetch
   const [displayName, setDisplayName] = useState('');
   const [userId, setUserId] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
@@ -21,15 +26,22 @@ const ProfilePage = () => {
   const [pronouns, setPronouns] = useState('');
   const [location, setLocation] = useState('');
   const [background, setBackground] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [followerCount, setFollowerCount] = useState(0);
+  const [saving, setSaving] = useState(false); // This is for the save button
+  const [followerCount, setFollowerCount] = useState(0); // Own followers
+  const [followingUserCount, setFollowingUserCount] = useState(0); // How many users current user is following
+  const [followingGrupoCount, setFollowingGrupoCount] = useState(0); // How many grupos current user is following
 
-  const profileCards = ['Your Profile', 'Quiz Questions', 'Your Photos'];
+  // Added 'Notification Settings' to profileCards
+  const profileCards = ['Your Profile', 'Quiz Questions', 'Your Photos', 'Notification Settings'];
 
   useEffect(() => {
     const fetchUser = async () => {
+      setIsLoadingProfile(true); // Start loading before fetch
       const user = auth.currentUser;
-      if (!user) return;
+      if (!user) {
+        setIsLoadingProfile(false); // Stop loading if no user
+        return;
+      }
 
       setUserId(user.uid);
       const ref = doc(db, 'users', user.uid);
@@ -47,26 +59,47 @@ const ProfilePage = () => {
       }
 
       const allUsersSnap = await getDocs(collection(db, 'users'));
-      const followers = allUsersSnap.docs.filter(doc => (doc.data().following || []).includes(user.uid));
-      setFollowerCount(followers.length);
+      // Fetch follower count for the current user
+      const ownFollowersRef = collection(db, 'users', user.uid, 'followers');
+      const ownFollowersSnap = await getDocs(ownFollowersRef);
+      setFollowerCount(ownFollowersSnap.size);
+
+      // Fetch how many users the current user is following
+      const ownFollowingUsersRef = collection(db, 'users', user.uid, 'followingUsers');
+      const ownFollowingUsersSnap = await getDocs(ownFollowingUsersRef);
+      setFollowingUserCount(ownFollowingUsersSnap.size);
+
+      // Fetch how many grupos the current user is following
+      const ownFollowingGruposRef = collection(db, 'users', user.uid, 'followingGrupos');
+      const ownFollowingGruposSnap = await getDocs(ownFollowingGruposRef);
+      setFollowingGrupoCount(ownFollowingGruposSnap.size);
+
+      setIsLoadingProfile(false); // Stop loading after all fetches
     };
     fetchUser();
-  }, []);
+  }, [userId]); // Added userId to dependency array as it's used in fetchUser
 
   const handleSavePublicProfile = async () => {
     if (!userId) return;
     setSaving(true);
-    const userRef = doc(db, 'users', userId);
-    await updateDoc(userRef, {
-      displayName,
-      bio,
-      hobbies,
-      status,
-      pronouns,
-      location,
-      background,
-    });
-    setSaving(false);
+    try {
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, {
+        displayName,
+        bio,
+        hobbies,
+        status,
+        pronouns,
+        location,
+        background,
+      });
+      setSaving(false);
+      showNotification("Profile saved successfully!", "success");
+    } catch (error) {
+      console.error("Error saving profile: ", error);
+      setSaving(false);
+      showNotification("Failed to save profile. Please try again.", "error");
+    }
   };
 
   const nextCard = () => setCurrentCard((prev) => (prev + 1) % profileCards.length);
@@ -87,7 +120,11 @@ const ProfilePage = () => {
         return (
           <>
             <h2 className={sectionTitleClasses}>Customize Your Public Profile</h2>
-            <p className="text-center text-sm text-coral font-semibold">Followers: {followerCount}</p>
+            <div className="text-center text-sm text-neutral-600 mb-4 space-x-4">
+              <span><span className="font-bold text-coral">{followerCount}</span> Followers</span>
+              <span><span className="font-bold text-coral">{followingUserCount}</span> Following Users</span>
+              <span><span className="font-bold text-coral">{followingGrupoCount}</span> Following Grupos</span>
+            </div>
             <div className="max-w-md mx-auto space-y-5 pt-4">
               {[{ label: 'Display Name', value: displayName, setter: setDisplayName, type: 'input' },
               { label: 'Bio', value: bio, setter: setBio, type: 'textarea' },
@@ -132,10 +169,25 @@ const ProfilePage = () => {
                 </select>
               </div>
               <div className="mt-4 flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <button onClick={handleSavePublicProfile} className={profileFormButtonClasses} disabled={saving}>
-                  {saving ? 'Saving...' : '💾 Save Profile'}
+                <button 
+                  onClick={handleSavePublicProfile} 
+                  className={`${profileFormButtonClasses} flex items-center justify-center`} 
+                  disabled={saving}
+                >
+                  {saving ? (
+                    <>
+                      <Spinner size="sm" color="white" />
+                      <span className="ml-2">Saving...</span>
+                    </>
+                  ) : (
+                    '💾 Save Profile'
+                  )}
                 </button>
-                <button onClick={() => navigate(`/profile/${userId}`)} className={profileFormButtonClasses}>
+                <button 
+                  onClick={() => navigate(`/profile/${userId}`)} 
+                  className={profileFormButtonClasses}
+                  disabled={saving}
+                >
                   🔍 View Public Profile
                 </button>
               </div>
@@ -152,6 +204,8 @@ const ProfilePage = () => {
             <ProfilePhotos />
           </>
         );
+      case 'Notification Settings':
+        return <NotificationSettings />;
       default:
         return null;
     }
@@ -187,15 +241,25 @@ const ProfilePage = () => {
 
       <div className="flex justify-center mb-8 z-[10]">
         <div className="bg-white p-8 rounded-[1.5rem] shadow-[0_5px_25px_rgba(0,0,0,0.2)] w-[90%] max-w-[800px] min-h-[60vh] text-center relative z-0">
-          {profileCards[currentCard] !== 'Your Profile' && profileCards[currentCard] !== 'Your Photos' && (
-            <h2 className={sectionTitleClasses}>{profileCards[currentCard]}</h2>
+          {isLoadingProfile ? (
+            <div className="flex justify-center items-center h-40">
+              <Spinner size="lg" color="coral" />
+            </div>
+          ) : (
+            <>
+              {profileCards[currentCard] !== 'Your Profile' && 
+               profileCards[currentCard] !== 'Your Photos' &&
+               profileCards[currentCard] !== 'Notification Settings' && (
+                <h2 className={sectionTitleClasses}>{profileCards[currentCard]}</h2>
+              )}
+              {renderCardContent()}
+            </>
           )}
-          {renderCardContent()}
           <div className="absolute right-4 top-1/2 -translate-y-1/2 z-0">
-            <button onClick={nextCard} className={arrowButtonClasses}>→</button>
+            <button onClick={nextCard} className={arrowButtonClasses} disabled={isLoadingProfile}>→</button>
           </div>
           <div className="absolute left-4 top-1/2 -translate-y-1/2 z-0">
-            <button onClick={prevCard} className={arrowButtonClasses}>←</button>
+            <button onClick={prevCard} className={arrowButtonClasses} disabled={isLoadingProfile}>←</button>
           </div>
         </div>
       </div>
