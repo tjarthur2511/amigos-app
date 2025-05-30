@@ -1,3 +1,4 @@
+// src/components/common/NotificationsBell.jsx
 import React, { useEffect, useState } from "react";
 import {
   collection,
@@ -23,7 +24,6 @@ const NotificationsBell = () => {
   useEffect(() => {
     if (!currentUser?.uid) return;
 
-    // ✅ Subscribe to live notifications
     const q = query(
       collection(db, "notifications"),
       where("targetUserId", "==", currentUser.uid)
@@ -104,22 +104,20 @@ const NotificationsBell = () => {
 
   const unseenCount = notifications.filter((n) => !n.seen).length;
 
-  // Tailwind classes for the bell button
-  const bellBaseClasses = "fixed top-[15vh] sm:top-28 right-4 sm:right-8 p-2 rounded-full shadow-lg transition-all duration-300 ease-in-out focus:outline-none z-[1000]"; // Adjusted positioning slightly for responsiveness
+  const bellBaseClasses = "fixed top-[15vh] sm:top-28 right-4 sm:right-8 p-2 rounded-full shadow-lg transition-all duration-300 ease-in-out focus:outline-none z-[1000]";
   const bellColorClasses = "bg-coral text-white hover:bg-coral-dark active:bg-coral-dark/90 focus:ring-2 focus:ring-coral-dark focus:ring-offset-2";
-  const pulseAnimationClass = unseenCount > 0 ? "animate-[pulse-a_1.75s_infinite]" : ""; // Using existing pulse-a from theme
 
   return (
     <>
       <button
         onClick={handleClick}
-        className={`${bellBaseClasses} ${bellColorClasses} ${pulseAnimationClass}`}
+        className={`${bellBaseClasses} ${bellColorClasses}`}
         aria-label={`Notifications (${unseenCount} unseen)`}
       >
         <img
-          src="/assets/amigosaonly.png" // Assuming this is the bell icon
+          src="/assets/amigosaonly.png"
           alt="Notifications"
-          className="h-6 w-6 block filter drop-shadow-[0_0_1px_rgba(255,255,255,0.7)]" // Standardized size and shadow
+          className="h-6 w-6 block filter drop-shadow-[0_0_1px_rgba(255,255,255,0.7)]"
         />
         {unseenCount > 0 && (
           <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
