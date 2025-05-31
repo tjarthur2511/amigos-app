@@ -1,4 +1,11 @@
 {
-    "css.validate": false
+  "css.validate": false,
+  "tailwindCSS.experimental.configFile": "./tailwind.config.js",
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "tailwindCSS.includeLanguages": {
+    "javascript": "javascript",
+    "javascriptreact": "javascript"
   }
-  
+}
