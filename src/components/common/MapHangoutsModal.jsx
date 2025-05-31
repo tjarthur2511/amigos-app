@@ -1,14 +1,9 @@
+// src/components/common/MapHangoutsModal.jsx
 import React, { useEffect, useState } from "react";
 import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from "@react-google-maps/api";
 import { db } from "../../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-
-const containerStyle = {
-  width: "100%",
-  height: "300px",
-  borderRadius: "0.75rem",
-};
 
 const fallbackCenter = {
   lat: 42.3314,
@@ -17,7 +12,7 @@ const fallbackCenter = {
 
 const getPinIcon = (type) => {
   switch (type) {
-    case "amigo": return "/assets/amigosaonly.png";
+    case "amigo": return "/assets/redalogo.png";
     case "grupo": return "/assets/g-logo.png";
     case "event": return "/assets/e-logo.png";
     default: return "/assets/redalogo.png";
@@ -27,7 +22,7 @@ const getPinIcon = (type) => {
 const MapHangoutsModal = ({ onClose }) => {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY, // CRITICAL SECURITY FIX
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
   });
 
   const navigate = useNavigate();
@@ -82,53 +77,51 @@ const MapHangoutsModal = ({ onClose }) => {
     if (activeInfo.type === "event") navigate(`/events/${activeInfo.item.id}`);
   };
 
-  const renderMarker = (type, item) => (
-    <Marker
-      key={`${type}-${item.id}`}
-      position={item.location}
-      title={`${type === "amigo" ? "Amigo" : type === "grupo" ? "Grupo" : "Event"}: ${
-        item.displayName || item.name || item.title
-      }`}
-      icon={{
-        url: getPinIcon(type),
-        scaledSize: new window.google.maps.Size(36, 36),
-      }}
-      onClick={() => handleInfoClick(type, item)}
-    />
-  );
+  const renderMarker = (type, item) => {
+    if (!item.location || typeof item.location.lat !== 'number' || typeof item.location.lng !== 'number') {
+      console.warn(`${type} missing or invalid location:`, item);
+      return null;
+    }
 
-  // Define Tailwind classes
-  const standardButtonBase = "rounded-full font-comfortaa font-bold shadow-md transition-all duration-200 ease-in-out disabled:opacity-70 disabled:cursor-not-allowed";
-  const primaryButtonClasses = `${standardButtonBase} bg-coral text-white hover:bg-coral-dark`;
-  const iconPrimaryButtonClasses = `${primaryButtonClasses} p-2 text-lg`; // For small icon buttons
+    return (
+      <Marker
+        key={`${type}-${item.id}`}
+        position={item.location}
+        title={`${type === "amigo" ? "Amigo" : type === "grupo" ? "Grupo" : "Event"}: ${
+          item.displayName || item.name || item.title
+        }`}
+        icon={{
+          url: getPinIcon(type),
+          scaledSize: new window.google.maps.Size(36, 36),
+        }}
+        onClick={() => handleInfoClick(type, item)}
+      />
+    );
+  };
 
   const modalOverlayClasses = "fixed inset-0 w-screen h-screen bg-black/60 z-[1000000] flex items-center justify-center font-comfortaa";
   const modalContainerClasses = "bg-white rounded-[1.25rem] p-6 shadow-[0_10px_40px_rgba(0,0,0,0.2)] w-[90%] max-w-xl relative";
-  const closeModalButtonClasses = `absolute top-3 right-3 ${iconPrimaryButtonClasses}`; // Adjusted position and applied standard
+  const closeModalButtonClasses = "absolute top-3 right-3 rounded-full bg-coral text-white font-comfortaa font-bold shadow-md p-2 text-lg hover:bg-coral-dark transition-all";
   const titleClasses = "text-center text-coral text-xl font-bold mb-4";
   const mapElementContainerClasses = "w-full h-[300px] rounded-lg";
 
   return (
     <div className={modalOverlayClasses}>
       <div className={modalContainerClasses}>
-        <button
-          onClick={onClose}
-          className={closeModalButtonClasses} 
-        >
-          ✕
-        </button>
-
-        <h2 className={titleClasses}>
-          Map Hangouts
-        </h2>
+        <button onClick={onClose} className={closeModalButtonClasses}>✕</button>
+        <h2 className={titleClasses}>Map Hangouts</h2>
 
         {isLoaded ? (
-          <GoogleMap mapContainerClassName={mapElementContainerClasses} mapContainerStyle={{width: '100%', height: '300px', borderRadius: '0.75rem'}} center={mapCenter} zoom={10}>
-            {grupos.map((grupo) => renderMarker("grupo", grupo))}
-            {amigos.map((amigo) => renderMarker("amigo", amigo))}
-            {events.map((event) => renderMarker("event", event))}
+          <GoogleMap
+            mapContainerClassName={mapElementContainerClasses}
+            center={mapCenter}
+            zoom={10}
+          >
+            {grupos.map((g) => renderMarker("grupo", g))}
+            {amigos.map((a) => renderMarker("amigo", a))}
+            {events.map((e) => renderMarker("event", e))}
 
-            {activeInfo && activeInfo.item.location && (
+            {activeInfo?.item?.location && (
               <InfoWindow
                 position={activeInfo.item.location}
                 onCloseClick={handleInfoClose}
@@ -154,7 +147,5 @@ const MapHangoutsModal = ({ onClose }) => {
     </div>
   );
 };
-
-// containerStyle constant is no longer needed.
 
 export default MapHangoutsModal;
