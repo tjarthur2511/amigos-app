@@ -1,9 +1,9 @@
 // src/components/pages/Grupos/GrupoFormModal.jsx
 import React, { useState, useEffect } from 'react';
-import { db, auth } from '../../../firebase';
+import { db, auth } from '../../../firebase.js';
 import { collection, addDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { useNotification } from '../../../context/NotificationContext.jsx';
-import Spinner from '../../common/Spinner';
+import Spinner from '../../common/Spinner.jsx';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 
 const GrupoFormModal = ({ isOpen, onClose, grupoToEdit }) => {
