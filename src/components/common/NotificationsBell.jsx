@@ -72,8 +72,8 @@ const NotificationsBell = () => {
 
           if (!notifSnap.exists()) {
             await setDoc(notifRef, {
-              targetUserId: currentUser.uid,
-              senderId: currentUser.uid,
+              targetUserId: String(currentUser.uid),
+              senderId: String(currentUser.uid),
               category: "general",
               type: "quiz",
               content: "You have unanswered profile questions waiting",
