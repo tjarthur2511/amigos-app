@@ -2,101 +2,102 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, auth } from '../../../firebase';
-import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where, documentId } from 'firebase/firestore';
 
 const GruposUnidos = () => {
-  const [joinedGrupos, setJoinedGrupos] = useState([]);
+  const [joinedGruposDetails, setJoinedGruposDetails] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchJoinedGrupos = async () => {
-      const user = auth.currentUser;
-      if (!user) return;
+    const loadJoinedGruposDetails = async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        setJoinedGruposDetails([]);
+        setIsLoading(false);
+        return;
+      }
 
-      const userRef = doc(db, 'users', user.uid);
-      const userSnap = await getDoc(userRef);
-      if (!userSnap.exists()) return;
+      setIsLoading(true);
+      setError(null);
 
-      const { joinedGrupos = [] } = userSnap.data();
-      if (!joinedGrupos.length) return;
+      try {
+        const memberOfGruposRef = collection(db, 'users', currentUser.uid, 'memberOfGrupos');
+        const memberOfSnapshot = await getDocs(memberOfGruposRef);
+        const groupIds = memberOfSnapshot.docs.map(doc => doc.id);
 
-      const allGruposSnap = await getDocs(collection(db, 'grupos'));
-      const allGrupos = allGruposSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      const userGrupos = allGrupos.filter(grupo => joinedGrupos.includes(grupo.id));
-      setJoinedGrupos(userGrupos);
+        if (groupIds.length === 0) {
+          setJoinedGruposDetails([]);
+          setIsLoading(false);
+          return;
+        }
+
+        const fetchedGroups = [];
+        const BATCH_SIZE = 30; // Firestore 'in' query limit
+
+        for (let i = 0; i < groupIds.length; i += BATCH_SIZE) {
+          const batchOfIds = groupIds.slice(i, i + BATCH_SIZE);
+          if (batchOfIds.length > 0) {
+            const gruposQuery = query(collection(db, 'grupos'), where(documentId(), 'in', batchOfIds));
+            const gruposSnapshot = await getDocs(gruposQuery);
+            gruposSnapshot.docs.forEach(doc => {
+              fetchedGroups.push({ id: doc.id, ...doc.data() });
+            });
+          }
+        }
+
+        // Sort alphabetically by group name
+        fetchedGroups.sort((a, b) => {
+          const nameA = a.name || '';
+          const nameB = b.name || '';
+          return nameA.localeCompare(nameB);
+        });
+
+        setJoinedGruposDetails(fetchedGroups);
+
+      } catch (err) {
+        console.error("Error loading joined group details:", err);
+        setError("Failed to load your joined grupos. Please try refreshing.");
+        setJoinedGruposDetails([]);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    fetchJoinedGrupos();
-  }, []);
+    loadJoinedGruposDetails();
+  }, [auth.currentUser?.uid]); // Re-run if user ID changes
 
   return (
-    <div style={containerStyle}>
-      <h3 style={titleStyle}>Your Joined Grupos</h3>
-      {joinedGrupos.length > 0 ? (
-        <ul style={listStyle}>
-          {joinedGrupos.map(grupo => (
+    <div className="bg-white p-6 rounded-2xl shadow-xl font-comfortaa z-0">
+      <h3 className="text-2xl text-coral font-bold text-center mb-6">
+        Your Joined Grupos
+      </h3>
+      {isLoading && <p className="text-center text-gray-500 py-4">Loading your grupos...</p>}
+      {error && <p className="text-center text-red-500 py-4">{error}</p>}
+
+      {!isLoading && !error && joinedGruposDetails.length === 0 && (
+        <p className="text-center text-coral py-4">
+          You haven’t joined any grupos yet.
+        </p>
+      )}
+
+      {!isLoading && !error && joinedGruposDetails.length > 0 && (
+        <ul className="flex flex-col gap-4 mt-4 max-h-[300px] overflow-y-auto pr-2">
+          {joinedGruposDetails.map(grupo => (
             <li
               key={grupo.id}
-              style={itemStyle}
-              className="cursor-pointer hover:bg-[#fff7f7] transition"
+              className="bg-white p-4 rounded-xl shadow-md z-0 cursor-pointer hover:bg-coral-blush transition-colors duration-150 ease-in-out"
               onClick={() => navigate(`/grupos/${grupo.id}`)}
             >
-              <p style={groupName}>{grupo.name}</p>
-              <p style={groupDetail}>{grupo.description}</p>
+              <p className="text-xl font-bold text-coral">{grupo.name || 'Unnamed Grupo'}</p>
+              <p className="text-sm text-gray-700 line-clamp-2">{grupo.description || 'No description available.'}</p>
             </li>
           ))}
         </ul>
-      ) : (
-        <p style={noDataStyle}>You haven’t joined any grupos yet.</p>
       )}
     </div>
   );
-};
-
-const containerStyle = {
-  backgroundColor: '#ffffff',
-  padding: '1rem',
-  borderRadius: '1rem',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-  fontFamily: 'Comfortaa, sans-serif',
-  zIndex: 0
-};
-
-const titleStyle = {
-  fontSize: '1.5rem',
-  color: '#FF6B6B',
-  textAlign: 'center'
-};
-
-const listStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '1rem',
-  marginTop: '1rem'
-};
-
-const itemStyle = {
-  backgroundColor: '#ffffff',
-  padding: '1rem',
-  borderRadius: '1rem',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-  zIndex: 0
-};
-
-const groupName = {
-  fontSize: '1.2rem',
-  fontWeight: 'bold',
-  color: '#FF6B6B'
-};
-
-const groupDetail = {
-  fontSize: '0.9rem',
-  color: '#555'
-};
-
-const noDataStyle = {
-  textAlign: 'center',
-  color: '#FF6B6B'
 };
 
 export default GruposUnidos;
